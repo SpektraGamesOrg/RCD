@@ -34,6 +34,29 @@ This is a Unity C# mobile car simulation project.
 - Prefer extending existing systems instead of creating parallel ones
 - Never run git commit, git push, or any mutating git command; report changes so the developer can commit manually
 
+## UnityMCP Usage (Editor Automation)
+
+This project has **UnityMCP** available as an MCP server. It exposes live Unity Editor tooling (`mcp__UnityMCP__*`) that lets you interact with the running Editor instance directly.
+
+**Who can use it:** Any agent or workflow in this repo (main Claude Code session, GSD subagents, etc.) is permitted — and encouraged — to use UnityMCP whenever it would produce a better outcome than editing files blindly. This includes GSD commands (`/gsd-plan-phase`, `/gsd-execute-phase`, `/gsd-debug`, etc.) and their spawned agents.
+
+**When to prefer UnityMCP over plain file edits:**
+- **Verifying compilation** after creating/modifying C# scripts — use `read_console` to catch errors before proceeding. Poll `editor_state.isCompiling` to wait for domain reload.
+- **Inspecting Editor/project state** — scene contents, GameObjects, components, assets, tags, layers, tests. Use resources first (`editor_state`, `project_info`, etc.), then tools for mutations.
+- **Scene, prefab, material, and asset mutations** — use `manage_scene`, `manage_prefabs`, `manage_gameobject`, `manage_components`, `manage_material`, `manage_asset`, etc., instead of hand-writing `.unity`/`.prefab` YAML.
+- **Running tests** — `run_tests` + `get_test_job`.
+- **Targeted script edits** — `script_apply_edits` / `apply_text_edits` / `find_in_file` can be safer than raw Edit when the script is loaded by the Editor.
+- **Project-specific capabilities** — always check `mcpforunity://custom-tools` resource first to see what dynamic tools this project exposes.
+
+**Rules when using UnityMCP:**
+- Always use forward slashes in paths; paths are relative to `Assets/` unless stated otherwise.
+- After any script creation/modification (yours or `manage_script`), run `read_console` to verify clean compilation before using the new types.
+- If multiple Unity instances are connected, use the `mcpforunity://instances` resource and `set_active_instance` (or pass `unity_instance` per call) — never assume routing.
+- Prefer resources for reads, tools for writes. Do not use a mutating tool to discover state.
+- If UnityMCP is **not** available in the current session (no `mcp__UnityMCP__*` tools listed), fall back to normal file edits — do not block on it.
+
+**GSD integration:** When a GSD phase involves Unity Editor work (scene setup, prefab wiring, component configuration, running tests, verifying compilation), the executing agent should reach for UnityMCP before resorting to manual YAML edits or asking the user to do it in the Editor.
+
 ## Unity and C#
 
 - Use MonoBehaviour for GameObject-attached behaviors

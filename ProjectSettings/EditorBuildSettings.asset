@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/_Game/Scenes/Game.unity
     guid: e50ce4d8dee3f50478b8e2fa9f9bf5ff
   - enabled: 1
-    path: Assets/Garage/Scenes/Garage_Baked.unity
+    path: Assets/_ThirdParty/Garage/Scenes/Garage_Baked.unity
     guid: 6f0a48efaa6501c4e9b11dadf1fcdcfd
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e4eb3cb994804fd489f6feb1185bd8da, type: 2}
