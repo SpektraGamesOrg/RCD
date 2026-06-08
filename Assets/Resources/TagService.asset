@@ -20,8 +20,3 @@ MonoBehaviour:
   - MainCamera
   - Player
   - GameController
-  - Trailer
-  - Vehicle
-  - Wheel
-  - EnterExitPoint
-  - IgnoreDamage

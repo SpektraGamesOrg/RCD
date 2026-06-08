@@ -104,7 +104,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Exposure: 0.8
+    - _Exposure: 1
     - _Float: 0.43
     - _Float_1: 0.82
     - _GlossMapScale: 1

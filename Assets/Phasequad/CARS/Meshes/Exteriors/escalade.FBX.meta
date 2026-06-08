@@ -1,0 +1,231 @@
+fileFormatVersion: 2
+guid: 4ce61df9ba43c88468db323eccdd8483
+timeCreated: 1510646961
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: car_body
+    100002: //RootNode
+    100004: glass
+    100006: swheel
+    100008: ChamferBox002f
+    100010: gua_speed
+    100012: gua_speed001
+    100014: ind_left
+    100016: ind_right
+    100018: lglass
+    100020: Object002
+    100022: Object003
+    100024: Object004
+    100026: fl_left
+    100028: fl_lights
+    100030: fl_right
+    100032: glass_l
+    100034: Object006
+    100036: rl_lights
+    100038: rl_rear
+    100040: gua_rpm
+    100042: swheele
+    100044: s_wheel
+    100046: Object001
+    100048: r_left
+    100050: r_right
+    100052: r_stop
+    100054: f_glow
+    100056: f_left
+    100058: f_right
+    100060: r_lights
+    100062: r_rear
+    400000: car_body
+    400002: //RootNode
+    400004: glass
+    400006: swheel
+    400008: ChamferBox002f
+    400010: gua_speed
+    400012: gua_speed001
+    400014: ind_left
+    400016: ind_right
+    400018: lglass
+    400020: Object002
+    400022: Object003
+    400024: Object004
+    400026: fl_left
+    400028: fl_lights
+    400030: fl_right
+    400032: glass_l
+    400034: Object006
+    400036: rl_lights
+    400038: rl_rear
+    400040: gua_rpm
+    400042: swheele
+    400044: s_wheel
+    400046: Object001
+    400048: r_left
+    400050: r_right
+    400052: r_stop
+    400054: f_glow
+    400056: f_left
+    400058: f_right
+    400060: r_lights
+    400062: r_rear
+    2300000: car_body
+    2300002: glass
+    2300004: swheel
+    2300006: ChamferBox002f
+    2300008: gua_speed
+    2300010: gua_speed001
+    2300012: ind_left
+    2300014: ind_right
+    2300016: lglass
+    2300018: Object002
+    2300020: Object003
+    2300022: Object004
+    2300024: fl_left
+    2300026: fl_lights
+    2300028: fl_right
+    2300030: glass_l
+    2300032: Object006
+    2300034: rl_lights
+    2300036: rl_rear
+    2300038: gua_rpm
+    2300040: s_wheel
+    2300042: Object001
+    2300044: r_left
+    2300046: r_right
+    2300048: r_stop
+    2300050: f_glow
+    2300052: f_left
+    2300054: f_right
+    2300056: r_lights
+    2300058: r_rear
+    3300000: car_body
+    3300002: glass
+    3300004: swheel
+    3300006: ChamferBox002f
+    3300008: gua_speed
+    3300010: gua_speed001
+    3300012: ind_left
+    3300014: ind_right
+    3300016: lglass
+    3300018: Object002
+    3300020: Object003
+    3300022: Object004
+    3300024: fl_left
+    3300026: fl_lights
+    3300028: fl_right
+    3300030: glass_l
+    3300032: Object006
+    3300034: rl_lights
+    3300036: rl_rear
+    3300038: gua_rpm
+    3300040: s_wheel
+    3300042: Object001
+    3300044: r_left
+    3300046: r_right
+    3300048: r_stop
+    3300050: f_glow
+    3300052: f_left
+    3300054: f_right
+    3300056: r_lights
+    3300058: r_rear
+    4300000: swheel
+    4300002: car_body
+    4300004: glass
+    4300006: Object002
+    4300008: Object003
+    4300010: lglass
+    4300012: ChamferBox002f
+    4300014: ind_right
+    4300016: ind_left
+    4300018: gua_speed
+    4300020: Object004
+    4300022: gua_speed001
+    4300024: glass_l
+    4300026: Object006
+    4300028: fl_lights
+    4300030: rl_lights
+    4300032: rl_rear
+    4300034: fl_left
+    4300036: fl_right
+    4300038: gua_rpm
+    4300040: s_wheel
+    4300042: Object001
+    4300044: r_right
+    4300046: r_left
+    4300048: r_stop
+    4300050: f_glow
+    4300052: f_left
+    4300054: f_right
+    4300056: r_rear
+    4300058: r_lights
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

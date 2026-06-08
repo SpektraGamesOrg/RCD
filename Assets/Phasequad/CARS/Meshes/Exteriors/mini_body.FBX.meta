@@ -1,0 +1,207 @@
+fileFormatVersion: 2
+guid: dcb5e11147c1762488922ad57e7a9407
+timeCreated: 1524105064
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: car_body
+    100002: fl_glow
+    100004: fl_left
+    100006: fl_light
+    100008: fl_right
+    100010: glass
+    100012: glass_l
+    100014: //RootNode
+    100016: rl_left
+    100018: rl_light
+    100020: rl_rear
+    100022: rl_right
+    100024: rl_stop
+    100026: swheel
+    100028: s_wheel
+    100030: car_color
+    100032: Object001
+    100034: Object002
+    100036: f_glow
+    100038: f_left
+    100040: f_lights
+    100042: f_right
+    100044: r_left
+    100046: r_lights
+    100048: r_rear
+    100050: r_right
+    100052: r_stop
+    400000: car_body
+    400002: fl_glow
+    400004: fl_left
+    400006: fl_light
+    400008: fl_right
+    400010: glass
+    400012: glass_l
+    400014: //RootNode
+    400016: rl_left
+    400018: rl_light
+    400020: rl_rear
+    400022: rl_right
+    400024: rl_stop
+    400026: swheel
+    400028: s_wheel
+    400030: car_color
+    400032: Object001
+    400034: Object002
+    400036: f_glow
+    400038: f_left
+    400040: f_lights
+    400042: f_right
+    400044: r_left
+    400046: r_lights
+    400048: r_rear
+    400050: r_right
+    400052: r_stop
+    2300000: car_body
+    2300002: fl_glow
+    2300004: fl_left
+    2300006: fl_light
+    2300008: fl_right
+    2300010: glass
+    2300012: glass_l
+    2300014: rl_left
+    2300016: rl_light
+    2300018: rl_rear
+    2300020: rl_right
+    2300022: rl_stop
+    2300024: swheel
+    2300026: s_wheel
+    2300028: car_color
+    2300030: Object001
+    2300032: Object002
+    2300034: f_glow
+    2300036: f_left
+    2300038: f_lights
+    2300040: f_right
+    2300042: r_left
+    2300044: r_lights
+    2300046: r_rear
+    2300048: r_right
+    2300050: r_stop
+    3300000: car_body
+    3300002: fl_glow
+    3300004: fl_left
+    3300006: fl_light
+    3300008: fl_right
+    3300010: glass
+    3300012: glass_l
+    3300014: rl_left
+    3300016: rl_light
+    3300018: rl_rear
+    3300020: rl_right
+    3300022: rl_stop
+    3300024: swheel
+    3300026: s_wheel
+    3300028: car_color
+    3300030: Object001
+    3300032: Object002
+    3300034: f_glow
+    3300036: f_left
+    3300038: f_lights
+    3300040: f_right
+    3300042: r_left
+    3300044: r_lights
+    3300046: r_rear
+    3300048: r_right
+    3300050: r_stop
+    4300000: car_body
+    4300002: swheel
+    4300004: glass
+    4300006: glass_l
+    4300008: rl_rear
+    4300010: rl_stop
+    4300012: rl_right
+    4300014: rl_left
+    4300016: rl_light
+    4300018: fl_left
+    4300020: fl_right
+    4300022: fl_glow
+    4300024: fl_light
+    4300026: s_wheel
+    4300028: car_color
+    4300030: Object001
+    4300032: Object002
+    4300034: r_left
+    4300036: r_lights
+    4300038: r_stop
+    4300040: r_rear
+    4300042: r_right
+    4300044: f_glow
+    4300046: f_lights
+    4300048: f_left
+    4300050: f_right
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

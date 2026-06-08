@@ -1,0 +1,249 @@
+fileFormatVersion: 2
+guid: 4a54fbc1afb99d74da9d5df089e1a00d
+timeCreated: 1545994340
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: 488
+    100002: carcolor
+    100004: //RootNode
+    100006: glass
+    100008: glass_l
+    100010: Line001
+    100012: Object001
+    100014: Object001xc
+    100016: Object002
+    100018: Object003
+    100020: Object004
+    100022: Object005
+    100024: Object006
+    100026: Object007
+    100028: Object008
+    100030: Object009
+    100032: Object010ds
+    100034: Plane001
+    100036: Object011
+    100038: Object012
+    100040: Object013
+    100042: car_body
+    100044: f_glow
+    100046: f_left
+    100048: f_light
+    100050: f_right
+    100052: r_glow
+    100054: r_left
+    100056: r_light
+    100058: r_light 1
+    100060: s_wheel
+    100062: r_right
+    100064: r_stop
+    100066: f_lights
+    100068: r_lights
+    400000: 488
+    400002: carcolor
+    400004: //RootNode
+    400006: glass
+    400008: glass_l
+    400010: Line001
+    400012: Object001
+    400014: Object001xc
+    400016: Object002
+    400018: Object003
+    400020: Object004
+    400022: Object005
+    400024: Object006
+    400026: Object007
+    400028: Object008
+    400030: Object009
+    400032: Object010ds
+    400034: Plane001
+    400036: Object011
+    400038: Object012
+    400040: Object013
+    400042: car_body
+    400044: f_glow
+    400046: f_left
+    400048: f_light
+    400050: f_right
+    400052: r_glow
+    400054: r_left
+    400056: r_light
+    400058: r_light 1
+    400060: s_wheel
+    400062: r_right
+    400064: r_stop
+    400066: f_lights
+    400068: r_lights
+    2300000: 488
+    2300002: carcolor
+    2300004: glass
+    2300006: glass_l
+    2300008: Line001
+    2300010: Object001
+    2300012: Object001xc
+    2300014: Object002
+    2300016: Object003
+    2300018: Object004
+    2300020: Object005
+    2300022: Object006
+    2300024: Object007
+    2300026: Object008
+    2300028: Object009
+    2300030: Object010ds
+    2300032: Plane001
+    2300034: Object011
+    2300036: Object012
+    2300038: Object013
+    2300040: car_body
+    2300042: f_glow
+    2300044: f_left
+    2300046: f_light
+    2300048: f_right
+    2300050: r_glow
+    2300052: r_left
+    2300054: r_light
+    2300056: r_light 1
+    2300058: s_wheel
+    2300060: r_right
+    2300062: r_stop
+    2300064: f_lights
+    2300066: r_lights
+    3300000: 488
+    3300002: carcolor
+    3300004: glass
+    3300006: glass_l
+    3300008: Line001
+    3300010: Object001
+    3300012: Object001xc
+    3300014: Object002
+    3300016: Object003
+    3300018: Object004
+    3300020: Object005
+    3300022: Object006
+    3300024: Object007
+    3300026: Object008
+    3300028: Object009
+    3300030: Object010ds
+    3300032: Plane001
+    3300034: Object011
+    3300036: Object012
+    3300038: Object013
+    3300040: car_body
+    3300042: f_glow
+    3300044: f_left
+    3300046: f_light
+    3300048: f_right
+    3300050: r_glow
+    3300052: r_left
+    3300054: r_light
+    3300056: r_light 1
+    3300058: s_wheel
+    3300060: r_right
+    3300062: r_stop
+    3300064: f_lights
+    3300066: r_lights
+    4300000: Object003
+    4300002: glass
+    4300004: glass_l
+    4300006: Plane001
+    4300008: Line001
+    4300010: Object004
+    4300012: Object005
+    4300014: Object006
+    4300016: Object007
+    4300018: 488
+    4300020: Object001xc
+    4300022: Object010ds
+    4300024: Object001
+    4300026: Object002
+    4300028: Object008
+    4300030: Object009
+    4300032: carcolor
+    4300034: Object011
+    4300036: Object012
+    4300038: Object013
+    4300040: r_left
+    4300042: r_light
+    4300044: r_light
+    4300046: r_glow
+    4300048: f_left
+    4300050: f_glow
+    4300052: f_light
+    4300054: f_right
+    4300056: s_wheel
+    4300058: car_body
+    4300060: r_stop
+    4300062: r_right
+    4300064: f_lights
+    4300066: r_lights
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

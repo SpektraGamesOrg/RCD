@@ -1,0 +1,179 @@
+fileFormatVersion: 2
+guid: 57ed1af784eba3f49a8de437fd27037c
+timeCreated: 1532221887
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Object001dssdcs
+    100004: swheel
+    100006: car_body
+    100008: f_glow
+    100010: f_left
+    100012: f_lights
+    100014: f_right
+    100016: glass
+    100018: glass_l
+    100020: r_left
+    100022: r_lights
+    100024: r_rear
+    100026: r_right
+    100028: s_wheel
+    100030: Object001
+    100032: car_color
+    100034: Object003
+    100036: Object004
+    100038: r_glow
+    100040: r_stop
+    400000: //RootNode
+    400002: Object001dssdcs
+    400004: swheel
+    400006: car_body
+    400008: f_glow
+    400010: f_left
+    400012: f_lights
+    400014: f_right
+    400016: glass
+    400018: glass_l
+    400020: r_left
+    400022: r_lights
+    400024: r_rear
+    400026: r_right
+    400028: s_wheel
+    400030: Object001
+    400032: car_color
+    400034: Object003
+    400036: Object004
+    400038: r_glow
+    400040: r_stop
+    2300000: Object001dssdcs
+    2300002: swheel
+    2300004: car_body
+    2300006: f_glow
+    2300008: f_left
+    2300010: f_lights
+    2300012: f_right
+    2300014: glass
+    2300016: glass_l
+    2300018: r_left
+    2300020: r_lights
+    2300022: r_rear
+    2300024: r_right
+    2300026: s_wheel
+    2300028: Object001
+    2300030: car_color
+    2300032: Object003
+    2300034: Object004
+    2300036: r_glow
+    2300038: r_stop
+    3300000: Object001dssdcs
+    3300002: swheel
+    3300004: car_body
+    3300006: f_glow
+    3300008: f_left
+    3300010: f_lights
+    3300012: f_right
+    3300014: glass
+    3300016: glass_l
+    3300018: r_left
+    3300020: r_lights
+    3300022: r_rear
+    3300024: r_right
+    3300026: s_wheel
+    3300028: Object001
+    3300030: car_color
+    3300032: Object003
+    3300034: Object004
+    3300036: r_glow
+    3300038: r_stop
+    4300000: Object001dssdcs
+    4300002: swheel
+    4300004: car_body
+    4300006: glass
+    4300008: glass_l
+    4300010: r_lights
+    4300012: r_rear
+    4300014: r_right
+    4300016: r_left
+    4300018: f_left
+    4300020: f_right
+    4300022: f_lights
+    4300024: f_glow
+    4300026: s_wheel
+    4300028: Object001
+    4300030: car_color
+    4300032: r_glow
+    4300034: Object003
+    4300036: Object004
+    4300038: r_stop
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
