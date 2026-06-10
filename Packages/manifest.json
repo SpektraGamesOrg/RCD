@@ -57,14 +57,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0",
-	"com.spektragames.addressableloader": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/AddressableLoader",
-    "com.spektragames.buildautomation": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/BuildAutomation",
-    "com.spektragames.fsmsystem": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/FSMSystem",
-    "com.spektragames.nativeplugins": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/NativePlugins",
-    "com.spektragames.runtimeui": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/RuntimeUI",
-    "com.spektragames.scriptablesystem": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/ScriptableSystem",
-    "com.spektragames.spektrautilities": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/SpektraUtilities",
-	"com.spektragames.customtoolbar": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/CustomToolbar",
-	"com.spektragames.objectpooling": "git+https://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:x-oauth-basic@github.com/SpektraGamesOrg/SpektraUnityPackagesProject?path=/Packages/ObjectPooling"
+	"com.spektragames.addressableloader": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/AddressableLoader",
+    "com.spektragames.buildautomation": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/BuildAutomation",
+    "com.spektragames.fsmsystem": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/FSMSystem",
+    "com.spektragames.nativeplugins": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/NativePlugins",
+    "com.spektragames.runtimeui": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/RuntimeUI",
+    "com.spektragames.scriptablesystem": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/ScriptableSystem",
+    "com.spektragames.spektrautilities": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/SpektraUtilities",
+	"com.spektragames.customtoolbar": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/CustomToolbar",
+	"com.spektragames.objectpooling": "https://github.com/SpektraGamesOrg/SpektraUnityPackagesProject.git?path=/Packages/ObjectPooling"
   }
 }
