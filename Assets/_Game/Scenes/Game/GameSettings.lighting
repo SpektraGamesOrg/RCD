@@ -9,7 +9,7 @@ LightingSettings:
   m_Name: GameSettings
   serializedVersion: 10
   m_EnableBakedLightmaps: 1
-  m_EnableRealtimeLightmaps: 1
+  m_EnableRealtimeLightmaps: 0
   m_RealtimeEnvironmentLighting: 1
   m_BounceScale: 1
   m_AlbedoBoost: 2
@@ -19,7 +19,7 @@ LightingSettings:
   m_LightmapMaxSize: 1024
   m_LightmapSizeFixed: 0
   m_UseMipmapLimits: 1
-  m_BakeResolution: 0.5
+  m_BakeResolution: 8
   m_Padding: 2
   m_LightmapCompression: 3
   m_LightmapPackingMode: 1
@@ -30,8 +30,8 @@ LightingSettings:
   m_XAtlasRepackUnderutilizedLightmaps: 1
   m_AO: 1
   m_AOMaxDistance: 2
-  m_CompAOExponent: 3
-  m_CompAOExponentDirect: 2
+  m_CompAOExponent: 5
+  m_CompAOExponentDirect: 5
   m_ExtractAO: 0
   m_MixedBakeMode: 0
   m_LightmapsBakeMode: 0
