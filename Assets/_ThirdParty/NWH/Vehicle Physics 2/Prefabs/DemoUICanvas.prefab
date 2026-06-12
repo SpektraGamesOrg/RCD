@@ -4762,7 +4762,7 @@ MonoBehaviour:
   m_BlockingObjects: 1
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &781241035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4793,6 +4793,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!114 &781241036
 MonoBehaviour:
   m_ObjectHideFlags: 0
