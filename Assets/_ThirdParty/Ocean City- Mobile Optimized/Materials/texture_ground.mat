@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: texture_ground
-  m_Shader: {fileID: -6465566751694194690, guid: 627db600fb90cfd468f9172bd1a2f616, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 9abb31d7cf7362549b0e6d238e1dd5ea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -30,13 +30,18 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ApplyLUTCustomFunction_931fc36637ac4468927aa3bffa97737e_Lut_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 7cbae134465426142bc416b5f969c396, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: 0c5cb25342e950643972faf3b4e95004, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -111,12 +116,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - LIGHTMAP: 1
+    - LIGHTMAP_SHADOW_MIXING: 1
+    - SHADOWS_SHADOWMASK: 1
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _CastShadows: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -129,6 +138,9 @@ Material:
     - _GlossMapScale: 0.91
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _LIGHTMAP_SHADOW_MIXING: 0
+    - _MAIN_LIGHT_SHADOWS: 0
+    - _MAIN_LIGHT_SHADOWS_CASCADE: 1
     - _Metallic: 0.124
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -136,6 +148,8 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _SHADOWS_SHADOWMASK: 0
+    - _SHADOWS_SOFT: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
@@ -145,9 +159,11 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
+    - _ZTest: 4
     - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
+    - _BaseColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
     - _Color: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
