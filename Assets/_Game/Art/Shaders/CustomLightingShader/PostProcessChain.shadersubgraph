@@ -46,9 +46,6 @@
             "m_Id": "6cd7188cd5db4916bba832950f98ae6b"
         },
         {
-            "m_Id": "64af58a5d700496d9af0df1ea81ca6d1"
-        },
-        {
             "m_Id": "931fc36637ac4468927aa3bffa97737e"
         },
         {
@@ -56,6 +53,9 @@
         },
         {
             "m_Id": "6e76b949014c4adda0dfa2df05d0179f"
+        },
+        {
+            "m_Id": "40c6dfa1c34443d0acbfce856136124e"
         }
     ],
     "m_GroupDatas": [],
@@ -70,7 +70,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "64af58a5d700496d9af0df1ea81ca6d1"
+                    "m_Id": "8657dcd254a74be8a3224e6efe04ec85"
                 },
                 "m_SlotId": 0
             }
@@ -106,9 +106,9 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "51edbb093d45457291b50b04b6110e86"
+                    "m_Id": "40c6dfa1c34443d0acbfce856136124e"
                 },
-                "m_SlotId": 1
+                "m_SlotId": 0
             },
             "m_InputSlot": {
                 "m_Node": {
@@ -129,20 +129,6 @@
                     "m_Id": "931fc36637ac4468927aa3bffa97737e"
                 },
                 "m_SlotId": 2
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "64af58a5d700496d9af0df1ea81ca6d1"
-                },
-                "m_SlotId": 1
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "8657dcd254a74be8a3224e6efe04ec85"
-                },
-                "m_SlotId": 0
             }
         },
         {
@@ -171,20 +157,6 @@
                     "m_Id": "8ecd85227f434fdfa569564c8a6cc560"
                 },
                 "m_SlotId": 1
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "8c541e58097e4f5dbcb93fa4d111387d"
-                },
-                "m_SlotId": 1
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "931fc36637ac4468927aa3bffa97737e"
-                },
-                "m_SlotId": 0
             }
         },
         {
@@ -390,10 +362,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1151.9998779296875,
-            "y": 180.0,
-            "width": 207.99993896484376,
-            "height": 302.0
+            "x": -1227.000244140625,
+            "y": 161.00003051757813,
+            "width": 208.0,
+            "height": 302.0000305175781
         }
     },
     "m_Slots": [
@@ -468,7 +440,7 @@
     "m_FunctionName": "WhiteBalance",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "// Girişler: In (Vector3 linear), Temperature (Float -100..100), Tint (Float -100..100)\r\n// Çıkış: Out (Vector3)\r\n\r\nfloat t1 = Temperature / 65.0;\r\nfloat t2 = Tint / 65.0;\r\n\r\n// referans beyaz noktanın CIE xy değeri (D65)\r\nfloat wbX = 0.31271 - t1 * (t1 < 0.0 ? 0.1 : 0.05);\r\nfloat standardY = 2.87 * wbX - 3.0 * wbX * wbX - 0.27509507;\r\nfloat wbY = standardY + t2 * 0.05;\r\n\r\n// CIE xy -> CAT02 LMS\r\nfloat bigY = 1.0;\r\nfloat bigX = bigY * wbX / wbY;\r\nfloat bigZ = bigY * (1.0 - wbX - wbY) / wbY;\r\nfloat lCoef =  0.7328 * bigX + 0.4296 * bigY - 0.1624 * bigZ;\r\nfloat mCoef = -0.7036 * bigX + 1.6975 * bigY + 0.0061 * bigZ;\r\nfloat sCoef =  0.0030 * bigX + 0.0136 * bigY + 0.9834 * bigZ;\r\n\r\nfloat3 w1 = float3(0.949237, 1.03542, 1.08728); // D65\r\nfloat3 balance = float3(w1.x / lCoef, w1.y / mCoef, w1.z / sCoef);\r\n\r\n// linear <-> LMS matrisleri (Unity Core)\r\nfloat3x3 LIN_TO_LMS = float3x3(\r\n    3.90405e-1, 5.49941e-1, 8.92632e-3,\r\n    7.08416e-2, 9.63172e-1, 1.35775e-3,\r\n    2.31082e-2, 1.28021e-1, 9.36245e-1\r\n);\r\nfloat3x3 LMS_TO_LIN = float3x3(\r\n     2.85847e+0, -1.62879e+0, -2.48910e-2,\r\n    -2.10182e-1,  1.15820e+0,  3.24281e-4,\r\n    -4.18120e-2, -1.18169e-1,  1.06867e+0\r\n);\r\n\r\nfloat3 lms = mul(LIN_TO_LMS, In);\r\nlms *= balance;\r\nOut = mul(LMS_TO_LIN, lms);"
+    "m_FunctionBody": "// Girişler: In (Vector3 linear)\r\n// Çıkış: Out (Vector3)\r\n// temp = -5, tint = -13 için önceden katlanmış matris\r\nfloat3x3 WB = float3x3(\r\n    0.970146, -0.072329, -0.000827,\r\n    0.003778,  1.026838,  0.000082,\r\n    0.000384, -0.000980,  1.006624\r\n);\r\nOut = mul(WB, In);"
 }
 
 {
@@ -583,31 +555,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
-    "m_ObjectId": "397680f2c6e04668bbec04c8b63dbfdc",
-    "m_Id": 0,
-    "m_DisplayName": "In",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "In",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_LiteralMode": false
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
     "m_ObjectId": "3b3b8a2d75a04a8f8b81b27285af5315",
     "m_Group": {
@@ -657,6 +604,50 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1Node",
+    "m_ObjectId": "40c6dfa1c34443d0acbfce856136124e",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Float",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1394.9998779296875,
+            "y": 249.99998474121095,
+            "width": 125.9998779296875,
+            "height": 77.00001525878906
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "ad1025ba56614ed1b665a32817cab1c7"
+        },
+        {
+            "m_Id": "6e2fd5d70a09481c9f61fee73a1d9cd1"
+        }
+    ],
+    "synonyms": [
+        "Vector 1",
+        "1",
+        "v1",
+        "vec1",
+        "scalar"
+    ],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Value": 0.0,
+    "m_ConstIntMode": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "4ca16f7c707e4f7a836c9c2280a8e0bd",
     "m_Id": 0,
@@ -690,8 +681,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1508.9998779296875,
-            "y": 297.9999694824219,
+            "x": -1576.0,
+            "y": 333.9999694824219,
             "width": 208.0,
             "height": 312.0000305175781
         }
@@ -841,44 +832,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.SaturateNode",
-    "m_ObjectId": "64af58a5d700496d9af0df1ea81ca6d1",
-    "m_Group": {
-        "m_Id": ""
-    },
-    "m_Name": "Saturate",
-    "m_DrawState": {
-        "m_Expanded": true,
-        "m_Position": {
-            "serializedVersion": "2",
-            "x": -862.5304565429688,
-            "y": 171.46966552734376,
-            "width": 208.0,
-            "height": 278.0
-        }
-    },
-    "m_Slots": [
-        {
-            "m_Id": "397680f2c6e04668bbec04c8b63dbfdc"
-        },
-        {
-            "m_Id": "89d3c00484934892b77d786ee135aa0e"
-        }
-    ],
-    "synonyms": [
-        "clamp"
-    ],
-    "m_Precision": 0,
-    "m_PreviewExpanded": false,
-    "m_DismissedVersion": 0,
-    "m_PreviewMode": 0,
-    "m_CustomColors": {
-        "m_SerializableColors": []
-    }
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "65dd0d929e234b26a3e26b788db6868b",
     "m_Id": 3,
@@ -949,10 +902,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1673.8836669921875,
-            "y": 366.83905029296877,
-            "width": 0.0,
-            "height": 0.0
+            "x": -1560.0,
+            "y": 263.9999694824219,
+            "width": 124.0,
+            "height": 34.000030517578128
         }
     },
     "m_Slots": [
@@ -971,6 +924,22 @@
     "m_Property": {
         "m_Id": "6979704e39bf4385aa8aa30e89aa0656"
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "6e2fd5d70a09481c9f61fee73a1d9cd1",
+    "m_Id": 0,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": true
 }
 
 {
@@ -1086,10 +1055,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -743.0000610351563,
-            "y": 391.0,
-            "width": 237.00003051757813,
-            "height": 118.00003051757813
+            "x": -656.9999389648438,
+            "y": 367.00006103515627,
+            "width": 237.0,
+            "height": 117.99996948242188
         }
     },
     "m_Slots": [
@@ -1118,32 +1087,7 @@
     "m_FunctionName": "Contrasteffect",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "// Girişler: In (Vector3), Contrast (Float)\r\n// Çıkış: Out (Vector3)\r\n\r\nfloat logcA = 5.555556;\r\nfloat logcB = 0.047996;\r\nfloat logcC = 0.244161;\r\nfloat logcD = 0.386036;\r\nfloat midGray = 0.4135884;\r\n\r\nfloat contrastAmount = Contrast * 0.01 + 1.0;\r\n\r\nfloat3 logC = logcC * log10(logcA * In + logcB) + logcD;\r\nlogC = (logC - midGray) * contrastAmount + midGray;\r\nfloat3 lin = (pow(10.0, (logC - logcD) / logcC) - logcB) / logcA;\r\n\r\nOut = max(0.0, lin);"
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
-    "m_ObjectId": "89d3c00484934892b77d786ee135aa0e",
-    "m_Id": 1,
-    "m_DisplayName": "Out",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Out",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_LiteralMode": false
+    "m_FunctionBody": "// Girişler: In (Vector3 linear), Contrast (Float -100..100)\r\n// Çıkış: Out (Vector3)\r\n\r\nfloat pivot = 0.18;                 // linear orta gri\r\nfloat amount = Contrast * 0.01 + 1.0;\r\nOut = max(0.0, (In - pivot) * amount + pivot);"
 }
 
 {
@@ -1388,6 +1332,22 @@
         "e32": 0.0,
         "e33": 1.0
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "ad1025ba56614ed1b665a32817cab1c7",
+    "m_Id": 1,
+    "m_DisplayName": "X",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "X",
+    "m_StageCapability": 3,
+    "m_Value": 2.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
