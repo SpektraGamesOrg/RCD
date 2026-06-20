@@ -11,21 +11,7 @@ namespace Utils.Editor.QuickOptionsToolbarMenu
 {
     public static class QuickOptionsToolbarMenu
     {
-        private const string SavePath = "SpektraGames/Save";
         private const string QuickOptionsPath = "SpektraGames/QuickOptionsToolbarMenu";
-
-        [MainToolbarElement(SavePath, defaultDockPosition = MainToolbarDockPosition.Left)]
-        public static MainToolbarElement CreateSaveButton()
-        {
-            var icon = EditorGUIUtility.IconContent("d_SaveAs").image as Texture2D;
-            var content = new MainToolbarContent("Save", icon, "Save");
-
-            return new MainToolbarButton(content, () =>
-            {
-                EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
-                SpektraHelpers.Editor.SaveProject();
-            });
-        }
 
         [MainToolbarElement(QuickOptionsPath, defaultDockPosition = MainToolbarDockPosition.Left)]
         public static MainToolbarElement CreateQuickOptionsMenu()
