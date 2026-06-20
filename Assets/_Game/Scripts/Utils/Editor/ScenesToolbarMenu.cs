@@ -11,7 +11,7 @@ namespace Utils.Editor
 {
     public static class ScenesToolbarMenu
     {
-        private const string ScenesMenuPath = "Utils/ScenesToolbarMenu";
+        private const string ScenesMenuPath = "SpektraGames/ScenesToolbarMenu";
 
         [MainToolbarElement(ScenesMenuPath, defaultDockPosition = MainToolbarDockPosition.Middle)]
         public static MainToolbarElement CreateScenesMenu()

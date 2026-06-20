@@ -11,8 +11,8 @@ namespace Utils.Editor.QuickOptionsToolbarMenu
 {
     public static class QuickOptionsToolbarMenu
     {
-        private const string SavePath = "Utils/Save";
-        private const string QuickOptionsPath = "Utils/QuickOptionsToolbarMenu";
+        private const string SavePath = "SpektraGames/Save";
+        private const string QuickOptionsPath = "SpektraGames/QuickOptionsToolbarMenu";
 
         [MainToolbarElement(SavePath, defaultDockPosition = MainToolbarDockPosition.Left)]
         public static MainToolbarElement CreateSaveButton()

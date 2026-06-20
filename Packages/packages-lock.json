@@ -63,15 +63,6 @@
       "hash": "ad8f19632a14f1cc187f1f9db05d9191fa0f5d9b"
     },
     "com.spektragames.addressableloader": {
-      "version": "1.0.16",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.1"
-      },
-      "url": "https://upm.spektragames.com"
-    },
-    "com.spektragames.buildautomation": {
       "version": "1.0.18",
       "depth": 0,
       "source": "registry",
@@ -80,8 +71,8 @@
       },
       "url": "https://upm.spektragames.com"
     },
-    "com.spektragames.customtoolbar": {
-      "version": "1.0.6",
+    "com.spektragames.buildautomation": {
+      "version": "1.0.20",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -90,7 +81,7 @@
       "url": "https://upm.spektragames.com"
     },
     "com.spektragames.fsmsystem": {
-      "version": "1.2.2",
+      "version": "1.2.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -99,24 +90,6 @@
       "url": "https://upm.spektragames.com"
     },
     "com.spektragames.objectpooling": {
-      "version": "1.0.9",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.1"
-      },
-      "url": "https://upm.spektragames.com"
-    },
-    "com.spektragames.runtimeui": {
-      "version": "1.0.7",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.1"
-      },
-      "url": "https://upm.spektragames.com"
-    },
-    "com.spektragames.scriptablesystem": {
       "version": "1.0.10",
       "depth": 0,
       "source": "registry",
@@ -125,8 +98,26 @@
       },
       "url": "https://upm.spektragames.com"
     },
+    "com.spektragames.runtimeui": {
+      "version": "1.0.8",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.1"
+      },
+      "url": "https://upm.spektragames.com"
+    },
+    "com.spektragames.scriptablesystem": {
+      "version": "1.0.11",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.1"
+      },
+      "url": "https://upm.spektragames.com"
+    },
     "com.spektragames.spektrautilities": {
-      "version": "1.1.13",
+      "version": "1.1.16",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -234,7 +225,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
-      "version": "1.5.11",
+      "version": "1.5.12",
       "depth": 0,
       "source": "registry",
       "dependencies": {
