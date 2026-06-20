@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Save;
 using SpektraGames.RuntimeUI.Runtime;
 using SpektraGames.SpektraUtilities.Runtime;
 using Unity.Services.Core;
@@ -59,7 +60,11 @@ namespace Core
             }
             
             Initializing = true;
-            
+
+            // Save system. Run this synchronously (before the first await) so the player is guaranteed
+            // to own a starter vehicle before the garage / main menu start reading the save data.
+            SaveManager.Initialize();
+
             // SR Debugger
 #if !DISABLE_SRDEBUGGER
             if (!SRDebug.IsInitialized)
@@ -82,7 +87,7 @@ namespace Core
             
             // Core UI
             RuntimeUI.Init();
-            
+
             // Unity services
             try
             {

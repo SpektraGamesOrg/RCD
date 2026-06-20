@@ -17,55 +17,69 @@ MonoBehaviour:
     mainBehaviour:
       guid: 02515a4ac1930ab48bf8731c380bf29a
       resourcesPath: Supra
+    price: 0
   - id: 2
     mainBehaviour:
       guid: 1f7cbd68225b17e49a4938ae6c70658e
       resourcesPath: R35
+    price: 1500
   - id: 3
     mainBehaviour:
       guid: 8c7986328f2b22e47bc75ee267ab7f52
       resourcesPath: Rx7
+    price: 1500
   - id: 4
     mainBehaviour:
       guid: 266d1c59cb58d89468fa7c142d0bfd78
       resourcesPath: S15
+    price: 1500
   - id: 5
     mainBehaviour:
       guid: 90633cca3b0b3f145ac4eb5a733e2ae0
       resourcesPath: Gt500
+    price: 1500
   - id: 6
     mainBehaviour:
       guid: 3aa5369a729fd5b46bab5f8b64a26a9e
       resourcesPath: G63
+    price: 1500
   - id: 7
     mainBehaviour:
       guid: d57a016bc25fe4b44ab619f8178b07c6
       resourcesPath: 'Challenger_Hellcat '
+    price: 1500
   - id: 9
     mainBehaviour:
       guid: 206cf26b0c5bb084f80937a7679e6603
       resourcesPath: M4
+    price: 1500
   - id: 10
     mainBehaviour:
       guid: 7d0885c271ac3bf46973dc8e0679a343
       resourcesPath: F-Type
+    price: 1500
   - id: 11
     mainBehaviour:
       guid: c38ce57c83866894d812d812bba23b23
       resourcesPath: f488
+    price: 1500
   - id: 12
     mainBehaviour:
       guid: 3fa413fd59a4bb5479e14a8d2711bdad
       resourcesPath: Sf90
+    price: 1500
   - id: 13
     mainBehaviour:
       guid: 6f42e8f66aece0e4cbf4f1ec7fb78c0f
       resourcesPath: DBS
+    price: 1500
   - id: 14
     mainBehaviour:
       guid: aeba9138eaec2fe4f88958f62908ad33
       resourcesPath: Huayra
+    price: 1500
   - id: 15
     mainBehaviour:
       guid: 392b2c4b3f570d14fb4f2de8d28b0961
       resourcesPath: Fenyr
+    price: 1500

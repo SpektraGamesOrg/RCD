@@ -39,18 +39,7 @@ namespace Utils.Editor
 
             List<(string sceneName, string scenePath)> scenes = new();
 
-            // Add all scenes
-            // for (var i = 0; i < paths.Count; i++)
-            // {
-            //     string pathNormalized = paths[i].Replace("\\", "/");
-            //     string relativePath = pathNormalized.Replace(scenesPath, "");
-            //     // Remove .unity extension
-            //     if (relativePath.EndsWith(".unity"))
-            //         relativePath = relativePath.Substring(0, relativePath.Length - 6);
-            //
-            //     scenes.Add(new ValueTuple<string, string>(relativePath, paths[i]));
-            // }
-            
+            scenes.Add(new ValueTuple<string, string>("Starter", "Assets/_Game/Scenes/Starter.unity"));
             scenes.Add(new ValueTuple<string, string>("Main Menu", "Assets/_Game/Scenes/MainMenu.unity"));
             scenes.Add(new ValueTuple<string, string>("Game", "Assets/_Game/Scenes/Game.unity"));
 

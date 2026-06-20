@@ -16,7 +16,7 @@ using UnityEngine.Audio;
 namespace SkrilStudio
 {
     [CustomEditor(typeof(MufflerCrackleRandom))]
-    public class MufflerCrackleRandomEditor : Editor
+    public class MufflerCrackleRandomEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

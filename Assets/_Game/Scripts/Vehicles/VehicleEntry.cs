@@ -15,8 +15,10 @@ namespace Vehicles
     {
         [SerializeField] private VehicleID id;
         [SerializeField] private ResourceObject<MainVehicleBehaviour> mainBehaviour = new();
+        [SerializeField] private uint price = 1500;
 
         public VehicleID ID => id;
         public ResourceObject<MainVehicleBehaviour> MainBehaviour => mainBehaviour;
+        public uint Price => price;
     }
 }

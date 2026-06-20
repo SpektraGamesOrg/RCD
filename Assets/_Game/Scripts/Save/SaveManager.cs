@@ -164,6 +164,39 @@ namespace Save
         }
 
         // ---------------------------------------------------------------------
+        // Initialization
+        // ---------------------------------------------------------------------
+
+        /// <summary>
+        /// Prepares the save data for use. Call once during startup (see GameInitializer).
+        /// Guarantees the player always owns a drivable car by granting the first roster entry
+        /// when nothing is owned yet.
+        /// </summary>
+        public static void Initialize()
+        {
+            EnsureStarterVehicle();
+        }
+
+        // Grants the first roster vehicle (the free starter) when the player owns nothing yet.
+        private static void EnsureStarterVehicle()
+        {
+            if (GetOwnedVehicles().Count > 0)
+                return;
+
+            VehicleContainer container = VehicleContainer.Instance;
+            if (container == null || container.Vehicles.Count == 0)
+            {
+                Debug.LogError("[SaveManager] No vehicles registered; cannot grant a starter vehicle.");
+                return;
+            }
+
+            VehicleID starter = container.Vehicles[0].ID;
+            AddOwned(starter);
+            SelectVehicle(starter);
+            Save();
+        }
+
+        // ---------------------------------------------------------------------
         // Persistence
         // ---------------------------------------------------------------------
 

@@ -12,4 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b82112552874eeca4b1fa47cbb0e49, type: 3}
   m_Name: InfoLoggerSettings
   m_EditorClassIdentifier: SpektraGames.SpektraUtilities.Runtime::SpektraGames.SpektraUtilities.Runtime.InfoLoggerSettings
-  definitions: []
+  definitions:
+  - path: Packages/com.spektragames.addressableloader/Runtime/AddressableLoader.cs
+    loggerName: AddressableLoader
+    isEnabled: 1
+    defaultColor: {r: 1, g: 0, b: 1, a: 1}
+    overridedColor: {r: 1, g: 0, b: 1, a: 1}
+    debugLogsEnabled: 1
+    warningsLogsEnabled: 1
+    errorLogsEnabled: 1
+    exceptionLogsEnabled: 1
+  - path: Packages/com.spektragames.objectpooling/Runtime/LowLevel/IndependentPoolManager.cs
+    loggerName: IndependentPoolManager
+    isEnabled: 1
+    defaultColor: {r: 1, g: 0, b: 0.34901962, a: 1}
+    overridedColor: {r: 1, g: 0, b: 0.34901962, a: 1}
+    debugLogsEnabled: 0
+    warningsLogsEnabled: 0
+    errorLogsEnabled: 1
+    exceptionLogsEnabled: 1
