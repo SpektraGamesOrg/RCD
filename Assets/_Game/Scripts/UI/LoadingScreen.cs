@@ -1,7 +1,11 @@
 using System;
+using System.Threading;
+using Core;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UIManager;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -26,7 +30,14 @@ namespace UI
     {
         [Header("Loading")]
         [SerializeField] private LoadingBar loadingBar;
+        [SerializeField] private Image loadingBackground;
         [SerializeField] private TMP_Text descriptionText;
+
+        [Tooltip("Seconds (unscaled) the full bar is held on screen after it reaches 100%, before the " +
+                 "loading screen is dismissed.")]
+        [SerializeField, Min(0f)] private float filledHoldDuration = 1f;
+        
+        [SerializeField] private SerializedDictionary<SceneType, Sprite> loadingBackgrounds = new();
 
         private const string DefaultDescription = "Loading...";
 
@@ -39,11 +50,12 @@ namespace UI
         /// </summary>
         public IProgress<float> Progress => loadingBar;
 
-        /// <summary>Optional payload for opening the screen with a preset description / progress.</summary>
+        /// <summary>Optional payload for opening the screen with a preset description / progress / background.</summary>
         public class LoadingArgs
         {
             public string Description;
             public float InitialProgress;
+            public SceneType SceneType;
         }
 
         protected override void OnBeforeShowing(bool immediate, object uiData = null)
@@ -60,6 +72,7 @@ namespace UI
                     SetDescription(string.IsNullOrEmpty(args.Description) ? DefaultDescription : args.Description);
                     if (loadingBar)
                         loadingBar.SetProgress(args.InitialProgress);
+                    SetBackground(args.SceneType);
                     break;
 
                 case string description:
@@ -69,6 +82,23 @@ namespace UI
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Drives the bar to 100%, waits until it has visually filled, then holds the completed bar on screen
+        /// for <see cref="filledHoldDuration"/> seconds - so the player always sees a full bar for a beat
+        /// before the loading screen is replaced. Safe no-op when there is no bar.
+        /// </summary>
+        public async UniTask WaitUntilFilledAndHoldAsync(CancellationToken token = default)
+        {
+            if (loadingBar != null)
+                await loadingBar.WaitUntilFilledAsync(token);
+
+            if (filledHoldDuration > 0f)
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(filledHoldDuration),
+                    DelayType.UnscaledDeltaTime,
+                    cancellationToken: token);
         }
 
         /// <summary>Sets the progress shown on the bar. <paramref name="value01"/> is clamped to 0..1.</summary>
@@ -83,6 +113,19 @@ namespace UI
         {
             if (descriptionText)
                 descriptionText.text = text;
+        }
+
+        /// <summary>
+        /// Swaps the background image to the sprite mapped for <paramref name="sceneType"/>. Leaves the
+        /// current background untouched when the scene has no entry in <see cref="loadingBackgrounds"/>.
+        /// </summary>
+        public void SetBackground(SceneType sceneType)
+        {
+            if (loadingBackground == null || loadingBackgrounds == null)
+                return;
+
+            if (loadingBackgrounds.TryGetValue(sceneType, out Sprite sprite) && sprite != null)
+                loadingBackground.sprite = sprite;
         }
     }
 }

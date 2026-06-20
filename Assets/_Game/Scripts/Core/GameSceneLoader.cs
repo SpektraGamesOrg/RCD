@@ -37,6 +37,9 @@ namespace Core
 
             progress?.Report(1f);
 
+            // Let the player see the bar reach 100% (it smooths), then hold a beat before swapping screens.
+            await WaitForLoadingBarFilledAsync(token);
+
             if (gameplayScreen != null)
                 await GameUIManager.Instance.SwitchScreenAsync(gameplayScreen).AttachExternalCancellation(token);
             else

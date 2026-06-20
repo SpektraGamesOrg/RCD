@@ -279,9 +279,9 @@ namespace NWH.VehiclePhysics2.Input
 
             if (autoSetInput && (_inputProviders == null || _inputProviders.Count == 0))
             {
-                Debug.LogWarning(
-                    "No InputProviders are present in the scene. " +
-                    "Make sure that one or more InputProviders are present (DesktopInputProvider, MobileInputProvider, etc.).");
+                // Debug.LogWarning(
+                //     "No InputProviders are present in the scene. " +
+                //     "Make sure that one or more InputProviders are present (DesktopInputProvider, MobileInputProvider, etc.).");
             }
 
             // Update the input swapped throttle and brake immediately after gear shift happens.

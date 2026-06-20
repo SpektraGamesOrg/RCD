@@ -140,6 +140,12 @@
       },
       "url": "https://upm.spektragames.com"
     },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.addressables": {
       "version": "2.8.0",
       "depth": 1,
@@ -443,6 +449,12 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.unity.uiextensions": {
+      "version": "file:com.unity.uiextensions",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.visualeffectgraph": {
       "version": "17.3.0",

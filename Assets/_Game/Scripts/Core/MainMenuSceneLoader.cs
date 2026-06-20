@@ -40,6 +40,9 @@ namespace Core
 
             progress?.Report(1f);
 
+            // Let the player see the bar reach 100% (it smooths), then hold a beat before swapping screens.
+            await WaitForLoadingBarFilledAsync(token);
+
             // Always replace the loading screen with a real screen (never an empty layer).
             if (menu != null)
                 GameUIManager.Instance.SwitchScreen(menu);

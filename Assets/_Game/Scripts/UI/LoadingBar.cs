@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,10 +21,9 @@ namespace UI
     [DisallowMultipleComponent]
     public class LoadingBar : MonoBehaviour, IProgress<float>
     {
-        [Header("Targets")]
-        [SerializeField] private Slider slider;
-        [Tooltip("Optional fill image. Only used when no Slider is assigned.")]
-        [SerializeField] private Image fillImage;
+        [SerializeField] private RectTransform fillParentRectTransform;
+        [SerializeField] private RectTransform fillRectTransform;
+
         [Tooltip("Optional label that shows the rounded percentage, e.g. \"57%\".")]
         [SerializeField] private TMP_Text percentText;
 
@@ -72,7 +73,7 @@ namespace UI
 
         /// <summary>
         /// Sets the progress to show. <paramref name="value01"/> is clamped to 0..1.
-        /// Pass <paramref name="instant"/> = true to skip smoothing and snap immediately.
+        /// Pass <paramref name="instant"/> = tru/newe to skip smoothing and snap immediately.
         /// </summary>
         public void SetProgress(float value01, bool instant = false)
         {
@@ -92,6 +93,20 @@ namespace UI
         /// </summary>
         public void Report(float value) => SetProgress(value);
 
+        /// <summary>
+        /// Drives the bar to full and completes only once the displayed fill has actually reached 1 (after
+        /// the smoothing tail). Use this to guarantee the player sees a completed bar before it is dismissed.
+        /// </summary>
+        public async UniTask WaitUntilFilledAsync(CancellationToken token = default)
+        {
+            SetProgress(1f);
+
+            if (IsComplete)
+                return;
+
+            await UniTask.WaitUntil(() => IsComplete, cancellationToken: token);
+        }
+
         /// <summary>Snaps the bar back to empty. Call before starting a new load.</summary>
         public void ResetBar()
         {
@@ -103,10 +118,13 @@ namespace UI
         {
             float shown = Mathf.Clamp01(_displayed);
 
-            if (slider)
-                slider.SetValueWithoutNotify(shown);
-            else if (fillImage)
-                fillImage.fillAmount = shown;
+            if (fillRectTransform)
+            {
+                float maxWidth = fillParentRectTransform.rect.width;
+                float x = shown * maxWidth;
+                //Debug.LogError(maxWidth + " _ " + x);
+                fillRectTransform.sizeDelta = new Vector2(x, fillRectTransform.sizeDelta.y);
+            }
 
             // Only touch the label when the integer percentage actually changes (allocation-free).
             if (percentText)
@@ -136,12 +154,6 @@ namespace UI
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (slider)
-            {
-                slider.minValue = 0f;
-                slider.maxValue = 1f;
-                slider.wholeNumbers = false;
-            }
         }
 #endif
     }

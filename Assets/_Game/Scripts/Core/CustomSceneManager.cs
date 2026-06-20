@@ -129,7 +129,7 @@ namespace Core
             // This object is DontDestroyOnLoad, so the token only trips on real destruction (e.g. app quit),
             // not on the scene swap - the continuation that switches to the scene's screen is therefore safe.
             CancellationToken token = this.GetCancellationTokenOnDestroy();
-            LoadingScreen loadingScreen = ShowLoadingScreen(description, progressStart);
+            LoadingScreen loadingScreen = ShowLoadingScreen(sceneType, description, progressStart);
 
             await UniTask.NextFrame();
             await UniTask.NextFrame();
@@ -252,7 +252,7 @@ namespace Core
 
         // Switches to the shared loading screen. Returns null (and falls back to a screenless load)
         // when no GameUIManager / LoadingScreen is available.
-        private static LoadingScreen ShowLoadingScreen(string description, float progressStart)
+        private static LoadingScreen ShowLoadingScreen(SceneType sceneType, string description, float progressStart)
         {
             if (GameUIManager.Instance == null)
             {
@@ -271,6 +271,7 @@ namespace Core
                 loadingScreen.SetProgress(progressStart, instant: Mathf.Approximately(progressStart, 0f));
                 if (!string.IsNullOrEmpty(description))
                     loadingScreen.SetDescription(description);
+                loadingScreen.SetBackground(sceneType);
             }
             else
             {
@@ -278,6 +279,7 @@ namespace Core
                 {
                     Description = description,
                     InitialProgress = progressStart,
+                    SceneType = sceneType,
                 };
                 GameUIManager.Instance.SwitchScreen(loadingScreen, false, loadingArgs);
             }

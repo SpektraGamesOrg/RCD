@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UI;
+using UIManager;
 
 namespace Core
 {
@@ -24,5 +26,21 @@ namespace Core
         /// bar (report <c>1f</c> when done). <paramref name="token"/> trips if the manager is destroyed mid-load.
         /// </summary>
         public abstract UniTask LoadAsync(IProgress<float> progress, CancellationToken token);
+
+        /// <summary>
+        /// Drives the loading bar to 100%, waits until it has visually filled, then holds the completed bar
+        /// for a short beat - so the player always sees a full bar before the loader swaps in the scene's
+        /// screen. No-op when no loading screen is available. Concrete loaders call this right before their
+        /// screen switch.
+        /// </summary>
+        protected static async UniTask WaitForLoadingBarFilledAsync(CancellationToken token)
+        {
+            LoadingScreen loadingScreen = GameUIManager.Instance != null
+                ? GameUIManager.Instance.GetScreen<LoadingScreen>()
+                : null;
+
+            if (loadingScreen != null)
+                await loadingScreen.WaitUntilFilledAndHoldAsync(token);
+        }
     }
 }
