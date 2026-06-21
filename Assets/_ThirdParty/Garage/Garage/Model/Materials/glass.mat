@@ -21,11 +21,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: glass
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: f6cd3f6b4eafb9a4b9f9de7c34a8ef69, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
+  - _MAIN_LIGHT_SHADOWS
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -37,7 +37,6 @@ Material:
   disabledShaderPasses:
   - MOTIONVECTORS
   - DepthOnly
-  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -106,6 +105,7 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _CastShadows: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -118,22 +118,27 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.95
     - _GlossyReflections: 1
-    - _Metallic: 1
+    - _MAIN_LIGHT_SHADOWS: 1
+    - _MaxLight: 1
+    - _Metallic: 0.71
     - _Mode: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
     - _UVSec: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
+    - _ZTest: 4
     - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 0.7529412}
     - _Color: {r: 0.18867919, g: 0.18867919, b: 0.18867919, a: 0.7529412}
