@@ -16,7 +16,10 @@ class StripUrpLitShaders : IPreprocessShaders
      "Hidden/TerrainEngine/Details/UniversalPipeline/BillboardWavingDoublePass",
         "Hidden/TerrainEngine/Details/UniversalPipeline/WavingDoublePass",
         "Hidden/TerrainEngine/Details/UniversalPipeline/Vertexlit",
-        "ProBuilder6/Standart Vertex Color"
+        "ProBuilder6/Standart Vertex Color",
+        "Hidden/Universal Render Pipeline/ScreenSpaceAmbientOcclusion",
+        "Universal Render Pipeline/Particles/Lit",
+        "Universal Render Pipeline/Particles/Simple Lit"
         // Ýhtiyaca göre:
         // "Universal Render Pipeline/Complex Lit",
         // "Universal Render Pipeline/Baked Lit",
