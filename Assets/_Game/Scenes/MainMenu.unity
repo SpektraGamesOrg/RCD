@@ -15,12 +15,12 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.59607846, g: 0.5686275, b: 0.5366679, a: 1}
+  m_FogColor: {r: 0.5882353, g: 0.5803922, b: 0.57254905, a: 1}
   m_FogMode: 2
-  m_FogDensity: 0.002
+  m_FogDensity: 0.004
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}
+  m_AmbientSkyColor: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 1}
   m_AmbientEquatorColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
   m_AmbientGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientIntensity: 1.18
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000002, guid: 68b8ae72b178b7e409f9073e0b6c0eac, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: 68b8ae72b178b7e409f9073e0b6c0eac, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 203408f1ef6ab8348b9a523aa4cf5e39, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -7061,10 +7061,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97ebad13ee5f31448873862cf793db3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColorGradeController
-  postExposure: 1.69
-  contrast: 15
-  garage: 1
-  Backface: 0.2
+  postExposure: 1.5
+  contrast: 5
+  garage: 0
+  Backface: 0.15
   TireAoIntensity: 1.5
 --- !u!1001 &1204942615
 PrefabInstance:

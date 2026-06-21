@@ -1,17 +1,7 @@
 fileFormatVersion: 2
 guid: a78c1a2cb131bba43bfa9d0dc4154af3
-AssetOrigin:
-  serializedVersion: 1
-  productId: 162976
-  packageName: PBR Garage Environment
-  packageVersion: 1.0
-  assetPath: Assets/Garage/Scenes/Garage_Baked/ReflectionProbe-0.exr
-  uploadId: 352753
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      89: 8900000
-    second: generatedCubemap
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,7 +86,7 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
-    compressionQuality: 100
+    compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
@@ -109,7 +99,7 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
-    compressionQuality: 100
+    compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
@@ -122,7 +112,7 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
-    compressionQuality: 100
+    compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0

@@ -12,10 +12,10 @@ LightingSettings:
   m_EnableRealtimeLightmaps: 0
   m_RealtimeEnvironmentLighting: 1
   m_BounceScale: 1
-  m_AlbedoBoost: 1.5
-  m_IndirectOutputScale: 3
+  m_AlbedoBoost: 2
+  m_IndirectOutputScale: 4
   m_UsingShadowmask: 0
-  m_BakeBackend: 1
+  m_BakeBackend: 2
   m_LightmapMaxSize: 2048
   m_LightmapSizeFixed: 0
   m_UseMipmapLimits: 1
@@ -28,7 +28,7 @@ LightingSettings:
   m_XAtlasBruteForce: 0
   m_XAtlasBlockAlign: 0
   m_XAtlasRepackUnderutilizedLightmaps: 1
-  m_AO: 1
+  m_AO: 0
   m_AOMaxDistance: 2
   m_CompAOExponent: 1
   m_CompAOExponentDirect: 1
@@ -53,7 +53,7 @@ LightingSettings:
   m_PVRBounces: 2
   m_PVRMinBounces: 2
   m_PVREnvironmentImportanceSampling: 0
-  m_PVRFilteringMode: 2
+  m_PVRFilteringMode: 1
   m_PVRDenoiserTypeDirect: 0
   m_PVRDenoiserTypeIndirect: 0
   m_PVRDenoiserTypeAO: 0
