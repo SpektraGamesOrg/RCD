@@ -7134,7 +7134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColorGradeController
   postExposure: 1.55
-  contrast: 20
+  contrast: 25
   garage: 1
   Backface: 0.15
   TireAoIntensity: 1.5
