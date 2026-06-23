@@ -21,22 +21,18 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: glass
-  m_Shader: {fileID: -6465566751694194690, guid: f6cd3f6b4eafb9a4b9f9de7c34a8ef69, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 32cd29c53805c104ebb05a9007800df4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _MAIN_LIGHT_SHADOWS
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -51,6 +47,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CustomFunction_b098cc5157ea4d90b0c4860619b2537b_Tex_0_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -85,8 +85,44 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_3c808aa3c3854faa97b6ee399f8b1c4e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8deedf22d0f246ed8cdb831a56ad4bac_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_a2d16de7afbb4b518d7039af4664d187_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 41665c6e8348d2049ba4f0a70e570d64, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
+        m_Scale: {x: -0.08, y: 0.1}
+        m_Offset: {x: -0.27, y: -0.63}
+    - _TriplanarFixedCustomFunction_b098cc5157ea4d90b0c4860619b2537b_Tex_0_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_1d852852156f4dc48fff689c1cbd45e2_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_490c055a520f425c88b6baad040afbcf_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 41665c6e8348d2049ba4f0a70e570d64, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_72a3ec5531424983882f99c639374e01_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 41665c6e8348d2049ba4f0a70e570d64, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_90c8e19955cf45788a9bc3c92cf7dc7e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fcc84013d354fcd49b9810e14f7a5d38, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -119,10 +155,13 @@ Material:
     - _DstBlend: 10
     - _DstBlendAlpha: 10
     - _EnvironmentReflections: 1
+    - _Float: 1
+    - _Float_1: 1
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
     - _MAIN_LIGHT_SHADOWS: 1
+    - _MaxLight: 1
     - _Metallic: 0
     - _Mode: 3
     - _OcclusionStrength: 1
@@ -147,5 +186,6 @@ Material:
     - _Color: {r: 0.14150938, g: 0.14150938, b: 0.14150938, a: 0.83137256}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Vector3: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

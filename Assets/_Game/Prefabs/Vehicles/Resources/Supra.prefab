@@ -1560,6 +1560,8 @@ GameObject:
   - component: {fileID: 6173869683734576024}
   - component: {fileID: 157429424184403450}
   - component: {fileID: 1390836947500123807}
+  - component: {fileID: 4127291377480865236}
+  - component: {fileID: 2290300461683535462}
   m_Layer: 0
   m_Name: Supra
   m_TagString: Vehicle
@@ -2262,6 +2264,47 @@ MonoBehaviour:
   realtimeSinceStartup: 0
   runAutomaticValidation: 1
   lodCamera: {fileID: 0}
+--- !u!114 &4127291377480865236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928749633107346892}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a0a93aab15381c4bb37dc1110e09237, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NWH.VehiclePhysics2::NWH.VehiclePhysics2.Damage.DamageHandler
+  collisionIgnoreTags:
+  - Wheel
+  collisionTimeout: 0.8
+  damageIntensity: 0.1
+  decelerationThreshold: 200
+  deformationIgnoreTags:
+  - Wheel
+  deformationRadius: 0.4
+  deformationRandomness: 0.01
+  deformationStrength: 0.15
+  deformationVerticesPerFrame: 8000
+  lastCollisionTime: -1
+  meshDeform: 1
+  smokeParticleSystems: []
+  visualOnly: 0
+--- !u!114 &2290300461683535462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928749633107346892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e304bdabbbce74ba49d09f0091bbde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleDamageReceiver
+  maxImpact: 25
+  minImpact: 3
 --- !u!1 &5930450491330218866
 GameObject:
   m_ObjectHideFlags: 0
@@ -3513,6 +3556,7 @@ GameObject:
   - component: {fileID: 2840314194209780797}
   - component: {fileID: 3054519617377471397}
   - component: {fileID: 6931466808972421681}
+  - component: {fileID: 7387980583491963167}
   m_Layer: 0
   m_Name: glass
   m_TagString: Untagged
@@ -3592,6 +3636,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7387980583491963167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8235846961375659053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f859f1f0fc17f743b7bc6ed19d69a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VertexDamagePainter
+  radius: 2
+  accumulate: 1
+  saveKey: Supra_Glass
 --- !u!1 &8543752068852704237
 GameObject:
   m_ObjectHideFlags: 0
@@ -3739,6 +3798,7 @@ GameObject:
   - component: {fileID: 9065015065721822344}
   - component: {fileID: 5905606505936652508}
   - component: {fileID: 7491146190861203503}
+  - component: {fileID: 6595373307152965326}
   m_Layer: 0
   m_Name: car_body
   m_TagString: Untagged
@@ -3829,6 +3889,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6595373307152965326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9023790537830290573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f859f1f0fc17f743b7bc6ed19d69a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VertexDamagePainter
+  radius: 0.6
+  accumulate: 1
+  saveKey: Supra_Body
 --- !u!1001 &506963879873631659
 PrefabInstance:
   m_ObjectHideFlags: 0
