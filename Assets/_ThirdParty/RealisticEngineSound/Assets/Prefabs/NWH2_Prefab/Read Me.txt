@@ -1,2 +1,2 @@
-Drag and drop this prefab into an NWH2 vehicle, then drop RES2 prefab(s) into this prefab. Adding both prefabs made for exterior and interior views (the first one is allways the exterior prefab) will make the script automatically switch between them when you switching between camera views.
-Just make sure you selected the right order number in NWH2_RES2.cs script for your NWH2 interior camera. You can even add only just one engine sound prefab if you need it like that. 
+Drag and drop this prefab into an RCC vehicle, then drop RES2 prefab(s) into this prefab. Adding both prefabs made for exterior and interior views (the first one is allways the exterior prefab) will make the script automatically switch between them when you switching between camera views. You can even add only just one engine sound prefab if you need it like that.
+Remove/disable RCC's stock wind noise for best result. Do the same for turbo and gear changing sounds if you wish to use these from RES2.

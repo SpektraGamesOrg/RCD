@@ -877,10 +877,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.33996582
   m_SuspensionSpring:
-    spring: 45000
-    damper: 3000
+    spring: 90000
+    damper: 5000
     targetPosition: 0.5
-  m_SuspensionDistance: 0.2
+  m_SuspensionDistance: 0.28
   m_ForceAppPointDistance: 0.05
   m_Mass: 40
   m_WheelDampingRate: 1
@@ -2695,6 +2695,7 @@ Transform:
   - {fileID: 6566797449726868033}
   - {fileID: 7120306066022497677}
   - {fileID: 2980665663647642745}
+  - {fileID: 5583361566645424170}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6296713914826580619
@@ -2766,23 +2767,23 @@ MonoBehaviour:
       time: 0
       value: 40
       inSlope: 0
-      outSlope: -0.3
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 120
-      value: 10
+      time: 101.666664
+      value: 19.978573
       inSlope: -0.115
-      outSlope: -0.1
+      outSlope: -0.115
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 200
-      value: 7
+      time: 181.66666
+      value: 16.978573
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -2795,8 +2796,8 @@ MonoBehaviour:
   steerAngle: 40
   highspeedsteerAngle: 5
   highspeedsteerAngleAtspeed: 120
-  antiRollFrontHorizontal: 1000
-  antiRollRearHorizontal: 1000
+  antiRollFrontHorizontal: 5000
+  antiRollRearHorizontal: 5000
   antiRollVertical: 0
   COM: {fileID: 6566797449726868033}
   COMAssister: 0
@@ -2811,27 +2812,27 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 800
-      value: 150
-      inSlope: 0.031914894
-      outSlope: 0.031914894
+      value: 300
+      inSlope: 0.06382979
+      outSlope: 0.06382979
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 5500
-      value: 300
-      inSlope: -0.017375888
-      outSlope: -0.017375888
+      value: 600
+      inSlope: -0.034751777
+      outSlope: -0.034751777
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 7000
-      value: 200
-      inSlope: -0.06666667
-      outSlope: -0.06666667
+      value: 400
+      inSlope: -0.13333334
+      outSlope: -0.13333334
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -2840,7 +2841,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   autoGenerateEngineRPMCurve: 1
-  maxEngineTorque: 300
+  maxEngineTorque: 600
   maxEngineTorqueAtRPM: 5500
   minEngineRPM: 800
   maxEngineRPM: 7000
@@ -4677,7 +4678,7 @@ Transform:
   m_GameObject: {fileID: 4297425904688353490}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.26855344, z: 0.13635254}
+  m_LocalPosition: {x: 0, y: -0.45, z: 0.13635254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5955,10 +5956,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.33996582
   m_SuspensionSpring:
-    spring: 45000
-    damper: 3000
+    spring: 90000
+    damper: 5000
     targetPosition: 0.5
-  m_SuspensionDistance: 0.2
+  m_SuspensionDistance: 0.28
   m_ForceAppPointDistance: 0.05
   m_Mass: 40
   m_WheelDampingRate: 1
@@ -6423,10 +6424,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.3494066
   m_SuspensionSpring:
-    spring: 45000
-    damper: 3000
+    spring: 90000
+    damper: 5000
     targetPosition: 0.5
-  m_SuspensionDistance: 0.2
+  m_SuspensionDistance: 0.28
   m_ForceAppPointDistance: 0.05
   m_Mass: 40
   m_WheelDampingRate: 1
@@ -6867,10 +6868,10 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.3494066
   m_SuspensionSpring:
-    spring: 45000
-    damper: 3000
+    spring: 90000
+    damper: 5000
     targetPosition: 0.5
-  m_SuspensionDistance: 0.2
+  m_SuspensionDistance: 0.28
   m_ForceAppPointDistance: 0.05
   m_Mass: 40
   m_WheelDampingRate: 1
@@ -9026,3 +9027,73 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &4696589169135553061
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6969046721103237675}
+    m_Modifications:
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 248.55103
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -6.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1303.6979
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3238204712918432291, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 8810871752657035979, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_Name
+      value: RCC to RES2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8810871752657035979, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+--- !u!4 &5583361566645424170 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+  m_PrefabInstance: {fileID: 4696589169135553061}
+  m_PrefabAsset: {fileID: 0}
