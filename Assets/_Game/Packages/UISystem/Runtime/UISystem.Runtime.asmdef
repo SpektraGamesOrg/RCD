@@ -1,0 +1,32 @@
+{
+    "name": "UISystem.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a9042e450a7e4f039993b69dad38c610",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:029c1c1b674aaae47a6841a0b89ad80e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:dc47925d1a5fa2946bdd37746b2b5d48",
+        "GUID:d160d95825cb2394aa4ff2d6f43366dc",
+        "GUID:dcda59435f56624449b0867d0c9e15c1",
+        "GUID:375a2b2d1d3bd46ba98f8cd67b6afde6",
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
+        "GUID:72dbcd289ec9440b29cddf20bc5d90ef",
+        "GUID:61335de54cd44a3882fb1b24cc5423d6",
+        "GUID:c102b5ab716bd479a8c6f6df8681fcb1",
+        "GUID:676dc0faf1c5d4e119914eb23538837c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "DOTween.dll",
+        "DOTweenPro.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

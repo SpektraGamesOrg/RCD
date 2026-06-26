@@ -16,5 +16,8 @@ namespace Save
 
         // Vehicles
         public const string Vehicles        = "vehicles"; // VehicleList serialized as JSON
+
+        // Gold collection
+        public const string GoldCooldowns   = "gold_cooldowns"; // GoldCooldownList serialized as JSON
     }
 }

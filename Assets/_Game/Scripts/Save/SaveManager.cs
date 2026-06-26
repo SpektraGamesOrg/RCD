@@ -33,10 +33,31 @@ namespace Save
         // ---------------------------------------------------------------------
         // Currency
         // ---------------------------------------------------------------------
+
+        /// <summary>
+        /// Raised whenever <see cref="Coins"/> changes, carrying the new total. Lets live UI (e.g. the
+        /// in-game HUD) update on reward grants without polling. Note: PlayerPrefs is not flushed yet;
+        /// call <see cref="Save"/> to persist.
+        /// </summary>
+        public static event System.Action<int> OnCoinsChanged;
+
         public static int Coins
         {
             get => PlayerPrefs.GetInt(SaveKeys.Coins, DefaultCoins);
-            set => PlayerPrefs.SetInt(SaveKeys.Coins, value);
+            set
+            {
+                PlayerPrefs.SetInt(SaveKeys.Coins, value);
+                OnCoinsChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
+        /// Adds (or, with a negative amount, removes) coins and fires <see cref="OnCoinsChanged"/>.
+        /// Convenience for reward paths so callers don't repeat the read-modify-write.
+        /// </summary>
+        public static void AddCoins(int amount)
+        {
+            Coins += amount;
         }
 
         // ---------------------------------------------------------------------
@@ -164,6 +185,72 @@ namespace Save
         }
 
         // ---------------------------------------------------------------------
+        // Gold collection cooldowns (stored as a single GoldCooldownList JSON blob)
+        // ---------------------------------------------------------------------
+
+        /// <summary>
+        /// The full set of gold-point cooldown records the player has data for.
+        /// </summary>
+        public static GoldCooldownList GetGoldCooldownList()
+        {
+            string json = PlayerPrefs.GetString(SaveKeys.GoldCooldowns, "");
+            if (string.IsNullOrEmpty(json))
+                return new GoldCooldownList();
+
+            return JsonUtility.FromJson<GoldCooldownList>(json);
+        }
+
+        /// <summary>
+        /// The Unix time (seconds) the given gold point was last collected, or -1 if it has never been
+        /// collected (i.e. it is currently active).
+        /// </summary>
+        public static long GetGoldCollectedTime(string goldId)
+        {
+            if (string.IsNullOrEmpty(goldId))
+                return -1;
+
+            GoldCooldownData data = GetGoldCooldownList().golds.Find(g => g.id == goldId);
+            return data?.collectedUnixSeconds ?? -1;
+        }
+
+        /// <summary>
+        /// Records that the given gold point was collected at <paramref name="collectedUnixSeconds"/>,
+        /// adding or replacing its cooldown entry. Does not flush; call <see cref="Save"/> to persist.
+        /// </summary>
+        public static void SetGoldCollected(string goldId, long collectedUnixSeconds)
+        {
+            if (string.IsNullOrEmpty(goldId))
+            {
+                Debug.LogError("[SaveManager] SetGoldCollected called with empty goldId.");
+                return;
+            }
+
+            GoldCooldownList list = GetGoldCooldownList();
+            int index = list.golds.FindIndex(g => g.id == goldId);
+            if (index >= 0)
+                list.golds[index].collectedUnixSeconds = collectedUnixSeconds;
+            else
+                list.golds.Add(new GoldCooldownData(goldId, collectedUnixSeconds));
+
+            SaveGoldCooldownList(list);
+        }
+
+        /// <summary>
+        /// Clears the cooldown record for a gold point (it becomes active again). Used when a gold's
+        /// cooldown has elapsed. Does not flush; call <see cref="Save"/> to persist.
+        /// </summary>
+        public static void ClearGoldCollected(string goldId)
+        {
+            if (string.IsNullOrEmpty(goldId))
+                return;
+
+            GoldCooldownList list = GetGoldCooldownList();
+            int removed = list.golds.RemoveAll(g => g.id == goldId);
+            if (removed > 0)
+                SaveGoldCooldownList(list);
+        }
+
+        // ---------------------------------------------------------------------
         // Initialization
         // ---------------------------------------------------------------------
 
@@ -224,6 +311,11 @@ namespace Save
         private static void SaveVehicleList(VehicleList list)
         {
             PlayerPrefs.SetString(SaveKeys.Vehicles, JsonUtility.ToJson(list));
+        }
+
+        private static void SaveGoldCooldownList(GoldCooldownList list)
+        {
+            PlayerPrefs.SetString(SaveKeys.GoldCooldowns, JsonUtility.ToJson(list));
         }
     }
 }
