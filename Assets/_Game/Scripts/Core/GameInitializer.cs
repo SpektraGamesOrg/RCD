@@ -21,7 +21,7 @@ namespace Core
         public static bool Initialized { get; private set; } = false;
         private static bool Initializing { get; set; } = false;
 
-        protected override void Awake()
+        protected override void Awake() 
         {
             bool willDestroy = Exists();
 

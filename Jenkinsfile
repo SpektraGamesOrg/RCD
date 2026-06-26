@@ -344,33 +344,6 @@ pipeline {
             }
         }
         
-        stage('Build Addressables') {
-            steps {
-                script {
-                    if (SLACK_MESSAGES_ACTIVE == 'true') {
-                        slackSend(channel: env.THREAD_ID, message: ":hammer_and_wrench:  Build Addressables")
-                        sh """python3 $AUTOMATION_SCRIPTS_FOLDER/generate_slack_message.py \
-                            --title ":zap: $PROJECT_NAME - $PLATFORM #$BUILD_NUMBER" \
-                            --description "${params.DESCRIPTION}" \
-                            --commit "${env.CHANGESET}" \
-                            --commit-comment "${env.CHANGESET_COMMENT.replace('"', '\\"')}" \
-                            --build-type "$BUILD_TYPE" \
-                            --build-purpose "$BUILD_PURPOSE" \
-                            --color "info" \
-                            --current-step 7 \
-                            --total-steps 9 \
-                            --job_name "$JOB_NAME"
-                        """             
-                        def attachments = readJSON file: 'slack_message.json'
-                        slackSend(channel: env.CHANNEL_ID_NON_DETAILED, attachments: attachments, timestamp: env.FIRST_MESSAGE_TS_NON_DETAILED)
-                    }
-                    sh '''
-                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -executeMethod Builder.BuildAddressables -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType Full -silent-crashes
-                    '''
-                }
-            }
-        }
-        
         stage('Build From Unity') {
             steps {
                 script {
