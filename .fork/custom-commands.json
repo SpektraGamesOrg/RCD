@@ -1,0 +1,178 @@
+[
+  {
+    "version" : 2
+  },
+  {
+    "action" : {
+      "script" : "echo \"╭─────────────────────────────────────────────╮\"\necho \"│  Branches containing ${sha:0:10}            │\"\necho \"╰─────────────────────────────────────────────╯\"\necho \"\"\necho \"  Remote:\"\ngit branch -r --contains ${sha} | sed 's/^ */    • /'\necho \"\"\necho \"  ─────────────────────────────────────────────\"\necho \"\"\n\n# ── Where was this branch created from? ──────────────────────────\necho \"╭─────────────────────────────────────────────╮\"\necho \"│  Branch origin of ${sha:0:10}               │\"\necho \"╰─────────────────────────────────────────────╯\"\necho \"\"\n\nbest_branch=\"\"\nbest_base=\"\"\nbest_to_sha=-1\nbest_to_tip=-1\n\nfor ref in $(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes); do\n    # ignore the symbolic origin/HEAD pointer\n    [ \"$ref\" = \"origin/HEAD\" ] && continue\n\n    # skip any branch that already contains this commit\n    # (the branch itself, its remote copy, or any descendant)\n    git merge-base --is-ancestor \"$sha\" \"$ref\" 2>/dev/null && continue\n\n    base=$(git merge-base \"$ref\" \"$sha\" 2>/dev/null) || continue\n    [ -z \"$base\" ] && continue\n\n    to_sha=$(git rev-list --count \"$base..$sha\" 2>/dev/null)   # how recent the fork point is\n    to_tip=$(git rev-list --count \"$base..$ref\" 2>/dev/null)   # how close the branch tip is to the fork\n\n    # prefer the most-recent fork point; tie-break on the tip nearest the fork\n    if [ \"$best_to_sha\" -lt 0 ] \\\n       || [ \"$to_sha\" -lt \"$best_to_sha\" ] \\\n       || { [ \"$to_sha\" -eq \"$best_to_sha\" ] && [ \"$to_tip\" -lt \"$best_to_tip\" ]; }; then\n        best_to_sha=$to_sha\n        best_to_tip=$to_tip\n        best_branch=$ref\n        best_base=$base\n    fi\ndone\n\nif [ -n \"$best_branch\" ]; then\n    echo \"    Created from : ${best_branch}\"\n    echo \"    At commit    : $(git log -1 --format='%h  %s' \"$best_base\")\"\n    echo \"    Forked       : ${best_to_sha} commit(s) ago\"\n    if [ \"$best_to_tip\" -gt 0 ]; then\n        echo \"    Note         : '${best_branch}' advanced ${best_to_tip} commit(s) past the fork point\"\n    fi\nelse\n    echo \"    Could not determine a parent branch (root commit or no diverging branch).\"\nfi\necho \"\"\necho \"  ─────────────────────────────────────────────\"",
+      "showOutput" : true,
+      "type" : "sh",
+      "waitForExit" : true
+    },
+    "name" : "Branches Containing This Commit",
+    "target" : "revision"
+  },
+  {
+    "name" : "Build/Android/Development",
+    "target" : "revision",
+    "ui" : {
+      "buttons" : [
+        {
+          "action" : {
+            "script" : "```bash\ncurl -X POST https://bridge.api.spektragames.com/api/v1/git/builds \\\n     -H \"Content-Type: application/json\" \\\n     -H \"X-Api-Key: 2d58d1a956341b43c6bd31ef3cf922ab1e4cfa73eeb56d6494e6f1ab6b96ef62\" \\\n     -d '{\n           \"DESCRIPTION\": \"'\"$1{text}\"'\",\n           \"COMMIT_HASH\": \"'\"$sha\"'\",\n           \"REPO_NAME\": \"'\"$(basename -s .git \"$(git remote get-url origin)\")\"'\",\n           \"BUILD_TARGET\": \"Android\",\n           \"BUILD_TYPE\": \"Development\",\n           \"BUILD_PURPOSE\": \"Testing\",\n           \"VEHICLE_REBUILD_OPTION\": \"None\"\n         }'\n```\n",
+            "showOutput" : false,
+            "type" : "sh",
+            "waitForExit" : true
+          },
+          "title" : "Trigger"
+        },
+        {
+          "action" : {
+            "type" : "cancel"
+          },
+          "title" : "Cancel"
+        }
+      ],
+      "controls" : [
+        {
+          "placeholder" : "What is the reason for triggering this build?",
+          "text" : "",
+          "textBoxType" : "generic",
+          "title" : "Description",
+          "type" : "textBox"
+        }
+      ],
+      "description" : "",
+      "title" : "Trigger Build"
+    }
+  },
+  {
+    "name" : "Build/Android/Production/Release",
+    "target" : "revision",
+    "ui" : {
+      "buttons" : [
+        {
+          "action" : {
+            "script" : "curl -X POST https://bridge.api.spektragames.com/api/v1/git/builds \\\n     -H \"Content-Type: application/json\" \\\n     -H \"X-Api-Key: 2d58d1a956341b43c6bd31ef3cf922ab1e4cfa73eeb56d6494e6f1ab6b96ef62\" \\\n     -d '{\n           \"DESCRIPTION\": \"'\"$1{text}\"'\",\n           \"COMMIT_HASH\": \"'\"$sha\"'\",\n           \"REPO_NAME\": \"'\"$(basename -s .git \"$(git remote get-url origin)\")\"'\",\n           \"BUILD_TARGET\": \"Android\",\n           \"BUILD_TYPE\": \"Production\",\n           \"BUILD_PURPOSE\": \"Release\",\n\"VEHICLE_REBUILD_OPTION\": \"None\"\n         }'\n",
+            "showOutput" : false,
+            "type" : "sh",
+            "waitForExit" : true
+          },
+          "title" : "Trigger"
+        },
+        {
+          "action" : {
+            "type" : "cancel"
+          },
+          "title" : "Cancel"
+        }
+      ],
+      "controls" : [
+        {
+          "placeholder" : "What is the reason for triggering this build?",
+          "text" : "",
+          "textBoxType" : "generic",
+          "title" : "Description",
+          "type" : "textBox"
+        }
+      ],
+      "description" : "",
+      "title" : "Trigger Build"
+    }
+  },
+  {
+    "name" : "Build/Android/Production/Release With SR",
+    "target" : "revision",
+    "ui" : {
+      "buttons" : [
+        {
+          "action" : {
+            "script" : "curl -X POST https://bridge.api.spektragames.com/api/v1/git/builds \\\n     -H \"Content-Type: application/json\" \\\n     -H \"X-Api-Key: 2d58d1a956341b43c6bd31ef3cf922ab1e4cfa73eeb56d6494e6f1ab6b96ef62\" \\\n     -d '{\n           \"DESCRIPTION\": \"'\"$1{text}\"'\",\n           \"COMMIT_HASH\": \"'\"$sha\"'\",\n           \"REPO_NAME\": \"'\"$(basename -s .git \"$(git remote get-url origin)\")\"'\",\n           \"BUILD_TARGET\": \"Android\",\n           \"BUILD_TYPE\": \"Production\",\n           \"BUILD_PURPOSE\": \"Release\",\n           \"FORCE_ENABLE_SRDEBUGGER\": \"true\",\n\"VEHICLE_REBUILD_OPTION\": \"None\"\n         }'\n",
+            "showOutput" : false,
+            "type" : "sh",
+            "waitForExit" : true
+          },
+          "title" : "Trigger"
+        },
+        {
+          "action" : {
+            "type" : "cancel"
+          },
+          "title" : "Cancel"
+        }
+      ],
+      "controls" : [
+        {
+          "placeholder" : "What is the reason for triggering this build?",
+          "text" : "",
+          "textBoxType" : "generic",
+          "title" : "Description",
+          "type" : "textBox"
+        }
+      ],
+      "description" : "",
+      "title" : "Trigger Build"
+    }
+  },
+  {
+    "name" : "Build/Android/Production/Testing",
+    "target" : "revision",
+    "ui" : {
+      "buttons" : [
+        {
+          "action" : {
+            "script" : "curl -X POST https://bridge.api.spektragames.com/api/v1/git/builds \\\n     -H \"Content-Type: application/json\" \\\n     -H \"X-Api-Key: 2d58d1a956341b43c6bd31ef3cf922ab1e4cfa73eeb56d6494e6f1ab6b96ef62\" \\\n     -d '{\n           \"DESCRIPTION\": \"'\"$1{text}\"'\",\n           \"COMMIT_HASH\": \"'\"$sha\"'\",\n           \"REPO_NAME\": \"'\"$(basename -s .git \"$(git remote get-url origin)\")\"'\",\n           \"BUILD_TARGET\": \"Android\",\n           \"BUILD_TYPE\": \"Production\",\n           \"BUILD_PURPOSE\": \"Testing\",\n\"VEHICLE_REBUILD_OPTION\": \"None\"\n         }'\n",
+            "showOutput" : false,
+            "type" : "sh",
+            "waitForExit" : true
+          },
+          "title" : "Trigger"
+        },
+        {
+          "action" : {
+            "type" : "cancel"
+          },
+          "title" : "Cancel"
+        }
+      ],
+      "controls" : [
+        {
+          "placeholder" : "What is the reason for triggering this build?",
+          "text" : "",
+          "textBoxType" : "generic",
+          "title" : "Description",
+          "type" : "textBox"
+        }
+      ],
+      "description" : "",
+      "title" : "Trigger Build"
+    }
+  },
+  {
+    "action" : {
+      "script" : "BRANCH_NAME=${ref}\necho \"BRANCH_NAME: $BRANCH_NAME\"\nRESULT=$(git merge-base --is-ancestor \"$BRANCH_NAME\" development && echo Merged || echo NotMerged)\necho \"Result: $RESULT\"",
+      "showOutput" : true,
+      "type" : "sh",
+      "waitForExit" : true
+    },
+    "name" : "Check Is Merged With Development",
+    "refTargets" : [
+      "remotebranch"
+    ],
+    "target" : "ref"
+  },
+  {
+    "action" : {
+      "script" : "BRANCH_NAME=${ref}\necho \"BRANCH_NAME: $BRANCH_NAME\"\nRESULT=$(git log \"$BRANCH_NAME\" --pretty=format:\"%h %ad %an %s\" --date=short)\necho \"$RESULT\"",
+      "showOutput" : true,
+      "type" : "sh",
+      "waitForExit" : true
+    },
+    "name" : "See All Commits",
+    "refTargets" : [
+      "localbranch",
+      "remotebranch"
+    ],
+    "target" : "ref"
+  }
+]
