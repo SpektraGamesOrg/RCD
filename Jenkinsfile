@@ -18,6 +18,11 @@ pipeline {
     environment {
         UNITY_CREDS = credentials('UNITY_CREDS')
         UNITY_SERIAL = credentials('UNITY_SERIAL')
+        // Extended-regex of native Unity console noise to drop from the Jenkins log.
+        // These are engine/compiler logs that bypass the managed logger (JenkinsLogHook),
+        // so they can only be filtered here on the shell side. The full unfiltered output
+        // is still written to unity_*.log and archived as a build artifact.
+        UNITY_LOG_FILTER = '(Shader warning in|: warning CS|: warning UAC|After scriptable stripping|After built-in stripping|After settings filtering|Full variant space|Target graphics API:|Cached mesh channel|Prepared data for serialisation|Serialized binary data|Compiling shader|^- Pass [0-9]|^[[:space:]]*[0-9]+([.][0-9]+)? (kb|mb|gb)[[:space:]])'
     }
 
     stages {
@@ -206,7 +211,10 @@ pipeline {
                         slackSend(channel: env.CHANNEL_ID_NON_DETAILED, attachments: attachments, timestamp: env.FIRST_MESSAGE_TS_NON_DETAILED)
                     }
                     sh '''
-                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -importPackage $AUTOMATION_SCRIPTS_FOLDER/$AUTOMATER_UNITY_PACKAGE_NAME -batchMode -projectPath . -logFile - -stackTraceLogType Full -silent-crashes -buildTarget $PLATFORM
+                    set -o pipefail
+                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -importPackage $AUTOMATION_SCRIPTS_FOLDER/$AUTOMATER_UNITY_PACKAGE_NAME -batchMode -projectPath . -logFile - -stackTraceLogType ScriptOnly -silent-crashes -buildTarget $PLATFORM 2>&1 |
+                      tee unity_import_automater.log |
+                      { grep --line-buffered -vE "$UNITY_LOG_FILTER" || true; }
                     '''
                 }
             }
@@ -233,7 +241,10 @@ pipeline {
                         slackSend(channel: env.CHANNEL_ID_NON_DETAILED, attachments: attachments, timestamp: env.FIRST_MESSAGE_TS_NON_DETAILED)
                     }
                     sh '''
-                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -executeMethod PrebuildSettings.ImportAssets -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType Full -silent-crashes
+                    set -o pipefail
+                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -executeMethod PrebuildSettings.ImportAssets -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType ScriptOnly -silent-crashes 2>&1 |
+                      tee unity_import_assets.log |
+                      { grep --line-buffered -vE "$UNITY_LOG_FILTER" || true; }
                     '''
                 }
             }
@@ -338,7 +349,10 @@ pipeline {
                         slackSend(channel: env.CHANNEL_ID_NON_DETAILED, attachments: attachments, timestamp: env.FIRST_MESSAGE_TS_NON_DETAILED)
                     }
                     sh '''
-                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -executeMethod PrebuildSettings.OnPreBuild -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType Full -silent-crashes
+                    set -o pipefail
+                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -executeMethod PrebuildSettings.OnPreBuild -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType ScriptOnly -silent-crashes 2>&1 |
+                      tee unity_prebuild.log |
+                      { grep --line-buffered -vE "$UNITY_LOG_FILTER" || true; }
                     '''
                 }
             }
@@ -366,7 +380,10 @@ pipeline {
                     }
                     sh 'rm -rf Builds'
                     sh '''
-                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -executeMethod Builder.Build -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType Full -silent-crashes
+                    set -o pipefail
+                    /Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity -quit -executeMethod Builder.Build -buildTarget $PLATFORM -buildEnvironmentType $BUILD_TYPE -localServerType $LOCAL_SERVER_TYPE -buildPurposeType $BUILD_PURPOSE -forceEnableSrDebugger $FORCE_ENABLE_SRDEBUGGER -forceDisableObfuscator $FORCE_DISABLE_OBFUSCATOR -scriptingImplementation $SCRIPTING_IMPLEMENTATION -productionStaging $PROD_STAGING -isAddressableBuild $IS_ADDRESSABLE_BUILD -forceDevelopmentBuild $FORCE_DEVELOPMENT_BUILD -cleanBuild $CLEAN_BUILD -vehicleRebuildOption $VEHICLE_REBUILD_OPTION -batchMode -projectPath . -logFile - -stackTraceLogType ScriptOnly -silent-crashes 2>&1 |
+                      tee unity_build.log |
+                      { grep --line-buffered -vE "$UNITY_LOG_FILTER" || true; }
                     '''
                 }
             }
@@ -528,6 +545,8 @@ pipeline {
     
     post {
         always {
+            // Keep the full, unfiltered Unity logs available even though the console view is filtered.
+            archiveArtifacts artifacts: 'unity_*.log', allowEmptyArchive: true, fingerprint: false
             script {
                 lock('UNITY_LICENSE_LOCK') {
                     if (fileExists('/tmp/current_builds.txt')) {
