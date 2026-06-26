@@ -18,5 +18,10 @@ EditorBuildSettings:
     path: Assets/_Game/Scenes/EmptySceneForLoading.unity
     guid: 124e49974f41548ac9a789e901d5ad86
   m_configObjects:
+    com.unity.adaptivePerformance.basic.provider_settings: {fileID: 11400000, guid: f94a9939ea833584c9b39ed60ad690fb, type: 2}
+    com.unity.adaptiveperformance.apple.provider_settings: {fileID: 11400000, guid: fbecba3d6de0c8041b7f72927816bf49, type: 2}
+    com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000, guid: 7fd4075ff97408643a454923131c0d77, type: 2}
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: d1eda9412dc3df741ba1b10c8d53bfbd, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 879056907e8ddae4892d745f6bc21867, type: 2}
     com.unity.addressableassets: {fileID: 11400000, guid: e4eb3cb994804fd489f6feb1185bd8da, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 9de827efd10f3e24e93d5bbc1184245f, type: 3}
