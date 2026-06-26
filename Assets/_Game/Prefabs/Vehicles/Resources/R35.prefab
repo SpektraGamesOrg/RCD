@@ -2967,7 +2967,7 @@ MonoBehaviour:
   indicatorTimer: 0
   damage:
     carController: {fileID: 0}
-    automaticInstallation: 1
+    automaticInstallation: 0
     meshDeformation: 1
     deformationMode: 1
     damageResolution: 100
@@ -9091,6 +9091,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: rcc
+      value: 
+      objectReference: {fileID: 7577434167652800510}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: res2.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: 'res2.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4591142130152798817}
     - target: {fileID: 3238204712918432291, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
       propertyPath: m_Layer
       value: 11
@@ -9182,3 +9194,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5960213301138584058, guid: 4f9626516aa22f84d9d8f9bb6affa44f, type: 3}
   m_PrefabInstance: {fileID: 7820150260799696805}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4591142130152798817 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5994786210482132420, guid: 4f9626516aa22f84d9d8f9bb6affa44f, type: 3}
+  m_PrefabInstance: {fileID: 7820150260799696805}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dcd2266c92fd740bdfac8b91d46014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

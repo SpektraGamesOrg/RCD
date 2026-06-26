@@ -3878,9 +3878,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3739594714802641649}
+  - component: {fileID: -5096460011673770898}
   - component: {fileID: 8658465359991164460}
   - component: {fileID: 5520015547198650708}
-  - component: {fileID: -5096460011673770898}
   m_Layer: 11
   m_Name: Fenyr
   m_TagString: Untagged
@@ -3907,6 +3907,21 @@ Transform:
   - {fileID: 4590413182165223505}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-5096460011673770898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3631941028679265013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
+  vehicleID: 15
+  vehicleController: {fileID: 5520015547198650708}
+  rigidbody: {fileID: 8658465359991164460}
 --- !u!54 &8658465359991164460
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4160,7 +4175,7 @@ MonoBehaviour:
   indicatorTimer: 0
   damage:
     carController: {fileID: 0}
-    automaticInstallation: 1
+    automaticInstallation: 0
     meshDeformation: 1
     deformationMode: 1
     damageResolution: 100
@@ -4221,21 +4236,6 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
---- !u!114 &-5096460011673770898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3631941028679265013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
-  vehicleID: 15
-  vehicleController: {fileID: 5520015547198650708}
-  rigidbody: {fileID: 8658465359991164460}
 --- !u!1 &3830786631287650898
 GameObject:
   m_ObjectHideFlags: 0
@@ -8625,6 +8625,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: rcc
+      value: 
+      objectReference: {fileID: 5520015547198650708}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: res2.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: 'res2.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1214717912838420496}
     - target: {fileID: 8810871752657035979, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
       propertyPath: m_Name
       value: RCC to RES2
@@ -8707,6 +8719,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 396310501878c83458084e85d4d76e2e, type: 3}
+--- !u!114 &1214717912838420496 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7442513845283349652, guid: 396310501878c83458084e85d4d76e2e, type: 3}
+  m_PrefabInstance: {fileID: 8616113313186831492}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dcd2266c92fd740bdfac8b91d46014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1251471515228920022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7407449276587869266, guid: 396310501878c83458084e85d4d76e2e, type: 3}

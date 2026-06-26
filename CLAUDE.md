@@ -28,6 +28,7 @@ This is a Unity C# mobile car simulation project.
 - The project structure is so important! When you create new scripts/assets, always create it inside "Assets/_Game/*" folders. For example, if you create a editor script, then you can create it in Assets/_Game/Scripts/Editor folder
 - When you put comments inside scripts, do not use Turkish or something different language, ALWAYS PREFER ENGLISH EVEN IF YOU CHATTING IN TURKISH LANGUAGE!!!
 - **NEVER add `[SerializeField]` to a variable just to make it visible in the Inspector if it is runtime-only and does not need to be serialized.** Keep it non-serialized (`private`, a `get`/`set` property, or `[System.NonSerialized]`) and use Odin's `[ShowInInspector, ReadOnly]` attributes to expose it for debugging. `[SerializeField]` is only for fields that must be set in the Inspector or persisted in the scene/prefab.
+- **NEVER use `null` comparison for Unity objects** (anything deriving from `UnityEngine.Object` — MonoBehaviours, GameObjects, Components, etc.). Do not write `if (myUnityObject == null)` or `if (myUnityObject != null)`. Instead rely on Unity's implicit `bool` operator: use `if (myUnityObject)` for the non-null/alive case and `if (!myUnityObject)` for the null/destroyed case. This correctly accounts for destroyed objects that are not truly `null`.
 
 ## Core Principles
 

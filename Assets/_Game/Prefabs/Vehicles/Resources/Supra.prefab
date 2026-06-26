@@ -3248,9 +3248,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6205837048854703307}
+  - component: {fileID: 3459056531034866381}
   - component: {fileID: 6448389183193360085}
   - component: {fileID: 2845316561103630150}
-  - component: {fileID: 3459056531034866381}
   m_Layer: 11
   m_Name: Supra
   m_TagString: Untagged
@@ -3277,6 +3277,21 @@ Transform:
   - {fileID: 575092442293670547}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3459056531034866381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337518441148050883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
+  vehicleID: 1
+  vehicleController: {fileID: 2845316561103630150}
+  rigidbody: {fileID: 6448389183193360085}
 --- !u!54 &6448389183193360085
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3530,7 +3545,7 @@ MonoBehaviour:
   indicatorTimer: 0
   damage:
     carController: {fileID: 0}
-    automaticInstallation: 1
+    automaticInstallation: 0
     meshDeformation: 1
     deformationMode: 1
     damageResolution: 100
@@ -3591,21 +3606,6 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
---- !u!114 &3459056531034866381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3337518441148050883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
-  vehicleID: 1
-  vehicleController: {fileID: 2845316561103630150}
-  rigidbody: {fileID: 6448389183193360085}
 --- !u!1 &3351551007746191189
 GameObject:
   m_ObjectHideFlags: 0
@@ -11150,6 +11150,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: rcc
+      value: 
+      objectReference: {fileID: 2845316561103630150}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: res2.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: 'res2.Array.data[0]'
+      value: 
+      objectReference: {fileID: 3693152628732180652}
     - target: {fileID: 8810871752657035979, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
       propertyPath: m_Name
       value: RCC to RES2
@@ -11237,3 +11249,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8923922256155013815, guid: 6840e90105f0fbe48a52dfb771a17e3c, type: 3}
   m_PrefabInstance: {fileID: 5260741182674964303}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3693152628732180652 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8809426267150333923, guid: 6840e90105f0fbe48a52dfb771a17e3c, type: 3}
+  m_PrefabInstance: {fileID: 5260741182674964303}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dcd2266c92fd740bdfac8b91d46014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

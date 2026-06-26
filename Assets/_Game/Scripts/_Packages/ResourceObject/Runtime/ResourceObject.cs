@@ -90,7 +90,10 @@ namespace SpektraGames.ResourceObject.Runtime
                 // Verify the asset type matches T (a GameObject when T is a prefab component) without loading it.
                 System.Type mainType = UnityEditor.AssetDatabase.GetMainAssetTypeAtPath(path);
                 if (mainType == null)
+                {
+                    Debug.LogError("mainType is null");
                     return false;
+                }
 
                 System.Type requiredType = IsComponentType ? typeof(GameObject) : typeof(T);
                 return requiredType.IsAssignableFrom(mainType);

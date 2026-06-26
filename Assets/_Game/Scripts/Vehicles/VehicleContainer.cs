@@ -65,13 +65,15 @@ namespace Vehicles
             {
                 if (vehicles[i].ID == VehicleID.None)
                 {
-                    Debug.LogError($"vehicles[{i}].ID is is None");
+                    Debug.LogError($"vehicles[{i}].ID is is None", this);
                     continue;
                 }
 
-                if (!vehicles[i].MainBehaviour.IsValidForEditor)
+                if (!UnityEditor.EditorApplication.isCompiling &&
+                    !UnityEditor.EditorApplication.isUpdating &&
+                    !vehicles[i].MainBehaviour.IsValidForEditor)
                 {
-                    Debug.LogError($"vehicles[{i}] with id  {vehicles[i].ID} has invalid prefab");
+                    Debug.LogError($"vehicles[{i}] with id  {vehicles[i].ID} has invalid prefab", this);
                     continue;
                 }
 

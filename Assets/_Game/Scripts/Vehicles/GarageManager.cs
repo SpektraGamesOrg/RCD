@@ -30,6 +30,9 @@ namespace Vehicles
         [Tooltip("How many vehicles to keep loaded on each side of the current one (2 = current ± 2).")]
         [SerializeField, Min(0)] private int preloadRadius = 2;
 
+        [Tooltip("How the spawned showroom car is dropped onto the floor so its 4 tyres rest on the ground.")]
+        [SerializeField] private VehicleGroundingSettings groundingSettings = new();
+
         /// <summary>Raised whenever the browsed vehicle changes (fires immediately on a switch, before the 3D car finishes loading).</summary>
         public event Action<VehicleID> DisplayedVehicleChanged;
 
@@ -326,6 +329,11 @@ namespace Vehicles
 
             if (_currentInstance != null)
             {
+                // Destroy() is deferred to end of frame, so the old car's colliders would still be in the
+                // physics scene when the new car runs its grounding raycast below — and the rays would land on
+                // the OUTGOING car's body instead of the floor, spawning the new car high. Deactivating removes
+                // its colliders from physics immediately (this frame) so the raycast only sees the floor.
+                _currentInstance.SetActive(false);
                 Destroy(_currentInstance);
                 _currentInstance = null;
             }
@@ -342,11 +350,14 @@ namespace Vehicles
             t.localRotation = Quaternion.identity;
             t.localScale = Vector3.one;
 
+            // Drop the car onto the floor from its 4 wheels so it never spawns buried or floating, no matter
+            // how each prefab's pivot sits relative to its wheels. The car stays a live physics vehicle.
+            VehicleGroundAligner.Align(t, instance.VehicleController, groundingSettings);
+
+            // Re-seat the rigidbody on the final, grounded pose so physics agrees with the transform.
             instance.Rigidbody.position = t.position;
             instance.Rigidbody.rotation = t.rotation;
             Physics.SyncTransforms();
-
-            //MakeStaticDisplay(instance);
         }
 
         // The roster prefabs are full driving vehicles; freeze them so they sit still in the showroom.

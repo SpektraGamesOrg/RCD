@@ -23,15 +23,16 @@ using UnityEngine.Rendering.Universal;
 /// with orbit control, collision detection, occlusion handling, and dynamic FOV adjustments.
 /// Instead of using multiple cameras, it parents a single camera to the appropriate position for each mode.
 /// </summary>
-public class RCC_Camera : RCC_Core {
-
+[DefaultExecutionOrder(-10)]
+public class RCC_Camera : RCC_Core
+{
     /// <summary>
     /// Stores references and cached data about the currently targeted player vehicle,
     /// including speed, velocity, hood camera, and wheel camera transforms.
     /// </summary>
     [System.Serializable]
-    public class CameraTarget {
-
+    public class CameraTarget
+    {
         /// <summary>
         /// The player vehicle this camera is currently tracking.
         /// </summary>
@@ -41,42 +42,38 @@ public class RCC_Camera : RCC_Core {
         /// <summary>
         /// Gets the current speed of the player vehicle in km/h. Returns 0 if no vehicle is assigned.
         /// </summary>
-        public float Speed {
-
-            get {
-
+        public float Speed
+        {
+            get
+            {
                 if (!playerVehicle)
                     return 0f;
 
                 return playerVehicle.speed;
-
             }
-
         }
 
         /// <summary>
         /// Gets the velocity of the player vehicle in its local space. Returns Vector3.zero if no vehicle is assigned.
         /// </summary>
-        public Vector3 Velocity {
-
-            get {
-
+        public Vector3 Velocity
+        {
+            get
+            {
                 if (!playerVehicle)
                     return Vector3.zero;
 
                 return playerVehicle.transform.InverseTransformDirection(playerVehicle.Rigid.linearVelocity);
-
             }
-
         }
 
         /// <summary>
         /// Gets the hood camera component attached to the player vehicle. Lazily cached on first access.
         /// </summary>
-        public RCC_HoodCamera HoodCamera {
-
-            get {
-
+        public RCC_HoodCamera HoodCamera
+        {
+            get
+            {
                 if (!playerVehicle)
                     return null;
 
@@ -84,19 +81,17 @@ public class RCC_Camera : RCC_Core {
                     _hoodCamera = playerVehicle.GetComponentInChildren<RCC_HoodCamera>();
 
                 return _hoodCamera;
-
             }
-
         }
         private RCC_HoodCamera _hoodCamera;
 
         /// <summary>
         /// Gets the wheel camera component attached to the player vehicle. Lazily cached on first access.
         /// </summary>
-        public RCC_WheelCamera WheelCamera {
-
-            get {
-
+        public RCC_WheelCamera WheelCamera
+        {
+            get
+            {
                 if (!playerVehicle)
                     return null;
 
@@ -104,12 +99,9 @@ public class RCC_Camera : RCC_Core {
                     _wheelCamera = playerVehicle.GetComponentInChildren<RCC_WheelCamera>();
 
                 return _wheelCamera;
-
             }
-
         }
         private RCC_WheelCamera _wheelCamera;
-
     }
 
     /// <summary>
@@ -139,8 +131,8 @@ public class RCC_Camera : RCC_Core {
     /// <summary>
     /// Available camera modes for the RCC camera system.
     /// </summary>
-    public enum CameraMode {
-
+    public enum CameraMode
+    {
         /// <summary>Third-person shooter style camera behind the vehicle.</summary>
         TPS,
         /// <summary>First-person / hood camera mounted on the vehicle.</summary>
@@ -153,7 +145,6 @@ public class RCC_Camera : RCC_Core {
         CINEMATIC,
         /// <summary>Top-down overhead camera looking at the vehicle from above.</summary>
         TOP
-
     }
 
     /// <summary>
@@ -170,10 +161,10 @@ public class RCC_Camera : RCC_Core {
     /// <summary>
     /// Returns true if the target vehicle is currently in drift mode, enabling a wider camera angle.
     /// </summary>
-    public bool DriftMode {
-
-        get {
-
+    public bool DriftMode
+    {
+        get
+        {
             if (cameraTarget == null)
                 return false;
 
@@ -181,20 +172,24 @@ public class RCC_Camera : RCC_Core {
                 return false;
 
             return cameraTarget.playerVehicle.driftMode;
-
         }
-
     }
 
     /// <summary>
     /// Shortcut to the scene-wide fixed camera singleton instance.
     /// </summary>
-    private RCC_FixedCamera FixedCamera { get { return RCC_FixedCamera.Instance; } }
+    private RCC_FixedCamera FixedCamera
+    {
+        get { return RCC_FixedCamera.Instance; }
+    }
 
     /// <summary>
     /// Shortcut to the scene-wide cinematic camera singleton instance.
     /// </summary>
-    private RCC_CinematicCamera CinematicCamera { get { return RCC_CinematicCamera.Instance; } }
+    private RCC_CinematicCamera CinematicCamera
+    {
+        get { return RCC_CinematicCamera.Instance; }
+    }
 
     /// <summary>
     /// When enabled in TPS mode, the camera's X (pitch) rotation follows the vehicle's X rotation.
@@ -530,15 +525,23 @@ public class RCC_Camera : RCC_Core {
     [Tooltip("True when the camera is looking back (rear view) in TPS mode.")]
     public bool lookBackNow = false;
 
-    private void Awake() {
+    /// <summary>
+    /// Singleton instance of the currently active RCC camera in the scene.
+    /// </summary>
+    public static RCC_Camera Instance { get; private set; }
+
+    private void Awake()
+    {
+        // Register the singleton instance.
+        Instance = this;
 
         // Getting Camera.
         if (!actualCamera)
             actualCamera = GetComponentInChildren<Camera>();
 
         //  If pivot of the camera is not found, create it.
-        if (!pivot) {
-
+        if (!pivot)
+        {
             Transform pivotTransform = transform.Find("Pivot");
             pivot = pivotTransform ? pivotTransform.gameObject : null;
 
@@ -550,58 +553,52 @@ public class RCC_Camera : RCC_Core {
             pivot.transform.localRotation = Quaternion.identity;
 
             actualCamera.transform.SetParent(pivot.transform, true);
-
         }
 
 #if BCG_URP
         if (IsURP())
             CheckURP_PP();
 #endif
-
     }
 
 #if BCG_URP
     /// <summary>
     /// Checks if URP is used and ensures post-processing is enabled on the camera.
     /// </summary>
-    public void CheckURP_PP() {
-
+    public void CheckURP_PP()
+    {
         GameObject actCamera = GetComponentInChildren<Camera>(true).gameObject;
 
-        if (actCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData)) {
-
-            if (!cameraData.renderPostProcessing) {
-
+        if (actCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
+        {
+            if (!cameraData.renderPostProcessing)
+            {
 #if UNITY_EDITOR
                 Debug.Log("Post processing of RCC_Camera has been enabled.");
 #endif
                 cameraData.renderPostProcessing = true;
-
             }
-
-        } else {
-
+        }
+        else
+        {
 #if UNITY_EDITOR
             Debug.Log("UniversalAdditionalCameraData wasn't found on RCC_Camera, adding it.");
 #endif
             cameraData = actCamera.AddComponent<UniversalAdditionalCameraData>();
 
-            if (!cameraData.renderPostProcessing) {
-
+            if (!cameraData.renderPostProcessing)
+            {
 #if UNITY_EDITOR
                 Debug.Log("Post processing of RCC_Camera has been enabled.");
 #endif
                 cameraData.renderPostProcessing = true;
-
             }
-
         }
-
     }
 #endif
 
-    private void OnEnable() {
-
+    private void OnEnable()
+    {
         ResetCameraVariables();
 
         // Calling this event when BCG Camera spawned.
@@ -613,7 +610,6 @@ public class RCC_Camera : RCC_Core {
         // Listening input events for camera modes and look back.
         RCC_Events.OnChangeCamera += RCC_InputManager_OnChangeCamera;
         RCC_Events.OnLookBack += RCC_InputManager_OnLookBack;
-
     }
 
     /// <summary>
@@ -621,38 +617,36 @@ public class RCC_Camera : RCC_Core {
     /// </summary>
     /// <param name="RCC">The vehicle controller that was involved in the collision.</param>
     /// <param name="collision">Unity collision data containing contact points and relative velocity.</param>
-    private void RCC_CarControllerV4_OnRCCPlayerCollision(RCC_CarControllerV4 RCC, Collision collision) {
-
+    private void RCC_CarControllerV4_OnRCCPlayerCollision(RCC_CarControllerV4 RCC, Collision collision)
+    {
         Collision(collision);
-
     }
 
     /// <summary>
     /// Look back toggle triggered by input manager.
     /// </summary>
     /// <param name="state">True to enable look-back, false to disable.</param>
-    private void RCC_InputManager_OnLookBack(bool state) {
-
+    private void RCC_InputManager_OnLookBack(bool state)
+    {
         lookBackNow = state;
-
     }
 
     /// <summary>
     /// Cycle camera mode triggered by input manager.
     /// </summary>
-    private void RCC_InputManager_OnChangeCamera() {
-
+    private void RCC_InputManager_OnChangeCamera()
+    {
         ChangeCamera();
-
     }
 
     /// <summary>
     /// Assigns a target vehicle to the camera and optionally adjusts TPS camera distance/height.
     /// </summary>
     /// <param name="player">The vehicle controller to track with this camera.</param>
-    public void SetTarget(RCC_CarControllerV4 player) {
-
-        cameraTarget = new CameraTarget {
+    public void SetTarget(RCC_CarControllerV4 player)
+    {
+        cameraTarget = new CameraTarget
+        {
             playerVehicle = player
         };
 
@@ -662,36 +656,33 @@ public class RCC_Camera : RCC_Core {
         SetupForNewMode();
 
         TPSLastRotation = player.transform.rotation;
-
     }
 
     /// <summary>
     /// Removes the current target vehicle from the camera.
     /// </summary>
-    public void RemoveTarget() {
-
+    public void RemoveTarget()
+    {
         transform.SetParent(null);
         cameraTarget.playerVehicle = null;
-
     }
 
-    private void Update() {
-
+    private void Update()
+    {
         acceleration_Smoothed = Vector3.SmoothDamp(acceleration_Smoothed, acceleration, ref accelerationVelocity, .3f);
 
         // If it's not rendering, disable the camera.
-        if (!isRendering) {
-
+        if (!isRendering)
+        {
             if (actualCamera.gameObject.activeSelf)
                 actualCamera.gameObject.SetActive(false);
 
             return;
-
-        } else {
-
+        }
+        else
+        {
             if (!actualCamera.gameObject.activeSelf)
                 actualCamera.gameObject.SetActive(true);
-
         }
 
         // Early out if we don't have the player vehicle.
@@ -700,11 +691,10 @@ public class RCC_Camera : RCC_Core {
 
         // Lerping current field of view to target field of view.
         actualCamera.fieldOfView = Mathf.Lerp(actualCamera.fieldOfView, targetFieldOfView, Time.deltaTime * 5f);
-
     }
 
-    private void LateUpdate() {
-
+    private void LateUpdate()
+    {
         // Early out if we don't have the player vehicle.
         if (!cameraTarget.playerVehicle)
             return;
@@ -717,8 +707,8 @@ public class RCC_Camera : RCC_Core {
             return;
 
         // Run the corresponding method with chosen camera mode.
-        switch (cameraMode) {
-
+        switch (cameraMode)
+        {
             case CameraMode.TPS:
 
                 if (useOrbitInTPSCameraMode)
@@ -752,7 +742,6 @@ public class RCC_Camera : RCC_Core {
             case CameraMode.TOP:
                 TOP();
                 break;
-
         }
 
         if (lastCameraMode != cameraMode)
@@ -763,20 +752,18 @@ public class RCC_Camera : RCC_Core {
         if (useAutoChangeCamera)
             autoChangeCameraTimer += Time.deltaTime;
 
-        if (useAutoChangeCamera && autoChangeCameraTimer >= 10) {
-
+        if (useAutoChangeCamera && autoChangeCameraTimer >= 10)
+        {
             autoChangeCameraTimer = 0f;
             ChangeCamera();
-
         }
 
         //  Checking if camera is occluded by some colliders.
         CheckIfOccluded();
-
     }
 
-    private void FixedUpdate() {
-
+    private void FixedUpdate()
+    {
         // Early out if we don't have the player vehicle.
         if (!cameraTarget.playerVehicle)
             return;
@@ -785,37 +772,35 @@ public class RCC_Camera : RCC_Core {
         if (!cameraTarget.playerVehicle.gameObject.activeSelf)
             return;
 
-        acceleration = (cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity) - lastVelocity) / Time.fixedDeltaTime;
+        acceleration = (cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity) - lastVelocity) /
+                       Time.fixedDeltaTime;
         lastVelocity = cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity);
 
         acceleration.x = 0f;
         acceleration.y = 0f;
         acceleration = Vector3.ClampMagnitude(acceleration, 10f);
-
     }
 
     /// <summary>
     /// Cycles the camera mode by incrementing cameraSwitchCount.
     /// </summary>
-    public void ChangeCamera() {
-
+    public void ChangeCamera()
+    {
         ChangeCamera(0);
-
     }
 
     /// <summary>
     /// Internal camera cycling with recursion depth guard to prevent infinite loops when all modes are disabled.
     /// </summary>
     /// <param name="depth">Current recursion depth.</param>
-    private void ChangeCamera(int depth) {
-
+    private void ChangeCamera(int depth)
+    {
         // Prevent infinite recursion if all optional camera modes are disabled.
-        if (depth >= 6) {
-
+        if (depth >= 6)
+        {
             cameraMode = CameraMode.TPS;
             cameraSwitchCount = 0;
             return;
-
         }
 
         cameraSwitchCount++;
@@ -823,8 +808,8 @@ public class RCC_Camera : RCC_Core {
         if (cameraSwitchCount >= 6)
             cameraSwitchCount = 0;
 
-        switch (cameraSwitchCount) {
-
+        switch (cameraSwitchCount)
+        {
             case 0:
                 cameraMode = CameraMode.TPS;
                 break;
@@ -863,48 +848,43 @@ public class RCC_Camera : RCC_Core {
                 else
                     ChangeCamera(depth + 1);
                 break;
-
         }
-
     }
 
     /// <summary>
     /// Directly changes camera mode to the specified mode.
     /// </summary>
     /// <param name="mode">The camera mode to switch to.</param>
-    public void ChangeCamera(CameraMode mode) {
-
+    public void ChangeCamera(CameraMode mode)
+    {
         cameraMode = mode;
-
     }
 
     /// <summary>
     /// Hood (FPS) camera logic. If orbit is enabled, applies orbit rotation.
     /// </summary>
-    private void FPS() {
-
+    private void FPS()
+    {
         if (useOrbitInHoodCameraMode)
             transform.rotation = cameraTarget.playerVehicle.transform.rotation * Quaternion.Euler(orbitY, orbitX, 0f);
         else
             transform.rotation = cameraTarget.playerVehicle.transform.rotation;
-
     }
 
     /// <summary>
     /// Wheel camera logic. If occluded, switches to TPS.
     /// </summary>
-    private void WHEEL() {
-
+    private void WHEEL()
+    {
         if (useOcclusion && occluded)
             ChangeCamera(CameraMode.TPS);
-
     }
 
     /// <summary>
     /// TPS mode.
     /// </summary>
-    private void TPS() {
-
+    private void TPS()
+    {
         //  Setting rotation of the camera.
         transform.rotation = TPSLastRotation;
 
@@ -923,15 +903,14 @@ public class RCC_Camera : RCC_Core {
         Vector3 playerVehicleDirection = cameraTarget.playerVehicle.transform.forward * direction;
 
         //  New direction for the drift mode.
-        if (DriftMode) {
-
+        if (DriftMode)
+        {
             Vector3 playerVelocityDirection = cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity);
 
             playerVelocityDirection.y = 0f;
             playerVelocityDirection = cameraTarget.playerVehicle.transform.TransformDirection(playerVelocityDirection);
 
             playerVehicleDirection = playerVelocityDirection + (cameraTarget.playerVehicle.transform.forward * direction * .1f);
-
         }
 
         // Create the desired rotation based on the direction to the target
@@ -961,11 +940,10 @@ public class RCC_Camera : RCC_Core {
         float rotDamp = TPSRotationDamping;
 
         //  Set rotation damping to 0 if free fall option is enabled and vehicle is not grounded.
-        if (TPSFreeFall && Time.time >= 1f && !DriftMode) {
-
+        if (TPSFreeFall && Time.time >= 1f && !DriftMode)
+        {
             if (!cameraTarget.playerVehicle.isGrounded)
                 rotDamp = 0f;
-
         }
 
         // Smoothly rotate the object towards the desired rotation.
@@ -1005,11 +983,10 @@ public class RCC_Camera : RCC_Core {
             OccludeRay(cameraTarget.playerVehicle.transform.position);
 
         // Collision positions and rotations that affects pivot of the camera.
-        if (Time.deltaTime != 0) {
-
+        if (Time.deltaTime != 0)
+        {
             collisionPos = Vector3.Lerp(collisionPos, Vector3.zero, Time.deltaTime * 5f);
             collisionRot = Quaternion.Lerp(collisionRot, Quaternion.identity, Time.deltaTime * 5f);
-
         }
 
         // Lerping position and rotation of the pivot to collision.
@@ -1020,7 +997,9 @@ public class RCC_Camera : RCC_Core {
         TPSLastRotation = transform.rotation;
 
         // Rotates camera by Z axis for tilt effect.
-        TPSTiltAngle = TPSTiltMaximum * (Mathf.Clamp(cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity).x, -10f, 10f) * .04f);
+        TPSTiltAngle = TPSTiltMaximum *
+                       (Mathf.Clamp(cameraTarget.playerVehicle.transform.InverseTransformDirection(cameraTarget.playerVehicle.Rigid.linearVelocity).x, -10f,
+                           10f) * .04f);
         TPSTiltAngle *= TPSTiltMultiplier;
 
         //  Applying tilt angle rotation.
@@ -1028,15 +1007,14 @@ public class RCC_Camera : RCC_Core {
 
         // Lerping targetFieldOfView from TPSMinimumFOV to TPSMaximumFOV related to vehicle speed.
         targetFieldOfView = Mathf.Lerp(TPSMinimumFOV, TPSMaximumFOV, Mathf.Abs(cameraTarget.playerVehicle.speed) / 150f);
-
     }
 
     /// <summary>
     /// Specialized TPS mode for drifting. It tilts the camera more based on sideways velocity
     /// and slightly offsets behind the drift angle.
     /// </summary>
-    private void TPSDrift() {
-
+    private void TPSDrift()
+    {
         // 1) Start from something close to the TPS logic
         transform.rotation = TPSLastRotation;
 
@@ -1069,7 +1047,7 @@ public class RCC_Camera : RCC_Core {
 
         // Increase tilt multiplier for a more dramatic drift effect:
         float driftTiltMultiplier = TPSTiltMultiplier * 2.0f;
-        float driftTiltMax = TPSTiltMaximum * 1.5f;      // 1.5x the normal tilt, for example
+        float driftTiltMax = TPSTiltMaximum * 1.5f; // 1.5x the normal tilt, for example
 
         float driftTiltAngle = driftTiltMax * (driftAngle * 0.1f) * driftTiltMultiplier;
 
@@ -1110,35 +1088,32 @@ public class RCC_Camera : RCC_Core {
 
         // 6) Store rotation for next frame
         TPSLastRotation = transform.rotation;
-
     }
 
 
     /// <summary>
     /// Fixed camera mode logic. Locks the camera to a fixed viewpoint.
     /// </summary>
-    private void FIXED() {
-
+    private void FIXED()
+    {
         if (!FixedCamera)
             return;
 
         if (FixedCamera.transform.parent != null)
             FixedCamera.transform.SetParent(null);
 
-        if (useOcclusion && occluded) {
-
+        if (useOcclusion && occluded)
+        {
             FixedCamera.ChangePosition();
             occluded = false;
-
         }
-
     }
 
     /// <summary>
     /// Top camera mode logic. Can be orthographic or perspective.
     /// </summary>
-    private void TOP() {
-
+    private void TOP()
+    {
         actualCamera.orthographic = useOrthoForTopCamera;
 
         topCameraDistanceOffset = Mathf.Lerp(0f, maximumZDistanceOffset, Mathf.Abs(cameraTarget.Speed) / 100f);
@@ -1152,26 +1127,23 @@ public class RCC_Camera : RCC_Core {
         transform.rotation = Quaternion.Euler(topCameraAngle);
 
         pivot.transform.localPosition = new Vector3(0f, 0f, -topCameraDistance);
-
     }
 
     /// <summary>
     /// Handles orbit rotation inputs for TPS or FPS camera modes.
     /// </summary>
-    private void ORBIT() {
-
-        if (oldOrbitX != orbitX) {
-
+    private void ORBIT()
+    {
+        if (oldOrbitX != orbitX)
+        {
             oldOrbitX = orbitX;
             orbitResetTimer = 2f;
-
         }
 
-        if (oldOrbitY != orbitY) {
-
+        if (oldOrbitY != orbitY)
+        {
             oldOrbitY = orbitY;
             orbitResetTimer = 2f;
-
         }
 
         if (orbitResetTimer > 0)
@@ -1179,29 +1151,26 @@ public class RCC_Camera : RCC_Core {
 
         Mathf.Clamp(orbitResetTimer, 0f, 2f);
 
-        if (orbitReset && cameraTarget.Speed >= 25f && orbitResetTimer <= 0f) {
-
+        if (orbitReset && cameraTarget.Speed >= 25f && orbitResetTimer <= 0f)
+        {
             orbitX = 0f;
             orbitY = 0f;
-
         }
-
     }
 
     /// <summary>
     /// Used by mobile UI drag panel to control orbit rotation with PointerEventData.
     /// </summary>
     /// <param name="pointerData">Pointer event data containing the drag delta from the UI system.</param>
-    public void OnDrag(PointerEventData pointerData) {
-
-        if (cameraMode == CameraMode.TPS) {
-
+    public void OnDrag(PointerEventData pointerData)
+    {
+        if (cameraMode == CameraMode.TPS)
+        {
             if (orbitX == 0)
                 orbitX = transform.eulerAngles.y;
 
             if (orbitY == 0)
-                orbitY = transform.eulerAngles.x; 
-
+                orbitY = transform.eulerAngles.x;
         }
 
         orbitX += pointerData.delta.x * orbitXSpeed / 1000f;
@@ -1210,7 +1179,6 @@ public class RCC_Camera : RCC_Core {
         orbitY = Mathf.Clamp(orbitY, minOrbitY, maxOrbitY);
 
         orbitResetTimer = 2f;
-
     }
 
     /// <summary>
@@ -1218,16 +1186,15 @@ public class RCC_Camera : RCC_Core {
     /// </summary>
     /// <param name="x">Horizontal drag delta value.</param>
     /// <param name="y">Vertical drag delta value.</param>
-    public void OnDrag(float x, float y) {
-
-        if (cameraMode == CameraMode.TPS) {
-
+    public void OnDrag(float x, float y)
+    {
+        if (cameraMode == CameraMode.TPS)
+        {
             if (orbitX == 0)
                 orbitX = transform.eulerAngles.y;
 
             if (orbitY == 0)
                 orbitY = transform.eulerAngles.x;
-
         }
 
         orbitX += x * orbitXSpeed / 10f;
@@ -1236,14 +1203,13 @@ public class RCC_Camera : RCC_Core {
         orbitY = Mathf.Clamp(orbitY, minOrbitY, maxOrbitY);
 
         orbitResetTimer = 2f;
-
     }
 
     /// <summary>
     /// Cinematic camera mode logic. Positions the camera using RCC_CinematicCamera if available.
     /// </summary>
-    private void CINEMATIC() {
-
+    private void CINEMATIC()
+    {
         if (!CinematicCamera)
             return;
 
@@ -1254,15 +1220,14 @@ public class RCC_Camera : RCC_Core {
 
         if (useOcclusion && occluded)
             ChangeCamera(CameraMode.TPS);
-
     }
 
     /// <summary>
     /// Handles collision effects on the camera (e.g., shake, FOV change) in TPS mode.
     /// </summary>
     /// <param name="collision">Unity collision data from the vehicle's collision event.</param>
-    public void Collision(Collision collision) {
-
+    public void Collision(Collision collision)
+    {
         if (!TPSCollision)
             return;
 
@@ -1277,30 +1242,28 @@ public class RCC_Camera : RCC_Core {
 
         float cos = Mathf.Abs(Vector3.Dot(collision.GetContact(0).normal, colRelVel.normalized));
 
-        if (colRelVel.magnitude * cos >= 5f) {
-
+        if (colRelVel.magnitude * cos >= 5f)
+        {
             collisionDirection = transform.InverseTransformDirection(colRelVel) / (30f);
 
             collisionPos -= collisionDirection * 5f;
             collisionRot = Quaternion.Euler(new Vector3(-collisionDirection.z * 10f, -collisionDirection.y * 10f, -collisionDirection.x * 10f));
             targetFieldOfView = actualCamera.fieldOfView - Mathf.Clamp(collision.relativeVelocity.magnitude, 0f, 15f);
-
         }
-
     }
 
     /// <summary>
     /// Resets the camera variables and reinitializes the mode.
     /// </summary>
-    private void SetupForNewMode() {
-
+    private void SetupForNewMode()
+    {
         ResetCameraVariables();
 
         if (FixedCamera)
             FixedCamera.canTrackNow = false;
 
-        switch (cameraMode) {
-
+        switch (cameraMode)
+        {
             case CameraMode.TPS:
                 transform.SetParent(null);
                 targetFieldOfView = TPSMinimumFOV;
@@ -1326,11 +1289,10 @@ public class RCC_Camera : RCC_Core {
                 break;
 
             case CameraMode.FIXED:
-                if (FixedCamera) {
-
+                if (FixedCamera)
+                {
                     transform.SetParent(FixedCamera.transform, false);
                     FixedCamera.canTrackNow = true;
-
                 }
                 transform.localPosition = Vector3.zero;
                 transform.localRotation = Quaternion.identity;
@@ -1354,34 +1316,30 @@ public class RCC_Camera : RCC_Core {
                 targetPosition += cameraTarget.playerVehicle.transform.rotation * Vector3.forward * topCameraDistanceOffset;
                 transform.position = cameraTarget.playerVehicle.transform.position;
                 break;
-
         }
-
     }
 
     /// <summary>
     /// Resets the camera variables to default, called when changing camera modes.
     /// </summary>
-    public void ResetCameraVariables() {
-
+    public void ResetCameraVariables()
+    {
         TPSTiltAngle = 0f;
 
         collisionPos = Vector3.zero;
         collisionRot = Quaternion.identity;
         collisionDirection = Vector3.zero;
 
-        if (actualCamera) {
-
+        if (actualCamera)
+        {
             actualCamera.transform.localPosition = Vector3.zero;
             actualCamera.transform.localRotation = Quaternion.identity;
-
         }
 
-        if (pivot) {
-
+        if (pivot)
+        {
             pivot.transform.localPosition = collisionPos;
             pivot.transform.localRotation = collisionRot;
-
         }
 
         orbitX = TPSStartRotation.y;
@@ -1394,7 +1352,7 @@ public class RCC_Camera : RCC_Core {
             actualCamera.orthographic = false;
 
         occluded = false;
-        
+
         orbitResetTimer = 0f;
         orbitX = 0f;
         orbitY = 0f;
@@ -1406,77 +1364,69 @@ public class RCC_Camera : RCC_Core {
         lastVelocity = Vector3.zero;
 
         targetPosition = Vector3.zero;
-
     }
 
     /// <summary>
     /// Toggles the camera on/off by enabling or disabling its rendering.
     /// </summary>
     /// <param name="state">True to enable camera rendering, false to disable it.</param>
-    public void ToggleCamera(bool state) {
-
+    public void ToggleCamera(bool state)
+    {
         isRendering = state;
-
     }
 
     /// <summary>
     /// Adjusts camera position if an occlusion is detected by a raycast.
     /// </summary>
     /// <param name="targetFollow">The world-space position of the target (vehicle) to linecast from.</param>
-    private void OccludeRay(Vector3 targetFollow) {
-
+    private void OccludeRay(Vector3 targetFollow)
+    {
         RaycastHit wallHit = new RaycastHit();
 
-        if (Physics.Linecast(targetFollow, transform.position, out wallHit, occlusionLayerMask)) {
-
-            if (!wallHit.collider.isTrigger && !wallHit.transform.IsChildOf(cameraTarget.playerVehicle.transform)) {
-
-                Vector3 occludedPosition = new Vector3(wallHit.point.x + wallHit.normal.x * .2f, wallHit.point.y + wallHit.normal.y * .2f, wallHit.point.z + wallHit.normal.z * .2f);
+        if (Physics.Linecast(targetFollow, transform.position, out wallHit, occlusionLayerMask))
+        {
+            if (!wallHit.collider.isTrigger && !wallHit.transform.IsChildOf(cameraTarget.playerVehicle.transform))
+            {
+                Vector3 occludedPosition = new Vector3(wallHit.point.x + wallHit.normal.x * .2f, wallHit.point.y + wallHit.normal.y * .2f,
+                    wallHit.point.z + wallHit.normal.z * .2f);
 
                 transform.position = occludedPosition;
-
             }
-
         }
-
     }
 
     /// <summary>
     /// Checks if the camera is currently occluded by a collider.
     /// </summary>
-    private void CheckIfOccluded() {
-
+    private void CheckIfOccluded()
+    {
         RaycastHit wallHit = new RaycastHit();
 
-        if (Physics.Linecast(cameraTarget.playerVehicle.transform.position, transform.position, out wallHit, occlusionLayerMask)) {
-
+        if (Physics.Linecast(cameraTarget.playerVehicle.transform.position, transform.position, out wallHit, occlusionLayerMask))
+        {
             if (!wallHit.collider.isTrigger && !wallHit.transform.IsChildOf(cameraTarget.playerVehicle.transform))
                 occluded = true;
-
         }
-
     }
 
     /// <summary>
     /// Automatically adjusts TPSDistance and TPSHeight based on the target vehicle's bounds.
     /// </summary>
-    public IEnumerator AutoFocus() {
-
+    public IEnumerator AutoFocus()
+    {
         float timer = 3f;
         float bounds = RCC_GetBounds.MaxBoundsExtent(cameraTarget.playerVehicle.transform);
 
-        while (timer > 0f) {
-
+        while (timer > 0f)
+        {
             timer -= Time.deltaTime;
             TPSDistance = Mathf.Lerp(TPSDistance, bounds * 2.7f, Time.deltaTime * 2f);
             TPSHeight = Mathf.Lerp(TPSHeight, bounds * .65f, Time.deltaTime * 2f);
             yield return null;
-
         }
 
         TPSDistance = bounds * 2.7f;
         TPSHeight = bounds * .65f;
-
     }
 
     /// <summary>
@@ -1484,23 +1434,21 @@ public class RCC_Camera : RCC_Core {
     /// </summary>
     /// <param name="transformBounds">The transform whose bounds are used to calculate camera distance and height.</param>
     /// <returns>Coroutine enumerator that runs over 3 seconds.</returns>
-    public IEnumerator AutoFocus(Transform transformBounds) {
-
+    public IEnumerator AutoFocus(Transform transformBounds)
+    {
         float timer = 3f;
         float bounds = RCC_GetBounds.MaxBoundsExtent(transformBounds);
 
-        while (timer > 0f) {
-
+        while (timer > 0f)
+        {
             timer -= Time.deltaTime;
             TPSDistance = Mathf.Lerp(TPSDistance, bounds * 2.7f, Time.deltaTime * 2f);
             TPSHeight = Mathf.Lerp(TPSHeight, bounds * .65f, Time.deltaTime * 2f);
             yield return null;
-
         }
 
         TPSDistance = bounds * 2.7f;
         TPSHeight = bounds * .65f;
-
     }
 
     /// <summary>
@@ -1509,23 +1457,21 @@ public class RCC_Camera : RCC_Core {
     /// <param name="transformBounds1">The first transform whose bounds contribute to the calculation.</param>
     /// <param name="transformBounds2">The second transform whose bounds contribute to the calculation.</param>
     /// <returns>Coroutine enumerator that runs over 3 seconds.</returns>
-    public IEnumerator AutoFocus(Transform transformBounds1, Transform transformBounds2) {
-
+    public IEnumerator AutoFocus(Transform transformBounds1, Transform transformBounds2)
+    {
         float timer = 3f;
         float bounds = (RCC_GetBounds.MaxBoundsExtent(transformBounds1) + RCC_GetBounds.MaxBoundsExtent(transformBounds2));
 
-        while (timer > 0f) {
-
+        while (timer > 0f)
+        {
             timer -= Time.deltaTime;
             TPSDistance = Mathf.Lerp(TPSDistance, bounds * 2.7f, Time.deltaTime * 2f);
             TPSHeight = Mathf.Lerp(TPSHeight, bounds * .65f, Time.deltaTime * 2f);
             yield return null;
-
         }
 
         TPSDistance = bounds * 2.7f;
         TPSHeight = bounds * .65f;
-
     }
 
     /// <summary>
@@ -1535,64 +1481,64 @@ public class RCC_Camera : RCC_Core {
     /// <param name="transformBounds2">The second transform whose bounds contribute to the calculation.</param>
     /// <param name="transformBounds3">The third transform whose bounds contribute to the calculation.</param>
     /// <returns>Coroutine enumerator that runs over 3 seconds.</returns>
-    public IEnumerator AutoFocus(Transform transformBounds1, Transform transformBounds2, Transform transformBounds3) {
-
+    public IEnumerator AutoFocus(Transform transformBounds1, Transform transformBounds2, Transform transformBounds3)
+    {
         float timer = 3f;
-        float bounds = (RCC_GetBounds.MaxBoundsExtent(transformBounds1) + RCC_GetBounds.MaxBoundsExtent(transformBounds2) + RCC_GetBounds.MaxBoundsExtent(transformBounds3));
+        float bounds = (RCC_GetBounds.MaxBoundsExtent(transformBounds1) + RCC_GetBounds.MaxBoundsExtent(transformBounds2) +
+                        RCC_GetBounds.MaxBoundsExtent(transformBounds3));
 
-        while (timer > 0f) {
-
+        while (timer > 0f)
+        {
             timer -= Time.deltaTime;
             TPSDistance = Mathf.Lerp(TPSDistance, bounds * 2.7f, Time.deltaTime * 2f);
             TPSHeight = Mathf.Lerp(TPSHeight, bounds * .65f, Time.deltaTime * 2f);
             yield return null;
-
         }
 
         TPSDistance = bounds * 2.7f;
         TPSHeight = bounds * .65f;
-
     }
 
     /// <summary>
     /// Checks if the current render pipeline is URP (Universal Render Pipeline).
     /// </summary>
     /// <returns>True if the active render pipeline is URP, false otherwise.</returns>
-    private bool IsURP() {
-
+    private bool IsURP()
+    {
         RenderPipelineAsset activePipeline = GraphicsSettings.currentRenderPipeline;
 
         if (activePipeline != null && activePipeline.GetType().ToString().Contains("Universal"))
             return true;
 
         return false;
-
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
+        // Clear the singleton reference if it points to this instance.
+        if (Instance == this)
+            Instance = null;
 
         RCC_Events.OnRCCPlayerCollision -= RCC_CarControllerV4_OnRCCPlayerCollision;
 
         // Listening input events.
         RCC_Events.OnChangeCamera -= RCC_InputManager_OnChangeCamera;
         RCC_Events.OnLookBack -= RCC_InputManager_OnLookBack;
-
     }
 
-    private void Reset() {
-
+    private void Reset()
+    {
         //  If pivot of the camera is not found, create it.
         if (transform.Find("Pivot"))
             pivot = transform.Find("Pivot").gameObject;
 
-        if (!pivot) {
-
+        if (!pivot)
+        {
             pivot = new GameObject("Pivot");
 
             pivot.transform.SetParent(transform);
             pivot.transform.localPosition = Vector3.zero;
             pivot.transform.localRotation = Quaternion.identity;
-
         }
 
         Camera foundCamera = GetComponentInChildren<Camera>();
@@ -1607,7 +1553,5 @@ public class RCC_Camera : RCC_Core {
         newCamera.AddComponent<Camera>();
         newCamera.AddComponent<AudioListener>();
         newCamera.gameObject.tag = "MainCamera";
-
     }
-
 }

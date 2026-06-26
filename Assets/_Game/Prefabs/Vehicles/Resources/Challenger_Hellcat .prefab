@@ -1421,9 +1421,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7708564649958157846}
+  - component: {fileID: 547450924300502003}
   - component: {fileID: 2648790810260707459}
   - component: {fileID: 8772737133869369294}
-  - component: {fileID: 547450924300502003}
   m_Layer: 11
   m_Name: 'Challenger_Hellcat '
   m_TagString: Untagged
@@ -1450,6 +1450,21 @@ Transform:
   - {fileID: 4684988149973699180}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &547450924300502003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915925527561201160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
+  vehicleID: 7
+  vehicleController: {fileID: 8772737133869369294}
+  rigidbody: {fileID: 2648790810260707459}
 --- !u!54 &2648790810260707459
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1703,7 +1718,7 @@ MonoBehaviour:
   indicatorTimer: 0
   damage:
     carController: {fileID: 0}
-    automaticInstallation: 1
+    automaticInstallation: 0
     meshDeformation: 1
     deformationMode: 1
     damageResolution: 100
@@ -1764,21 +1779,6 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
---- !u!114 &547450924300502003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915925527561201160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ec737efa3ae24285aeff32809ae3826, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.MainVehicleBehaviour
-  vehicleID: 7
-  vehicleController: {fileID: 8772737133869369294}
-  rigidbody: {fileID: 2648790810260707459}
 --- !u!1 &954152959263531464
 GameObject:
   m_ObjectHideFlags: 0
@@ -12892,6 +12892,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7167056546442631678, guid: 77f6b15fe51ce004d8a1f7e69f303571, type: 3}
   m_PrefabInstance: {fileID: 3721751550782115382}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5861035030237211452 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7129414949340210442, guid: 77f6b15fe51ce004d8a1f7e69f303571, type: 3}
+  m_PrefabInstance: {fileID: 3721751550782115382}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dcd2266c92fd740bdfac8b91d46014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5572602908746535011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12940,6 +12951,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: rcc
+      value: 
+      objectReference: {fileID: 8772737133869369294}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: res2.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2647045162067733738, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
+      propertyPath: 'res2.Array.data[0]'
+      value: 
+      objectReference: {fileID: 5861035030237211452}
     - target: {fileID: 8810871752657035979, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
       propertyPath: m_Name
       value: RCC to RES2

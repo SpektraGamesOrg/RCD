@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5870395856120070069}
   - component: {fileID: 141475735469098716}
-  - component: {fileID: 7155782288102060632}
   - component: {fileID: 5323834554592079700}
   - component: {fileID: 2100676341560308686}
   - component: {fileID: 8000049746193572832}
   - component: {fileID: 1008977361989485341}
   - component: {fileID: 6852359897161227365}
+  - component: {fileID: 2157693256274698755}
   m_Layer: 0
   m_Name: Vehicle Camera Cinemachine
   m_TagString: MainCamera
@@ -31,14 +31,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5818617868381496215}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.030718496, y: 0.9292169, z: -0.077856876, w: -0.35993156}
+  m_LocalRotation: {x: 0.030722113, y: -0.9292156, z: 0.077854484, w: 0.3599351}
   m_LocalPosition: {x: -3.2838688, y: 3.1877446, z: -1696.3936}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3810456790829796046}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 18.435, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 9.602, y: -137.657, z: -0.061}
 --- !u!20 &141475735469098716
 Camera:
   m_ObjectHideFlags: 0
@@ -90,14 +90,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!124 &7155782288102060632
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5818617868381496215}
-  m_Enabled: 1
 --- !u!81 &5323834554592079700
 AudioListener:
   m_ObjectHideFlags: 0
@@ -153,13 +145,13 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 1
-  BlendUpdateMethod: 1
+  UpdateMethod: 2
+  BlendUpdateMethod: 0
   LensModeOverride:
-    Enabled: 0
+    Enabled: 1
     DefaultMode: 2
   DefaultBlend:
-    Style: 1
+    Style: 0
     Time: 2
     CustomCurve:
       serializedVersion: 2
@@ -244,7 +236,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
+  m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -258,13 +250,37 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
+    m_Quality: 0
+    m_FrameInfluence: 0.01999998
     m_JitterScale: 1
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &2157693256274698755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5818617868381496215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19ffcd4e97e2524c8e990c34a5c0420, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PerLayerCulling
+  settings:
+  - layerName: Default
+    distance: 2000
+  - layerName: Prop
+    distance: 100
+  - layerName: Prop2
+    distance: 150
+  - layerName: Banner
+    distance: 250
+  - layerName: Ground
+    distance: 350
+  sphericalCulling: 1
 --- !u!1 &7907079612749701634
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,9 +291,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3810456790829796046}
   - component: {fileID: 635009120753835908}
-  - component: {fileID: 8126300622092741488}
   - component: {fileID: 6128285099806370190}
   - component: {fileID: 835478554790369657}
+  - component: {fileID: 6390487325032446799}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -307,28 +323,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7907079612749701634}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8126300622092741488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7907079612749701634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NoiseProfile: {fileID: 11400000, guid: a3dacaec0287d7444b4bd276816e1666, type: 2}
-  PivotOffset: {x: 0, y: 0, z: 0}
-  AmplitudeGain: 1
-  FrequencyGain: 1
-  m_NoiseOffsets: {x: 117.06674, y: -502.203, z: -538.4044}
 --- !u!114 &6128285099806370190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,6 +373,23 @@ MonoBehaviour:
   Damping: {x: 0, y: 0}
   Lookahead:
     Enabled: 1
-    Time: 0.107
-    Smoothing: 4.6
+    Time: 0.05
+    Smoothing: 1
     IgnoreY: 1
+--- !u!114 &6390487325032446799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7907079612749701634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
+  NoiseProfile: {fileID: 0}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 1
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 0, y: 0, z: 0}

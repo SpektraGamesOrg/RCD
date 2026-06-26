@@ -102,6 +102,10 @@ namespace Core
                 prefab,
                 vehicleSpawnPoint.position,
                 vehicleSpawnPoint.rotation);
+            RCC_SceneManager.Instance.RegisterPlayer(_spawnedVehicle.VehicleController);
+            _spawnedVehicle.VehicleController.SetCanControl(true);
+            _spawnedVehicle.VehicleController.SetExternalControl(false);
+            _spawnedVehicle.VehicleController.StartEngine(true);
 
             BindCamera(_spawnedVehicle.transform);
             progress?.Report(1f);

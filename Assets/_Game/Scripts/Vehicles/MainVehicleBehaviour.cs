@@ -47,10 +47,23 @@ namespace Vehicles
                 rigidbody = GetComponent<Rigidbody>();
                 anyChange = true;
             }
+            
+            Component[] components = GetComponents<Component>();
+            // Index 0 is always the Transform, so this component should sit at index 1.
+            int currentIndex = Array.IndexOf(components, this);
+            while (currentIndex > 1)
+            {
+                if (!UnityEditorInternal.ComponentUtility.MoveComponentUp(this))
+                    break;
+
+                currentIndex--;
+                anyChange = true;
+            }
 
             if (anyChange)
             {
                 UnityEditor.EditorUtility.SetDirty(this);
+                UnityEditor.EditorUtility.SetDirty(gameObject);
             }
 #endif
         }

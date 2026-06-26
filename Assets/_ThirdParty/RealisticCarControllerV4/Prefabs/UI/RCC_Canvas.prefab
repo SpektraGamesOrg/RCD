@@ -289,7 +289,6 @@ GameObject:
   - component: {fileID: 11424040}
   - component: {fileID: 11457982}
   - component: {fileID: 11451790}
-  - component: {fileID: 11424478}
   - component: {fileID: 892636795038902173}
   m_Layer: 5
   m_Name: RCC_Canvas
@@ -344,6 +343,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -517,20 +517,6 @@ MonoBehaviour:
   useGradualThrottle: 0
   steeringWheel: {fileID: 11429860}
   joystick: {fileID: 6886153921428882455}
---- !u!114 &11424478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 102148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8647f49632a2254fac2ad6d517cdef8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedVehicleIndex: 0
-  selectedBehaviorIndex: 0
 --- !u!114 &892636795038902173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1336,7 +1322,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: InitBehavior
         m_Mode: 1
@@ -1692,7 +1678,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: Spawn
         m_Mode: 1
@@ -3779,7 +3765,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: Quit
         m_Mode: 1
@@ -3960,7 +3946,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: RestartScene
         m_Mode: 1
@@ -4443,7 +4429,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: SetBehavior
         m_Mode: 0
@@ -7116,7 +7102,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: SelectVehicle
         m_Mode: 0
@@ -9591,7 +9577,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: SetMobileController
         m_Mode: 0
@@ -13185,7 +13171,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RCC_Demo, Assembly-CSharp
         m_MethodName: SpawnPhoton
         m_Mode: 1
@@ -13495,7 +13481,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11424478}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RCC_Demo, Assembly-CSharp
         m_MethodName: SelectPhotonVehicle
         m_Mode: 0
