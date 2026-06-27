@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Milestones;
 using Save;
 using SpektraGames.RuntimeUI.Runtime;
 using SpektraGames.SpektraUtilities.Runtime;
@@ -69,21 +70,32 @@ namespace Core
             
             Initializing = true;
 
-            // Auto-enable RCC's on-screen mobile controller on real Android / iOS device builds only.
-            // This MUST stay before the first await below: RCC_MobileButtons.Start() reads
-            // mobileControllerEnabled during scene startup, which happens before this async method
-            // resumes after the first await, so setting it any later leaves the mobile buttons disabled
-            // on the first read. Application.isMobilePlatform is always false in the Editor (regardless of
-            // the active build target), so the Editor path is never taken and we keep the keyboard setup.
+            // Auto-enable RCC's on-screen mobile controller on real Android / iOS device builds AND in the
+            // Editor. This MUST stay before the first await below: RCC_MobileButtons.Start() reads
+            // mobileControllerEnabled during scene startup, which happens before this async method resumes
+            // after the first await, so setting it any later leaves the mobile buttons disabled on the first
+            // read (and re-disabled on the next RCC_Events.OnVehicleChanged, e.g. when a vehicle is registered).
+            // We deliberately enable it in the Editor too (Application.isEditor) so the on-screen Gas/Brake/
+            // handbrake/arrow buttons stay visible while iterating on the in-game HUD, instead of being hidden
+            // because Application.isMobilePlatform is false in the Editor. To avoid losing keyboard driving in
+            // the Editor, RCC_InputManager.GetInputs() merges the keyboard inputs with the mobile button inputs
+            // whenever it runs in the Editor (see the UNITY_EDITOR block there), so WASD/arrows AND the on-screen
+            // buttons both drive the car. On device, only the mobile buttons feed input as before.
             // RCC_Settings.Instance is a play-mode clone (see RCC_Settings.Instance), so this in-memory
             // change never modifies or dirties the RCC_Settings asset on disk.
             RCC_Settings rccSettings = RCC_Settings.Instance;
-            if (rccSettings && Application.isMobilePlatform)
+            if (rccSettings && (Application.isMobilePlatform || Application.isEditor))
                 rccSettings.mobileControllerEnabled = true;
 
             // Save system. Run this synchronously (before the first await) so the player is guaranteed
             // to own a starter vehicle before the garage / main menu start reading the save data.
             SaveManager.Initialize();
+
+            // Distance milestone service. Initialize right after the save system so it starts watching the
+            // odometer before any gameplay or UI reads it. It grants nothing on startup: milestones already
+            // reached in a previous session stay PENDING (claimable) - derived from the persisted distance
+            // and claimed count - and are paid only when claimed.
+            DistanceMilestoneManager.Initialize();
 
             // SR Debugger
 #if !DISABLE_SRDEBUGGER

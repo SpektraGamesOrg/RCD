@@ -612,6 +612,8 @@ public class RCC_Core : MonoBehaviour {
             return;
 
         RCC_Settings.BehaviorType currentBehaviorType = RCC_Settings.Instance.selectedBehaviorType;
+        
+        //Debug.LogError("SetBehavior: " + currentBehaviorType.behaviorName);
 
         carController.steeringHelper = currentBehaviorType.steeringHelper;
         carController.tractionHelper = currentBehaviorType.tractionHelper;

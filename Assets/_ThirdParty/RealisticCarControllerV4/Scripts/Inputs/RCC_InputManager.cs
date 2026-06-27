@@ -235,8 +235,21 @@ public class RCC_InputManager : RCC_Singleton<RCC_InputManager> {
 
         }
 
-        // If the mobile controller is disabled, read standard input from the InputActions asset.
-        if (!Settings.mobileControllerEnabled) {
+        // PROJECT MODIFICATION (DRIVE01): decouple which input sources are read so the on-screen mobile
+        // buttons and the keyboard can BOTH drive the car in the Editor.
+        // - On device / standalone builds: behavior is unchanged from stock RCC -> mobile buttons feed input
+        //   when mobileControllerEnabled is true, keyboard otherwise (the two are mutually exclusive).
+        // - In the Editor: we force mobileControllerEnabled true (see GameInitializer) so the mobile buttons
+        //   stay visible for HUD work, but we ALSO read the keyboard here and merge the mobile inputs on top,
+        //   so WASD/arrows keep working while the buttons are clickable.
+        bool readMobile = Settings.mobileControllerEnabled;
+        bool readKeyboard = !readMobile;
+#if UNITY_EDITOR
+        readKeyboard = true;
+#endif
+
+        // Standard input from the InputActions asset (keyboard / gamepad).
+        if (readKeyboard) {
 
             try {
 
@@ -258,18 +271,27 @@ public class RCC_InputManager : RCC_Singleton<RCC_InputManager> {
 
             }
 
-        } else {
+        }
 
-            // If using mobile controls, read from RCC_MobileButtons.
-            if (RCC_MobileButtons.mobileInputs != null) {
+        // Mobile (on-screen button) input from RCC_MobileButtons.
+        if (readMobile && RCC_MobileButtons.mobileInputs != null) {
 
-                inputs.throttleInput = RCC_MobileButtons.mobileInputs.throttleInput;
-                inputs.brakeInput = RCC_MobileButtons.mobileInputs.brakeInput;
-                inputs.steerInput = RCC_MobileButtons.mobileInputs.steerInput;
-                inputs.handbrakeInput = RCC_MobileButtons.mobileInputs.handbrakeInput;
-                inputs.boostInput = RCC_MobileButtons.mobileInputs.boostInput;
-
-            }
+#if UNITY_EDITOR
+            // Editor: merge on top of the keyboard values so neither source is lost. Take the stronger of the
+            // two for the analog "pressed" axes, and additively combine steering (clamped to [-1, 1]).
+            inputs.throttleInput = Mathf.Max(inputs.throttleInput, RCC_MobileButtons.mobileInputs.throttleInput);
+            inputs.brakeInput = Mathf.Max(inputs.brakeInput, RCC_MobileButtons.mobileInputs.brakeInput);
+            inputs.steerInput = Mathf.Clamp(inputs.steerInput + RCC_MobileButtons.mobileInputs.steerInput, -1f, 1f);
+            inputs.handbrakeInput = Mathf.Max(inputs.handbrakeInput, RCC_MobileButtons.mobileInputs.handbrakeInput);
+            inputs.boostInput = Mathf.Max(inputs.boostInput, RCC_MobileButtons.mobileInputs.boostInput);
+#else
+            // Device / standalone: mobile buttons fully define the input (stock RCC behavior).
+            inputs.throttleInput = RCC_MobileButtons.mobileInputs.throttleInput;
+            inputs.brakeInput = RCC_MobileButtons.mobileInputs.brakeInput;
+            inputs.steerInput = RCC_MobileButtons.mobileInputs.steerInput;
+            inputs.handbrakeInput = RCC_MobileButtons.mobileInputs.handbrakeInput;
+            inputs.boostInput = RCC_MobileButtons.mobileInputs.boostInput;
+#endif
 
         }
 

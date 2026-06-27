@@ -8,7 +8,8 @@ namespace Save
     {
         public const string Gold           = "coins";
         public const string SelectedVehicle = "selected_vehicle"; // stored as (int)VehicleNameType
-        public const string DistanceDriven = "distance_driven"; // stored as (int)VehicleNameType
+        public const string DistanceDriven = "distance_driven"; // total km driven, all cars (whole km)
+        public const string DistanceMilestonesClaimed = "distance_milestones_claimed"; // how many distance milestones have been granted
 
         // Settings
         public const string MasterVolume    = "master_volume";

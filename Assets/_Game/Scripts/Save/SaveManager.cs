@@ -76,6 +76,19 @@ namespace Save
             DistanceDrivenKm += amount;
         }
 
+        /// <summary>
+        /// How many distance milestones have been completed and rewarded so far (the global progression
+        /// counter; distance milestones are device-level, not per vehicle). Equals the index of the next
+        /// unclaimed milestone. Owned by the milestone service (see Milestones.DistanceMilestoneManager);
+        /// raises no event of its own - that service raises its own progress event. Negative values clamp
+        /// to 0. Does not flush; call <see cref="Save"/> to persist.
+        /// </summary>
+        public static int DistanceMilestonesClaimed
+        {
+            get => PlayerPrefs.GetInt(SaveKeys.DistanceMilestonesClaimed, 0);
+            set => PlayerPrefs.SetInt(SaveKeys.DistanceMilestonesClaimed, value < 0 ? 0 : value);
+        }
+
         // ---------------------------------------------------------------------
         // Settings
         // ---------------------------------------------------------------------
@@ -312,7 +325,7 @@ namespace Save
         private static void EnsureStarterVehicle()
         {
             VehicleContainer container = VehicleContainer.Instance;
-            if (container == null || container.Vehicles.Count == 0)
+            if (!container || container.Vehicles.Count == 0)
             {
                 Debug.LogError("[SaveManager] No vehicles registered; cannot grant a starter vehicle.");
                 return;

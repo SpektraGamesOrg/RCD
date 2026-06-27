@@ -370,9 +370,9 @@ public class RCC_UI_DashboardDisplay : RCC_Core {
         if (KMHLabel) {
 
             if (Settings.units == RCC_Settings.Units.KMH)
-                KMHLabel.text = Inputs.KMH.ToString("0") + "\nKMH";
+                KMHLabel.text = Inputs.KMH.ToString("0");
             else
-                KMHLabel.text = (Inputs.KMH * 0.62f).ToString("0") + "\nMPH";
+                KMHLabel.text = (Inputs.KMH * 0.62f).ToString("0");
 
         }
 

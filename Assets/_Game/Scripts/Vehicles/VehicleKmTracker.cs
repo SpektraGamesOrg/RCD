@@ -1,4 +1,5 @@
 using Core;
+using Milestones;
 using Save;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -50,8 +51,8 @@ namespace Vehicles
         {
             if (!body)
             {
-                Debug.Log($"[VehicleKmTracker] {name} has no Rigidbody assigned; odometer disabled. " +
-                               "Re-run MainVehicleBehaviour.Validate to wire it.", this);
+                Debug.LogError($"[VehicleKmTracker] {name} has no Rigidbody assigned; odometer disabled. " +
+                          "Re-run MainVehicleBehaviour.Validate to wire it.", this);
                 enabled = false;
             }
         }
@@ -60,7 +61,7 @@ namespace Vehicles
         {
             if (!GameManager.Exists())
             {
-                Debug.LogError($"[VehicleKmTracker] {name} Component disabled because of we are not in game scene", this);
+                Debug.Log($"[VehicleKmTracker] {name} Component disabled because of we are not in game scene", this);
                 enabled = false;
             }
         }
@@ -80,6 +81,11 @@ namespace Vehicles
 
             _sessionKm += stepKm;
             _pendingKm += stepKm;
+
+            // Feed the live (uncommitted) distance to the milestone service so the HUD bar can move smoothly
+            // while driving. This is a plain float assignment - no allocations, no PlayerPrefs - and is
+            // display-only; milestone rewards still key off the committed whole-km value at commit time.
+            DistanceMilestoneManager.ReportSessionDistanceKm(_pendingKm);
         }
 
         // Stage progress whenever the car is torn down (run end / scene change / pooled away).
