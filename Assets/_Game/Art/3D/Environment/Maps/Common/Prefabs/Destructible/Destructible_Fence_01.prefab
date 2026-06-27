@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3663024435765465243}
   - component: {fileID: 3660863326718340060}
   - component: {fileID: 6628365259000102617}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 4332984809728423647}
   - component: {fileID: 4363620880524362294}
   - component: {fileID: 2677904331643705808}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 467382036114079306}
   - component: {fileID: 7443711463345434254}
   - component: {fileID: 4929514277880017562}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -436,7 +436,7 @@ GameObject:
   - component: {fileID: 30310097321247605}
   - component: {fileID: 5315111807877454359}
   - component: {fileID: 1098204093384283806}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -577,7 +577,7 @@ GameObject:
   - component: {fileID: 5221074465568832842}
   - component: {fileID: 3747278330748344473}
   - component: {fileID: 4547096341976627347}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -716,7 +716,7 @@ GameObject:
   - component: {fileID: 3979826010530231674}
   - component: {fileID: -8449111253969319965}
   - component: {fileID: 8091206657012531266}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Destructible_Fence_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -768,7 +768,7 @@ LODGroup:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3424544770035072338}
-  serializedVersion: 2
+  serializedVersion: 3
   m_LocalReferencePoint: {x: -0.00072356313, y: 0.4272478, z: 0.007557392}
   m_Size: 1.9616834
   m_FadeMode: 0
@@ -780,6 +780,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 5391229470126115158}
   m_Enabled: 1
+  m_GlobalIlluminationLOD: 0
 --- !u!1 &3530044608996119086
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +794,7 @@ GameObject:
   - component: {fileID: 3961584447376352381}
   - component: {fileID: 9030568881082188080}
   - component: {fileID: 1919455595822704714}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -932,7 +933,7 @@ GameObject:
   - component: {fileID: 4109259801624267835}
   - component: {fileID: 2670415491874911997}
   - component: {fileID: 5391229470126115158}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1020,7 +1021,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8119869347459236828}
-  m_Layer: 19
+  m_Layer: 7
   m_Name: Fence_01_Destructed
   m_TagString: Untagged
   m_Icon: {fileID: 0}

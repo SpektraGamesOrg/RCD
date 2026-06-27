@@ -69,12 +69,24 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: ec956a5c68696294cb91fc79f53736e9, type: 2}
     - target: {fileID: -336939851148429128, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -336939851148429128, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
       propertyPath: m_Name
       value: ChainFence
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227794283282164615, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1227794283282164615, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
       propertyPath: m_IsActive
@@ -92,6 +104,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: ec956a5c68696294cb91fc79f53736e9, type: 2}
+    - target: {fileID: 7081274404333775219, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7081274404333775219, guid: 16f72b556e290f84b83d2a5e6a776baf, type: 3}
       propertyPath: m_IsActive
       value: 0
