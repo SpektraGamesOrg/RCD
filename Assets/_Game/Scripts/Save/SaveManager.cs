@@ -24,30 +24,41 @@ namespace Save
         // ---------------------------------------------------------------------
         // Default values
         // ---------------------------------------------------------------------
-        private const int DefaultCoins = 150;
+        private const int DefaultGold = 150;
         private const float DefaultMasterVolume = 1f;
         private const float DefaultSfxVolume = 1f;
         private const bool DefaultVibration = true;
-        private const VehicleID DefaultSelectedVehicle = VehicleID.None;
 
         // ---------------------------------------------------------------------
         // Currency
         // ---------------------------------------------------------------------
 
-        /// <summary>
-        /// Raised whenever <see cref="Coins"/> changes, carrying the new total. Lets live UI (e.g. the
-        /// in-game HUD) update on reward grants without polling. Note: PlayerPrefs is not flushed yet;
-        /// call <see cref="Save"/> to persist.
-        /// </summary>
         public static event System.Action<int> OnCoinsChanged;
+        public static event System.Action<int> OnDistanceDrivenChanged;
 
-        public static int Coins
+        /// <summary>
+        /// Fired after all saved data is wiped (<see cref="ResetAll"/>). Per-value events are not raised
+        /// for a full reset, so listeners should re-read everything they display when this fires.
+        /// </summary>
+        public static event System.Action OnSaveReset;
+
+        public static int Gold
         {
-            get => PlayerPrefs.GetInt(SaveKeys.Coins, DefaultCoins);
+            get => PlayerPrefs.GetInt(SaveKeys.Gold, DefaultGold);
             set
             {
-                PlayerPrefs.SetInt(SaveKeys.Coins, value);
+                PlayerPrefs.SetInt(SaveKeys.Gold, value);
                 OnCoinsChanged?.Invoke(value);
+            }
+        }
+
+        public static int DistanceDrivenKm
+        {
+            get => PlayerPrefs.GetInt(SaveKeys.DistanceDriven, 0);
+            set
+            {
+                PlayerPrefs.SetInt(SaveKeys.DistanceDriven, value);
+                OnDistanceDrivenChanged?.Invoke(value);
             }
         }
 
@@ -57,7 +68,12 @@ namespace Save
         /// </summary>
         public static void AddCoins(int amount)
         {
-            Coins += amount;
+            Gold += amount;
+        }
+
+        public static void AddDistanceDriven(int amount)
+        {
+            DistanceDrivenKm += amount;
         }
 
         // ---------------------------------------------------------------------
@@ -91,7 +107,7 @@ namespace Save
         /// </summary>
         public static VehicleID SelectedVehicle
         {
-            get => (VehicleID)PlayerPrefs.GetInt(SaveKeys.SelectedVehicle, (int)DefaultSelectedVehicle);
+            get => (VehicleID)PlayerPrefs.GetInt(SaveKeys.SelectedVehicle, (int)VehicleID.None);
             private set => PlayerPrefs.SetInt(SaveKeys.SelectedVehicle, (int)value);
         }
 
@@ -184,6 +200,34 @@ namespace Save
             SetVehicle(vehicle);
         }
 
+        /// <summary>
+        /// How many rewarded ads the player has watched toward unlocking the given vehicle
+        /// (used by <see cref="VehicleObtainType.ByWatchAds"/>). Distance milestones are global and
+        /// read from <see cref="DistanceDrivenKm"/> instead - they are not tracked per vehicle.
+        /// </summary>
+        public static int GetVehicleWatchAdCount(VehicleID id)
+        {
+            VehicleSaveData vehicle = GetVehicleList().vehicles.Find(v => v.id == id);
+            return vehicle?.watchAdCount ?? 0;
+        }
+
+        /// <summary>
+        /// Stores the rewarded-ad watch count for a vehicle, creating its entry if needed.
+        /// Does not flush; call <see cref="Save"/> to persist.
+        /// </summary>
+        public static void SetVehicleWatchAdCount(VehicleID id, int count)
+        {
+            if (id == VehicleID.None)
+            {
+                Debug.LogError("[SaveManager] SetVehicleWatchAdCount called with None id.");
+                return;
+            }
+
+            VehicleSaveData vehicle = GetVehicle(id);
+            vehicle.watchAdCount = count < 0 ? 0 : count;
+            SetVehicle(vehicle);
+        }
+
         // ---------------------------------------------------------------------
         // Gold collection cooldowns (stored as a single GoldCooldownList JSON blob)
         // ---------------------------------------------------------------------
@@ -267,9 +311,6 @@ namespace Save
         // Grants the first roster vehicle (the free starter) when the player owns nothing yet.
         private static void EnsureStarterVehicle()
         {
-            if (GetOwnedVehicles().Count > 0)
-                return;
-
             VehicleContainer container = VehicleContainer.Instance;
             if (container == null || container.Vehicles.Count == 0)
             {
@@ -277,10 +318,28 @@ namespace Save
                 return;
             }
 
-            VehicleID starter = container.Vehicles[0].ID;
-            AddOwned(starter);
-            SelectVehicle(starter);
-            Save();
+            bool anyChange = false;
+
+            for (var i = 0; i < container.Vehicles.Count; i++)
+            {
+                var vehicle = container.Vehicles[i];
+
+                if (vehicle.VehicleObtainType == VehicleObtainType.Free &&
+                    !IsOwned(vehicle.ID))
+                {
+                    AddOwned(vehicle.ID);
+
+                    if (SelectedVehicle == VehicleID.None)
+                        SelectVehicle(vehicle.ID);
+
+                    anyChange = true;
+                }
+            }
+
+            if (anyChange)
+            {
+                Save();
+            }
         }
 
         // ---------------------------------------------------------------------
@@ -302,6 +361,7 @@ namespace Save
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
+            OnSaveReset?.Invoke();
         }
 
         // ---------------------------------------------------------------------

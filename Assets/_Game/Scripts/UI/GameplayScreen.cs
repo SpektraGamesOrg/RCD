@@ -17,7 +17,7 @@ namespace UI
         {
             base.OnBeforeShowing(immediate, uiData);
             SaveManager.OnCoinsChanged += OnCoinsChanged;
-            RefreshCoins(SaveManager.Coins);
+            RefreshCoins(SaveManager.Gold);
         }
 
         protected override void OnHidden(bool immediate = false)

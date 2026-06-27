@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using SpektraGames.ResourceObject.Runtime;
 using UnityEngine;
 
@@ -13,12 +14,17 @@ namespace Vehicles
     [Serializable]
     public class VehicleEntry
     {
-        [SerializeField] private VehicleID id;
-        [SerializeField] private ResourceObject<MainVehicleBehaviour> mainBehaviour = new();
-        [SerializeField] private uint price = 1500;
+        [field: SerializeField] public VehicleID ID { get; private set; }
 
-        public VehicleID ID => id;
-        public ResourceObject<MainVehicleBehaviour> MainBehaviour => mainBehaviour;
-        public uint Price => price;
+        [field: SerializeField] public ResourceObject<MainVehicleBehaviour> MainBehaviour { get; private set; } = new();
+
+        [field: SerializeField] public VehicleObtainType VehicleObtainType { get; private set; } = VehicleObtainType.ByGold;
+
+        [field: SerializeField, HideIf(nameof(IsFree))]
+        public int VehicleObtainTargetAmount { get; private set; } = 1500;
+
+        // Free cars are auto-granted (see SaveManager.EnsureStarterVehicle) and have no unlock target,
+        // so the target amount is hidden in the inspector when this entry is Free.
+        private bool IsFree => (VehicleObtainType & VehicleObtainType.Free) != 0;
     }
 }

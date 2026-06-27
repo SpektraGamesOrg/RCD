@@ -6,8 +6,9 @@ namespace Save
     /// </summary>
     public static class SaveKeys
     {
-        public const string Coins           = "coins";
+        public const string Gold           = "coins";
         public const string SelectedVehicle = "selected_vehicle"; // stored as (int)VehicleNameType
+        public const string DistanceDriven = "distance_driven"; // stored as (int)VehicleNameType
 
         // Settings
         public const string MasterVolume    = "master_volume";

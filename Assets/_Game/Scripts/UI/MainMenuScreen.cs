@@ -1,6 +1,8 @@
 using System;
 using Core;
+using Cysharp.Threading.Tasks;
 using Save;
+using SpektraGames.RuntimeUI.Runtime;
 using TMPro;
 using UIManager;
 using UnityEngine;
@@ -20,8 +22,10 @@ namespace UI
     /// </summary>
     public class MainMenuScreen : ScreenBase
     {
-        [Header("Garage")]
-        [SerializeField] private GarageManager garageManager;
+        private GarageManager _garageManager = null;
+
+        // Guards the rewarded-ad flow so a second tap can't start a second ad while one is in flight.
+        private bool _processingAd;
 
         [Header("Vehicle Navigation")]
         [SerializeField] private Button leftArrowButton;
@@ -30,15 +34,22 @@ namespace UI
         [SerializeField] private GameObject lockedBadge;
 
         [Header("Top Bar")]
-        [SerializeField] private TMP_Text coinAmountText;
+        // Gold and driven-distance are no longer shown here: each lives in its own self-updating widget
+        // (CoinWidget / DriveDistanceWidget) on the Widget_Coin / Widget_DriveDistance prefabs.
         [SerializeField] private Button settingsButton;
 
         [Header("Actions")]
         [SerializeField] private Button playButton;
-        [SerializeField] private Button customizeButton;
+        [SerializeField] private GameObject buyArea;
+        [SerializeField] private Button watchAdsBuyButton;
+        [SerializeField] private TMP_Text watchAdsButtonText;
+        [SerializeField] private GameObject unlockStatusArea;
+        [SerializeField] private TMP_Text unlockStatusText;
+        [SerializeField] private TMP_Text unlockStatusDistanceText;
+        [SerializeField] private LoadingBar unlockStatusLoadingBar;
+        [SerializeField] private Button claimNowButton;
         [SerializeField] private Button buyButton;
         [SerializeField] private TMP_Text buyPriceText;
-        [SerializeField] private GameObject buyCoinIcon;
 
         /// <summary>Raised when the player taps Customize (no customization screen exists yet).</summary>
         public event Action CustomizeRequested;
@@ -52,15 +63,16 @@ namespace UI
             if (leftArrowButton) leftArrowButton.onClick.AddListener(OnPreviousClicked);
             if (rightArrowButton) rightArrowButton.onClick.AddListener(OnNextClicked);
             if (playButton) playButton.onClick.AddListener(OnPlayClicked);
-            if (customizeButton) customizeButton.onClick.AddListener(OnCustomizeClicked);
             if (buyButton) buyButton.onClick.AddListener(OnBuyClicked);
+            if (watchAdsBuyButton) watchAdsBuyButton.onClick.AddListener(OnWatchAdsClicked);
+            if (claimNowButton) claimNowButton.onClick.AddListener(OnClaimNowClicked);
             if (settingsButton) settingsButton.onClick.AddListener(OnSettingsClicked);
 
             // NOTE: garageManager is bound at runtime via Bind(), not in the inspector. This screen is a
             // persistent (DontDestroyOnLoad) view owned by GameUIManager, while the garage lives in the
             // MainMenu scene, so the cross-scene reference can't be serialized.
-            if (garageManager)
-                garageManager.DisplayedVehicleChanged += OnDisplayedVehicleChanged;
+            if (_garageManager)
+                _garageManager.DisplayedVehicleChanged += OnDisplayedVehicleChanged;
         }
 
         /// <summary>
@@ -70,19 +82,19 @@ namespace UI
         /// </summary>
         public void Bind(GarageManager manager)
         {
-            if (garageManager == manager)
+            if (_garageManager == manager)
             {
                 Refresh(CurrentVehicle);
                 return;
             }
 
-            if (garageManager)
-                garageManager.DisplayedVehicleChanged -= OnDisplayedVehicleChanged;
+            if (_garageManager)
+                _garageManager.DisplayedVehicleChanged -= OnDisplayedVehicleChanged;
 
-            garageManager = manager;
+            _garageManager = manager;
 
-            if (garageManager)
-                garageManager.DisplayedVehicleChanged += OnDisplayedVehicleChanged;
+            if (_garageManager)
+                _garageManager.DisplayedVehicleChanged += OnDisplayedVehicleChanged;
 
             Refresh(CurrentVehicle);
         }
@@ -92,20 +104,33 @@ namespace UI
             if (leftArrowButton) leftArrowButton.onClick.RemoveListener(OnPreviousClicked);
             if (rightArrowButton) rightArrowButton.onClick.RemoveListener(OnNextClicked);
             if (playButton) playButton.onClick.RemoveListener(OnPlayClicked);
-            if (customizeButton) customizeButton.onClick.RemoveListener(OnCustomizeClicked);
             if (buyButton) buyButton.onClick.RemoveListener(OnBuyClicked);
+            if (watchAdsBuyButton) watchAdsBuyButton.onClick.RemoveListener(OnWatchAdsClicked);
+            if (claimNowButton) claimNowButton.onClick.RemoveListener(OnClaimNowClicked);
             if (settingsButton) settingsButton.onClick.RemoveListener(OnSettingsClicked);
 
-            if (garageManager)
-                garageManager.DisplayedVehicleChanged -= OnDisplayedVehicleChanged;
+            UnsubscribeFromSaveEvents();
+
+            if (_garageManager)
+                _garageManager.DisplayedVehicleChanged -= OnDisplayedVehicleChanged;
         }
 
         protected override void OnBeforeShowing(bool immediate, object uiData = null)
         {
             base.OnBeforeShowing(immediate, uiData);
 
+            // Listen for save changes while visible so the screen stays in sync no matter who edits the
+            // data (gameplay rewards, debug tools, etc.) instead of those callers reaching in to refresh it.
+            SubscribeToSaveEvents();
+
             // Sync the UI to whatever the garage is currently showing when the screen opens.
             Refresh(CurrentVehicle);
+        }
+
+        protected override void OnHidden(bool immediate = false)
+        {
+            base.OnHidden(immediate);
+            UnsubscribeFromSaveEvents();
         }
 
         // ---------------------------------------------------------------------
@@ -114,12 +139,12 @@ namespace UI
 
         private void OnNextClicked()
         {
-            if (garageManager) garageManager.ShowNext();
+            if (_garageManager) _garageManager.ShowNext();
         }
 
         private void OnPreviousClicked()
         {
-            if (garageManager) garageManager.ShowPrevious();
+            if (_garageManager) _garageManager.ShowPrevious();
         }
 
         private void OnDisplayedVehicleChanged(VehicleID id) => Refresh(id);
@@ -127,22 +152,80 @@ namespace UI
         private void OnBuyClicked()
         {
             VehicleID id = CurrentVehicle;
-            if (id == VehicleID.None || SaveManager.IsOwned(id))
+            VehicleEntry entry = GetEntry(id);
+            if (entry == null || SaveManager.IsOwned(id) || !Has(entry.VehicleObtainType, VehicleObtainType.ByGold))
                 return;
 
-            int price = PriceOf(id);
-            if (SaveManager.Coins < price)
+            int price = TargetOf(entry);
+            if (SaveManager.Gold < price)
             {
-                Debug.LogError($"[MainMenu] Not enough coins to buy {id}. Need {price}, have {SaveManager.Coins}.");
+                Debug.LogError($"[MainMenu] Not enough coins to buy {id}. Need {price}, have {SaveManager.Gold}.");
+                RuntimeUI.ShowToast("Not enough gold to buy");
                 return;
             }
 
-            SaveManager.Coins -= price;
-            SaveManager.AddOwned(id);
-            SaveManager.SelectVehicle(id);
-            SaveManager.Save();
+            SaveManager.Gold -= price;
+            UnlockVehicle(id);
 
-            Refresh(id);
+            Refresh(CurrentVehicle);
+        }
+
+        private void OnWatchAdsClicked()
+        {
+            OnWatchAdsClickedAsync(CurrentVehicle).Forget();
+        }
+
+        // Plays a rewarded ad for an unlock-by-ads vehicle; on a successful watch it counts one ad toward
+        // this car's target and unlocks it once the target is reached. The vehicle id is captured up front
+        // so the right car is credited even if the player browses away while the ad is on screen.
+        private async UniTaskVoid OnWatchAdsClickedAsync(VehicleID id)
+        {
+            if (_processingAd)
+                return;
+
+            VehicleEntry entry = GetEntry(id);
+            if (entry == null || SaveManager.IsOwned(id) || !Has(entry.VehicleObtainType, VehicleObtainType.ByWatchAds))
+                return;
+
+            _processingAd = true;
+            if (watchAdsBuyButton) watchAdsBuyButton.interactable = false;
+            try
+            {
+                if (!await ShowRewardedAdAsync())
+                    return;
+
+                int target = TargetOf(entry);
+                int watched = SaveManager.GetVehicleWatchAdCount(id) + 1;
+                SaveManager.SetVehicleWatchAdCount(id, watched);
+
+                if (watched >= target)
+                    UnlockVehicle(id);
+                else
+                    SaveManager.Save();
+            }
+            finally
+            {
+                _processingAd = false;
+                // Always resync to whatever car is on screen now (the player may have browsed during the ad).
+                Refresh(CurrentVehicle);
+            }
+        }
+
+        private void OnClaimNowClicked()
+        {
+            VehicleID id = CurrentVehicle;
+            VehicleEntry entry = GetEntry(id);
+            if (entry == null || SaveManager.IsOwned(id) || !Has(entry.VehicleObtainType, VehicleObtainType.DistanceMilestoneKm))
+                return;
+
+            if (SaveManager.DistanceDrivenKm < TargetOf(entry))
+            {
+                Debug.LogError($"[MainMenu] Cannot claim {id}: distance milestone not reached.");
+                return;
+            }
+
+            UnlockVehicle(id);
+            Refresh(CurrentVehicle);
         }
 
         private void OnPlayClicked()
@@ -185,9 +268,6 @@ namespace UI
 
         private void Refresh(VehicleID id)
         {
-            if (coinAmountText)
-                coinAmountText.text = SaveManager.Coins.ToString("N0");
-
             bool hasVehicle = id != VehicleID.None;
             bool owned = hasVehicle && SaveManager.IsOwned(id);
 
@@ -199,59 +279,152 @@ namespace UI
 
             if (owned)
             {
-                // Browsing an owned car selects it so the garage reflects the choice.
+                // Browsing an owned car selects it so the garage reflects the choice. The buy area (and
+                // every obtain control inside it) is hidden; only Play/Drive is shown.
                 SaveManager.SelectVehicle(id);
 
-                if (buyButton) buyButton.gameObject.SetActive(false);
+                if (buyArea) buyArea.SetActive(false);
                 if (playButton)
                 {
                     playButton.gameObject.SetActive(true);
                     playButton.interactable = true;
                 }
-                if (customizeButton) customizeButton.interactable = true;
+                return;
             }
-            else
-            {
-                // Not owned: only Buy is available. Play and Customize are turned off.
-                if (playButton) playButton.gameObject.SetActive(false);
-                if (customizeButton) customizeButton.interactable = false;
 
-                int price = PriceOf(id);
-                if (buyButton)
-                {
-                    buyButton.gameObject.SetActive(hasVehicle);
-                    buyButton.interactable = SaveManager.Coins >= price;
-                }
-                if (buyCoinIcon) buyCoinIcon.SetActive(true);
-                if (buyPriceText) buyPriceText.text = price.ToString("N0");
-            }
+            // Not owned: hide Play/Drive and show the buy area. Free cars never reach here - they are
+            // auto-granted in SaveManager.EnsureStarterVehicle - so only Gold / WatchAds / Distance apply.
+            if (playButton) playButton.gameObject.SetActive(false);
+            if (buyArea) buyArea.SetActive(hasVehicle);
+
+            if (hasVehicle)
+                ConfigureBuyArea(id);
         }
 
-        // ---------------------------------------------------------------------
-        // Debug helpers
-        // ---------------------------------------------------------------------
-
-        /// <summary>
-        /// Refreshes coin display and vehicle action buttons. Call after modifying SaveManager.Coins externally.
-        /// </summary>
-        public void RefreshCoinDisplay()
+        // Turns each obtain control inside the buy area on/off based on the vehicle's VehicleObtainType
+        // flags (a car can offer several at once). buyArea must be the parent of buyButton,
+        // watchAdsBuyButton, unlockStatusArea and claimNowButton so hiding it hides them all.
+        private void ConfigureBuyArea(VehicleID id)
         {
-            Refresh(CurrentVehicle);
+            VehicleEntry entry = GetEntry(id);
+            VehicleObtainType obtain = entry != null ? entry.VehicleObtainType : default;
+            int target = TargetOf(entry);
+
+            // --- Obtain by gold: show the price and gate the button on the player's balance. ---
+            bool byGold = Has(obtain, VehicleObtainType.ByGold);
+            if (buyButton)
+            {
+                buyButton.gameObject.SetActive(byGold);
+            }
+            if (byGold && buyPriceText) buyPriceText.text = "BUY " + target.ToString("N0");
+
+            // --- Obtain by watching ads: show "WATCH AD watched/target" for this specific car. ---
+            bool byAds = Has(obtain, VehicleObtainType.ByWatchAds);
+            if (watchAdsBuyButton)
+            {
+                watchAdsBuyButton.gameObject.SetActive(byAds);
+                watchAdsBuyButton.interactable = byAds && !_processingAd;
+            }
+            if (byAds && watchAdsButtonText)
+            {
+                int watched = Mathf.Min(SaveManager.GetVehicleWatchAdCount(id), target);
+                watchAdsButtonText.text = $"WATCH AD {watched}/{target}";
+            }
+
+            // --- Obtain by distance milestone: global km progress, with Claim Now once the target is hit. ---
+            bool byDistance = Has(obtain, VehicleObtainType.DistanceMilestoneKm);
+            if (unlockStatusArea) unlockStatusArea.SetActive(byDistance);
+
+            bool milestoneReached = false;
+            if (byDistance)
+            {
+                int driven = SaveManager.DistanceDrivenKm;
+                float progress01 = target > 0 ? Mathf.Clamp01((float)driven / target) : 1f;
+                int percent = Mathf.Clamp(Mathf.FloorToInt(progress01 * 100f), 0, 100);
+                milestoneReached = driven >= target;
+
+                if (unlockStatusText)
+                    unlockStatusText.text = $"UNLOCK STATUS: <color=#FFC31A>{percent}%</color>";
+                if (unlockStatusDistanceText)
+                    unlockStatusDistanceText.text = $"{Mathf.Min(driven, target)} / {target} KM";
+                if (unlockStatusLoadingBar)
+                    unlockStatusLoadingBar.SetProgress(progress01);
+            }
+
+            // Claim Now is an extra button that only appears once the distance milestone is reached.
+            if (claimNowButton) claimNowButton.gameObject.SetActive(byDistance && milestoneReached);
         }
+
+        // ---------------------------------------------------------------------
+        // Save events
+        // ---------------------------------------------------------------------
+
+        // Subscriptions are refreshed defensively (-= then +=) so re-showing the screen can never stack
+        // duplicate handlers. Driven from SaveManager so any system that mutates the save (gameplay,
+        // debug menu, etc.) keeps this screen correct without depending on a reference to it.
+        private void SubscribeToSaveEvents()
+        {
+            SaveManager.OnCoinsChanged -= HandleSaveValueChanged;
+            SaveManager.OnCoinsChanged += HandleSaveValueChanged;
+            SaveManager.OnDistanceDrivenChanged -= HandleSaveValueChanged;
+            SaveManager.OnDistanceDrivenChanged += HandleSaveValueChanged;
+            SaveManager.OnSaveReset -= HandleSaveReset;
+            SaveManager.OnSaveReset += HandleSaveReset;
+        }
+
+        private void UnsubscribeFromSaveEvents()
+        {
+            SaveManager.OnCoinsChanged -= HandleSaveValueChanged;
+            SaveManager.OnDistanceDrivenChanged -= HandleSaveValueChanged;
+            SaveManager.OnSaveReset -= HandleSaveReset;
+        }
+
+        // Gold and distance both feed the buy area (affordability, milestone progress), so any change
+        // re-runs the same full refresh for the car currently on screen.
+        private void HandleSaveValueChanged(int _) => Refresh(CurrentVehicle);
+        private void HandleSaveReset() => Refresh(CurrentVehicle);
 
         // ---------------------------------------------------------------------
         // Helpers
         // ---------------------------------------------------------------------
 
-        private VehicleID CurrentVehicle => garageManager ? garageManager.CurrentVehicleId : VehicleID.None;
+        private VehicleID CurrentVehicle => _garageManager ? _garageManager.CurrentVehicleId : VehicleID.None;
 
-        private static int PriceOf(VehicleID id)
+        // Static catalog entry for a vehicle, or null if it has no entry / the container is missing.
+        private static VehicleEntry GetEntry(VehicleID id)
         {
-            if (id == VehicleID.None || VehicleContainer.Instance == null)
-                return 0;
+            if (id == VehicleID.None || !VehicleContainer.Instance)
+                return null;
 
-            VehicleEntry entry = VehicleContainer.Instance.GetVehicle(id);
-            return entry != null ? (int)entry.Price : 0;
+            return VehicleContainer.Instance.GetVehicle(id);
+        }
+
+        // The single configured target amount for an entry. Its meaning depends on the obtain type:
+        // gold price, number of ads to watch, or distance milestone in km (see VehicleObtainTargetAmount).
+        private static int TargetOf(VehicleEntry entry)
+        {
+            return entry != null ? entry.VehicleObtainTargetAmount : 0;
+        }
+
+        // Allocation-free flag test (Enum.HasFlag boxes); VehicleObtainType is a [Flags] enum.
+        private static bool Has(VehicleObtainType obtain, VehicleObtainType flag) => (obtain & flag) != 0;
+
+        // Grants the vehicle, selects it, and flushes the save. Shared by every unlock path
+        // (gold, ads, distance) so ownership is recorded the same way everywhere.
+        private static void UnlockVehicle(VehicleID id)
+        {
+            SaveManager.AddOwned(id);
+            SaveManager.SelectVehicle(id);
+            SaveManager.Save();
+        }
+
+        // TODO: Replace with the real rewarded-ad SDK call once it is integrated. For now this stub
+        // simulates a successful ad watch so the unlock-by-ads flow can be built and tested end to end.
+        private static async UniTask<bool> ShowRewardedAdAsync()
+        {
+            await UniTask.Yield();
+            Debug.Log("[MainMenu] (stub) Rewarded ad watched - ad SDK not integrated yet.");
+            return true;
         }
 
         // Turns "GTR_R35" into "GTR R35" for display. Cheap, allocation-light, only runs on swaps.

@@ -69,9 +69,13 @@ namespace Vehicles
                     continue;
                 }
 
-                if (!UnityEditor.EditorApplication.isCompiling &&
-                    !UnityEditor.EditorApplication.isUpdating &&
-                    !vehicles[i].MainBehaviour.IsValidForEditor)
+                if (UnityEditor.EditorApplication.isCompiling ||
+                    UnityEditor.EditorApplication.isUpdating)
+                {
+                    continue;
+                }
+
+                if (!vehicles[i].MainBehaviour.IsValidForEditor)
                 {
                     Debug.LogError($"vehicles[{i}] with id  {vehicles[i].ID} has invalid prefab", this);
                     continue;
@@ -85,8 +89,80 @@ namespace Vehicles
                 }
                 mainBehaviour.Validate();
             }
+
+            // Validate() keeps exactly one wired odometer on each physics root. This second pass strips
+            // any stray VehicleKmTracker left on a GameObject without a Rigidbody (e.g. on a nested
+            // body-less copy of the car) - those would fail at runtime. Deferred + guarded so the
+            // DestroyImmediate/Save never run during OnValidate and repeated calls don't stack.
+            CleanupKmTrackersDeferred();
 #endif
         }
+
+#if UNITY_EDITOR
+        // Guards against stacking duplicate delayCall cleanups while one is pending.
+        [NonSerialized] private bool _kmTrackerCleanupQueued;
+
+        private void CleanupKmTrackersDeferred()
+        {
+            if (_kmTrackerCleanupQueued)
+                return;
+
+            _kmTrackerCleanupQueued = true;
+            VehicleContainer self = this;
+
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (self)
+                    self._kmTrackerCleanupQueued = false;
+
+                if (!self ||
+                    UnityEditor.EditorApplication.isCompiling ||
+                    UnityEditor.EditorApplication.isUpdating)
+                {
+                    return;
+                }
+
+                self.CleanupKmTrackers();
+            };
+        }
+
+        // Removes every VehicleKmTracker that sits on a GameObject without a Rigidbody to read - those
+        // are the broken leftovers (duplicates, or a tracker on a nested body-less copy). The valid
+        // tracker on each physics root is left alone; MainVehicleBehaviour.Validate keeps it wired.
+        private void CleanupKmTrackers()
+        {
+            bool anyChange = false;
+
+            for (int i = 0; i < vehicles.Count; i++)
+            {
+                if (vehicles[i].ID == VehicleID.None || !vehicles[i].MainBehaviour.IsValidForEditor)
+                    continue;
+
+                MainVehicleBehaviour root = vehicles[i].MainBehaviour.GetEditorAsset();
+                if (!root)
+                    continue;
+
+                VehicleKmTracker[] trackers = root.GetComponentsInChildren<VehicleKmTracker>(true);
+                for (int t = 0; t < trackers.Length; t++)
+                {
+                    VehicleKmTracker tracker = trackers[t];
+                    if (tracker.GetComponent<Rigidbody>())
+                        continue;
+
+                    MainVehicleBehaviour owner = tracker.GetComponent<MainVehicleBehaviour>();
+                    if (owner)
+                        owner.EditorSetKmTracker(null);
+
+                    DestroyImmediate(tracker, true);
+                    UnityEditor.EditorUtility.SetDirty(root);
+                    anyChange = true;
+                }
+            }
+
+            if (anyChange)
+                UnityEditor.AssetDatabase.SaveAssets();
+        }
+#endif
 
         /// <summary>
         /// Loads and returns the prefab for a vehicle asynchronously,

@@ -4680,6 +4680,7 @@ MonoBehaviour:
   vehicleID: 3
   vehicleController: {fileID: 0}
   rigidbody: {fileID: 0}
+  kmTracker: {fileID: 0}
 --- !u!1 &4930972231964778698
 GameObject:
   m_ObjectHideFlags: 0
@@ -7145,6 +7146,7 @@ GameObject:
   - component: {fileID: 3476444351938451524}
   - component: {fileID: 6547014499700783746}
   - component: {fileID: 3571639989426556995}
+  - component: {fileID: 7490182128591222329}
   m_Layer: 11
   m_Name: Rx7
   m_TagString: Untagged
@@ -7186,6 +7188,7 @@ MonoBehaviour:
   vehicleID: 3
   vehicleController: {fileID: 3571639989426556995}
   rigidbody: {fileID: 6547014499700783746}
+  kmTracker: {fileID: 7490182128591222329}
 --- !u!54 &6547014499700783746
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7500,6 +7503,20 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
+--- !u!114 &7490182128591222329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7359951360754109498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633577043808a4cec8a90ca28b085916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKmTracker
+  body: {fileID: 6547014499700783746}
+  controller: {fileID: 3571639989426556995}
 --- !u!1 &7530180223929501733
 GameObject:
   m_ObjectHideFlags: 0

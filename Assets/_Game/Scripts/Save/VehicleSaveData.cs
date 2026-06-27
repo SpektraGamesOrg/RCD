@@ -14,15 +14,12 @@ namespace Save
     [Serializable]
     public class VehicleSaveData
     {
-        // Default values
-        public const string DefaultPaintColorHex = "#FFFFFF";
-
         public VehicleID id;
         public bool owned;
 
-        // --- Customization (extend freely) ---
-        // Example paint color. Maps to the CarShader color properties when applied.
-        public string paintColorHex = DefaultPaintColorHex;
+        // Rewarded ads watched toward unlocking this vehicle (VehicleObtainType.ByWatchAds).
+        // Ignored once the vehicle is owned.
+        public int watchAdCount;
 
         public VehicleSaveData() { }
         

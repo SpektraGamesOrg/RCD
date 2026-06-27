@@ -69,6 +69,18 @@ namespace Core
             
             Initializing = true;
 
+            // Auto-enable RCC's on-screen mobile controller on real Android / iOS device builds only.
+            // This MUST stay before the first await below: RCC_MobileButtons.Start() reads
+            // mobileControllerEnabled during scene startup, which happens before this async method
+            // resumes after the first await, so setting it any later leaves the mobile buttons disabled
+            // on the first read. Application.isMobilePlatform is always false in the Editor (regardless of
+            // the active build target), so the Editor path is never taken and we keep the keyboard setup.
+            // RCC_Settings.Instance is a play-mode clone (see RCC_Settings.Instance), so this in-memory
+            // change never modifies or dirties the RCC_Settings asset on disk.
+            RCC_Settings rccSettings = RCC_Settings.Instance;
+            if (rccSettings && Application.isMobilePlatform)
+                rccSettings.mobileControllerEnabled = true;
+
             // Save system. Run this synchronously (before the first await) so the player is guaranteed
             // to own a starter vehicle before the garage / main menu start reading the save data.
             SaveManager.Initialize();

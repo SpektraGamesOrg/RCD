@@ -3251,6 +3251,7 @@ GameObject:
   - component: {fileID: 3459056531034866381}
   - component: {fileID: 6448389183193360085}
   - component: {fileID: 2845316561103630150}
+  - component: {fileID: 8108563259994746695}
   m_Layer: 11
   m_Name: Supra
   m_TagString: Untagged
@@ -3292,6 +3293,7 @@ MonoBehaviour:
   vehicleID: 1
   vehicleController: {fileID: 2845316561103630150}
   rigidbody: {fileID: 6448389183193360085}
+  kmTracker: {fileID: 8108563259994746695}
 --- !u!54 &6448389183193360085
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3606,6 +3608,20 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
+--- !u!114 &8108563259994746695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337518441148050883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633577043808a4cec8a90ca28b085916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKmTracker
+  body: {fileID: 6448389183193360085}
+  controller: {fileID: 2845316561103630150}
 --- !u!1 &3351551007746191189
 GameObject:
   m_ObjectHideFlags: 0
@@ -3751,6 +3767,7 @@ MonoBehaviour:
   vehicleID: 1
   vehicleController: {fileID: 0}
   rigidbody: {fileID: 0}
+  kmTracker: {fileID: 0}
 --- !u!114 &839609831419405386
 MonoBehaviour:
   m_ObjectHideFlags: 0

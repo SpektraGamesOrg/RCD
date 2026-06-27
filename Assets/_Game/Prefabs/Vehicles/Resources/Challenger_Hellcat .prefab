@@ -1424,6 +1424,7 @@ GameObject:
   - component: {fileID: 547450924300502003}
   - component: {fileID: 2648790810260707459}
   - component: {fileID: 8772737133869369294}
+  - component: {fileID: 8038520113241986743}
   m_Layer: 11
   m_Name: 'Challenger_Hellcat '
   m_TagString: Untagged
@@ -1465,6 +1466,7 @@ MonoBehaviour:
   vehicleID: 7
   vehicleController: {fileID: 8772737133869369294}
   rigidbody: {fileID: 2648790810260707459}
+  kmTracker: {fileID: 8038520113241986743}
 --- !u!54 &2648790810260707459
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1779,6 +1781,20 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
+--- !u!114 &8038520113241986743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915925527561201160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633577043808a4cec8a90ca28b085916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKmTracker
+  body: {fileID: 2648790810260707459}
+  controller: {fileID: 8772737133869369294}
 --- !u!1 &954152959263531464
 GameObject:
   m_ObjectHideFlags: 0
@@ -3171,6 +3187,7 @@ MonoBehaviour:
   vehicleID: 7
   vehicleController: {fileID: 0}
   rigidbody: {fileID: 0}
+  kmTracker: {fileID: 0}
 --- !u!1 &1849897600055831046
 GameObject:
   m_ObjectHideFlags: 0

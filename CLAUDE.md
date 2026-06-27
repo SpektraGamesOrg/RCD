@@ -108,6 +108,7 @@ These rules are MANDATORY whenever you create or modify in-game UI.
 - Avoid per-frame allocations in hot paths
 - Avoid LINQ in hot paths in runtime, but you can use linq for editor scripts and editor tools
 - NEVER use scene-scanning lookup methods in runtime code — `FindAnyObjectByType`, `FindFirstObjectByType`, `FindObjectsByType`, `FindObjectOfType`, `FindObjectsOfType`, `GameObject.Find`, `GameObject.FindWithTag`, etc. They are slow at runtime. Instead wire references via the Inspector, dependency injection, or the project's existing singleton/service accessors. These methods are acceptable ONLY in editor-only code (editor scripts and editor tools)
+- PREFER serialized references wired at edit time over runtime component lookups. When a reference lives on a known prefab or hierarchy (the same GameObject, a child, or a sibling on the vehicle), serialize the field and populate it in `OnValidate`/a `Validate()` pass (see `MainVehicleBehaviour.Validate`) — do NOT resolve it at runtime with `GetComponent`, `GetComponentInChildren`, `GetComponentInParent`, `GetComponentsInChildren`, etc. Those component lookups are a last resort, allowed only when the target genuinely cannot be known until runtime (e.g. a dynamically spawned/reparented object). This keeps wiring explicit, GC-free, and inspectable
 - Avoid excessive async task churn
 - Use object pooling for frequently spawned and destroyed objects
 - Optimize draw calls with batching and atlases where appropriate

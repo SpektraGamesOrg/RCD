@@ -6073,6 +6073,7 @@ MonoBehaviour:
   vehicleID: 14
   vehicleController: {fileID: 0}
   rigidbody: {fileID: 0}
+  kmTracker: {fileID: 0}
 --- !u!1 &6340983994531704284
 GameObject:
   m_ObjectHideFlags: 0
@@ -7579,6 +7580,7 @@ GameObject:
   - component: {fileID: 5679342249201138524}
   - component: {fileID: 6252644882475004074}
   - component: {fileID: 2926197571968179702}
+  - component: {fileID: 7417468864580061872}
   m_Layer: 11
   m_Name: Huayra
   m_TagString: Untagged
@@ -7620,6 +7622,7 @@ MonoBehaviour:
   vehicleID: 14
   vehicleController: {fileID: 2926197571968179702}
   rigidbody: {fileID: 6252644882475004074}
+  kmTracker: {fileID: 7417468864580061872}
 --- !u!54 &6252644882475004074
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7934,6 +7937,20 @@ MonoBehaviour:
   useNOS: 0
   useTurbo: 0
   attachedTrailer: {fileID: 0}
+--- !u!114 &7417468864580061872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8515333111759815284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633577043808a4cec8a90ca28b085916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKmTracker
+  body: {fileID: 6252644882475004074}
+  controller: {fileID: 2926197571968179702}
 --- !u!1 &8726493070014105322
 GameObject:
   m_ObjectHideFlags: 0
