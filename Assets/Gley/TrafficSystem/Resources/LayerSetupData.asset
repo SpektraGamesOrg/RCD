@@ -15,16 +15,16 @@ MonoBehaviour:
   edited: 1
   roadLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 33792
   trafficLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 65536
   buildingsLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 31743
   obstaclesLayers:
     serializedVersion: 2
     m_Bits: 0
   playerLayers:
     serializedVersion: 2
-    m_Bits: 6144
+    m_Bits: 6152

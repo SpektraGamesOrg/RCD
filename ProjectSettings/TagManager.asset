@@ -10,6 +10,7 @@ TagManager:
   - IgnoreDamage
   - Trailer
   - RuntimeInspector
+  - TrafficLight
   layers:
   - Default
   - TransparentFX
@@ -26,8 +27,8 @@ TagManager:
   - RCC_WheelCollider
   - RCC_DetachablePart
   - RCC_Prop
-  - 
-  - 
+  - Road
+  - Traffic
   - 
   - 
   - 
@@ -56,3 +57,4 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
+  m_MigratedRenderPipelines: []
