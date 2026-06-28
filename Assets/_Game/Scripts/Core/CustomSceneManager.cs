@@ -42,6 +42,53 @@ namespace Core
     [DefaultExecutionOrder(-900)]
     public class CustomSceneManager : SingletonComponent<CustomSceneManager>
     {
+        // -----------------------------------------------------------------------------
+        // Scene-state flags. Set by LoadSceneAsync so gameplay / menu code can ask "which scene am I in?"
+        // without scanning the scene graph. The two "*LoadingOrLoaded" flags are mutually exclusive, as are
+        // the two "*ActiveNow" flags. All default to false (the Starter boot scene is neither MainMenu nor
+        // Game), so they stay false until the first scene load begins.
+        // -----------------------------------------------------------------------------
+
+        /// <summary>
+        /// True from the moment a <see cref="SceneType.Game"/> load begins and for as long as the Game scene
+        /// stays the current scene. Flips back to false the instant a load to a different scene begins.
+        /// Mutually exclusive with <see cref="IsMainMenuSceneLoadingOrLoaded"/>.
+        /// </summary>
+        public static bool IsGameSceneLoadingOrLoaded { get; private set; }
+
+        /// <summary>
+        /// True only while the Game scene is fully streamed in, prepared and live (its loader has finished and
+        /// its screen is up) - i.e. real gameplay is running. False during every load transition. Mutually
+        /// exclusive with <see cref="IsMainMenuSceneActiveNow"/>.
+        /// </summary>
+        public static bool IsGameSceneActiveNow { get; private set; }
+
+        /// <summary>
+        /// True from the moment a <see cref="SceneType.MainMenu"/> load begins and for as long as the MainMenu
+        /// scene stays the current scene. Flips back to false the instant a load to a different scene begins.
+        /// Mutually exclusive with <see cref="IsGameSceneLoadingOrLoaded"/>.
+        /// </summary>
+        public static bool IsMainMenuSceneLoadingOrLoaded { get; private set; }
+
+        /// <summary>
+        /// True only while the MainMenu scene is fully streamed in, prepared and live (its loader has finished
+        /// and its screen is up). False during every load transition. Mutually exclusive with
+        /// <see cref="IsGameSceneActiveNow"/>.
+        /// </summary>
+        public static bool IsMainMenuSceneActiveNow { get; private set; }
+
+        // Resets the static scene-state flags on entering play mode. The project has "Enter Play Mode Options"
+        // enabled, so domain reload may be skipped and static state would otherwise leak across play sessions.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetSceneStateFlags()
+        {
+            IsGameSceneLoadingOrLoaded = false;
+            IsGameSceneActiveNow = false;
+            IsMainMenuSceneLoadingOrLoaded = false;
+            IsMainMenuSceneActiveNow = false;
+        }
+
+
         [Header("Scene Names (must match Build Settings)")]
         [Tooltip("Scene name for SceneType.MainMenu.")]
         [SerializeField] private string mainMenuSceneName = "MainMenu";
@@ -123,6 +170,14 @@ namespace Core
             _isLoading = true;
             progressStart = Mathf.Clamp01(progressStart);
 
+            // A load just began: mark the target scene as "loading or loaded" and clear the scene we are
+            // leaving. Neither scene counts as "active now" during the transition - the target only becomes
+            // active once its loader has finished (see end of the try block below).
+            IsGameSceneLoadingOrLoaded = sceneType == SceneType.Game;
+            IsMainMenuSceneLoadingOrLoaded = sceneType == SceneType.MainMenu;
+            IsGameSceneActiveNow = false;
+            IsMainMenuSceneActiveNow = false;
+
             // Where scene streaming ends (and the loader takes over). Never below progressStart.
             float sceneStreamEnd = Mathf.Clamp(sceneStreamProgressEnd, progressStart, 1f);
 
@@ -194,6 +249,11 @@ namespace Core
                     await loader.LoadAsync(loaderProgress, token);
                 else if (loadingScreen != null)
                     loadingScreen.SetProgress(1f);
+
+                // The scene is fully streamed in, prepared and its screen is up: it is now the active, live
+                // scene. (Reached only on success - a cancellation/failure above leaves "active now" false.)
+                IsGameSceneActiveNow = sceneType == SceneType.Game;
+                IsMainMenuSceneActiveNow = sceneType == SceneType.MainMenu;
             }
             catch (OperationCanceledException)
             {

@@ -4695,6 +4695,7 @@ GameObject:
   - component: {fileID: 8130441920183160451}
   - component: {fileID: 5739532268105833733}
   - component: {fileID: 9197148365428586015}
+  - component: {fileID: -9043890901863658311}
   m_Layer: 11
   m_Name: DBS
   m_TagString: Untagged
@@ -4737,6 +4738,7 @@ MonoBehaviour:
   vehicleController: {fileID: 8130441920183160451}
   rigidbody: {fileID: 7380898740011242947}
   kmTracker: {fileID: 5739532268105833733}
+  vehicleKinematicMoverBehaviour: {fileID: -9043890901863658311}
 --- !u!54 &7380898740011242947
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5065,6 +5067,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKmTracker
   body: {fileID: 7380898740011242947}
   controller: {fileID: 8130441920183160451}
+--- !u!114 &9197148365428586015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128532956715491317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e304bdabbbce74ba49d09f0091bbde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.CarDeformationSystem.VehicleDamageReceiver
+  maxImpact: 25
+  minImpact: 3
+  painters: []
+  mainVehicleBehaviour: {fileID: -6672990580295779989}
+--- !u!114 &-9043890901863658311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128532956715491317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 733e85ed07fd84a7ca81ad1f23218ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.VehicleKinematicMoverBehaviour
 --- !u!1 &5152467994665765828
 GameObject:
   m_ObjectHideFlags: 0
@@ -9259,18 +9289,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 887692037317302799, guid: 3163f72b5b60bf147aaabe2b6c6b198f, type: 3}
   m_PrefabInstance: {fileID: 8498419476707836905}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9197148365428586015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5128532956715491317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8e304bdabbbce74ba49d09f0091bbde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.CarDeformationSystem.VehicleDamageReceiver
-  maxImpact: 25
-  minImpact: 3
-  mainVehicleBehaviour: {fileID: -6672990580295779989}

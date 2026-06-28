@@ -1,5 +1,6 @@
 using System;
 using SpektraGames.RuntimeUI.Runtime;
+using SpektraGames.SpektraUtilities.Runtime;
 using UnityEngine;
 
 namespace Vehicles
@@ -26,10 +27,9 @@ namespace Vehicles
         private VehicleKmTracker kmTracker = null;
         public VehicleKmTracker KmTracker => kmTracker;
 
-#if UNITY_EDITOR
-        // Guards against stacking duplicate delayCall callbacks while the tracker add is pending.
-        [NonSerialized] private bool _kmTrackerEnsureQueued;
-#endif
+        [SerializeField]
+        private VehicleKinematicMoverBehaviour vehicleKinematicMoverBehaviour = null;
+        public VehicleKinematicMoverBehaviour VehicleKinematicMoverBehaviour => vehicleKinematicMoverBehaviour;
 
         private void OnValidate()
         {
@@ -57,19 +57,7 @@ namespace Vehicles
                 anyChange = true;
             }
 
-            // Only the physics root (the GameObject that actually has a Rigidbody) gets an odometer.
-            // A MainVehicleBehaviour without a body (e.g. a nested visual-only copy) is skipped, so it
-            // never receives a tracker that would have no Rigidbody to read and fail at runtime.
-            if (rigidbody)
-            {
-                if (!kmTracker)
-                    kmTracker = GetComponent<VehicleKmTracker>();
-
-                if (!kmTracker)
-                    EnsureKmTrackerDeferred();
-                else if (kmTracker.EditorAutoWire())
-                    anyChange = true;
-            }
+            EnsureBehavioursDeferred();
 
             Component[] components = GetComponents<Component>();
             // Index 0 is always the Transform, so this component should sit at index 1.
@@ -105,34 +93,37 @@ namespace Vehicles
             UnityEditor.EditorUtility.SetDirty(this);
         }
 
-        // AddComponent must not run during OnValidate (Unity forbids SendMessage there), so the missing
-        // tracker is added on the next editor tick instead, then bound and marked dirty so it persists.
-        private void EnsureKmTrackerDeferred()
+        // AddComponent must not run during OnValidate (Unity forbids SendMessage there)
+        private void EnsureBehavioursDeferred()
         {
-            if (_kmTrackerEnsureQueued)
-                return;
-
-            _kmTrackerEnsureQueued = true;
-            MainVehicleBehaviour self = this;
-
             UnityEditor.EditorApplication.delayCall += () =>
             {
-                if (self)
-                    self._kmTrackerEnsureQueued = false;
-
-                if (!self || Application.isPlaying)
+                if (!this || Application.isPlaying)
                     return;
 
-                VehicleKmTracker tracker = self.GetComponent<VehicleKmTracker>();
-                if (!tracker)
-                    tracker = self.gameObject.AddComponent<VehicleKmTracker>();
+                bool anyChange = false;
 
-                self.kmTracker = tracker;
-                tracker.EditorAutoWire();
+                var kmTrackerLocal = gameObject.GetOrAddComponent<VehicleKmTracker>();
+                kmTrackerLocal.EditorAutoWire();
+                if (kmTracker != kmTrackerLocal)
+                {
+                    kmTracker = kmTrackerLocal;
+                    anyChange = true;
+                }
 
-                UnityEditor.EditorUtility.SetDirty(tracker);
-                UnityEditor.EditorUtility.SetDirty(self);
-                UnityEditor.EditorUtility.SetDirty(self.gameObject);
+                var vehicleKinematicMoverBehaviourLocal = gameObject.GetOrAddComponent<VehicleKinematicMoverBehaviour>();
+                //vehicleKinematicMoverBehaviourLocal.EditorAutoWire();
+                if (vehicleKinematicMoverBehaviour != vehicleKinematicMoverBehaviourLocal)
+                {
+                    vehicleKinematicMoverBehaviour = vehicleKinematicMoverBehaviourLocal;
+                    anyChange = true;
+                }
+
+                if (anyChange)
+                {
+                    UnityEditor.EditorUtility.SetDirty(this);
+                    UnityEditor.EditorUtility.SetDirty(gameObject);
+                }
             };
         }
 #endif

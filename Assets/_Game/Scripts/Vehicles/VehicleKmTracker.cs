@@ -25,7 +25,7 @@ namespace Vehicles
     /// <see cref="MainVehicleBehaviour.Validate"/> - there is no runtime component lookup.
     /// </summary>
     [DisallowMultipleComponent]
-    public class VehicleKmTracker : MonoBehaviour
+    public class VehicleKmTracker : VehicleBehaviourBase
     {
         [Tooltip("Body whose speed is integrated. Wired by MainVehicleBehaviour.Validate.")]
         [SerializeField]
@@ -52,7 +52,7 @@ namespace Vehicles
             if (!body)
             {
                 Debug.LogError($"[VehicleKmTracker] {name} has no Rigidbody assigned; odometer disabled. " +
-                          "Re-run MainVehicleBehaviour.Validate to wire it.", this);
+                               "Re-run MainVehicleBehaviour.Validate to wire it.", this);
                 enabled = false;
             }
         }
@@ -133,8 +133,9 @@ namespace Vehicles
             EditorAutoWire();
         }
 
-        private void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
             EditorAutoWire();
         }
 

@@ -153,6 +153,8 @@ PlayerSettings:
   - {fileID: 11400000, guid: bb41ec9510c5a264499a060ff30157cf, type: 2}
   - {fileID: -944628639613478452, guid: 9de827efd10f3e24e93d5bbc1184245f, type: 3}
   - {fileID: 11400000, guid: 9ec546311e94d4b78a78b7e2570049c9, type: 2}
+  - {fileID: 11400000, guid: 7fd4075ff97408643a454923131c0d77, type: 2}
+  - {fileID: 4536406163528212434, guid: d1eda9412dc3df741ba1b10c8d53bfbd, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   xboxOneDisableKinectGpuReservation: 1
@@ -183,7 +185,7 @@ PlayerSettings:
   overrideDefaultApplicationIdentifier: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 28
-  AndroidTargetSdkVersion: 28
+  AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   AndroidPreferredDataLocation: 1
   aotOptions: 
@@ -963,7 +965,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 1
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   enableDirectStorage: 0
   cloudProjectId: 0186fe88-ceba-41e5-85df-c5f6660646a1

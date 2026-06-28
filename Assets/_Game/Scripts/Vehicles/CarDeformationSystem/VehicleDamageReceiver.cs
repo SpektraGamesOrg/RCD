@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Vehicles.CarDeformationSystem
 {
-    public class VehicleDamageReceiver : MonoBehaviour
+    public class VehicleDamageReceiver : VehicleBehaviourBase
     {
         [Header("Impact")]
         [SerializeField, Tooltip("Speed (relativeVelocity.magnitude) that maps to full damage.")]
@@ -13,10 +13,6 @@ namespace Vehicles.CarDeformationSystem
 
         [SerializeField, Tooltip("Damage painters under this vehicle. Auto-wired in the editor.")]
         private VertexDamagePainter[] painters;
-
-        [SerializeField, Tooltip("Owning vehicle on the prefab root. Auto-wired in the editor.")]
-        private MainVehicleBehaviour mainVehicleBehaviour;
-        public MainVehicleBehaviour MainVehicleBehaviour => mainVehicleBehaviour;
 
         // Reused contact buffer, allocated once to avoid per-collision GC.
         private readonly ContactPoint[] contacts = new ContactPoint[16];
@@ -80,19 +76,13 @@ namespace Vehicles.CarDeformationSystem
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
+
             if (Application.isPlaying) return;
 
             bool changed = false;
-
-            // This receiver lives on the prefab root, next to MainVehicleBehaviour; keep the
-            // back-reference wired at edit time so it never has to be resolved at runtime.
-            if (mainVehicleBehaviour != GetComponent<MainVehicleBehaviour>())
-            {
-                mainVehicleBehaviour = GetComponent<MainVehicleBehaviour>();
-                changed = true;
-            }
 
             VertexDamagePainter[] found = GetComponentsInChildren<VertexDamagePainter>(true);
             if (!PaintersMatch(found))
@@ -110,7 +100,8 @@ namespace Vehicles.CarDeformationSystem
             if (painters == null || painters.Length != found.Length) return false;
 
             for (int i = 0; i < found.Length; i++)
-                if (painters[i] != found[i]) return false;
+                if (painters[i] != found[i])
+                    return false;
 
             return true;
         }
