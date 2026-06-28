@@ -51,14 +51,16 @@ public class RCC_InputManager : RCC_Singleton<RCC_InputManager> {
 
 
     private void Awake() {
-
+        
         // Check if another instance exists and handle it properly.
-        if (Instance != this) {
+        if (Exist() && Instance != this) {
 
             Destroy(gameObject);
             return;
 
         }
+
+        m_Instance = this;
 
         // Hide this GameObject from the scene hierarchy for cleanliness.
         gameObject.hideFlags = HideFlags.HideInHierarchy;

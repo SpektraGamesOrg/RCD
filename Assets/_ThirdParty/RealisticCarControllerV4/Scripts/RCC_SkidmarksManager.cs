@@ -35,6 +35,8 @@ public class RCC_SkidmarksManager : RCC_Singleton<RCC_SkidmarksManager> {
 
     private void Awake() {
 
+        m_Instance = this;
+        
         //  Creating new skidmarks and initializing them with given ground materials in RCC Ground Materials.
         if (!GroundMaterials || GroundMaterials.frictions == null || GroundMaterials.frictions.Length < 1)
             return;

@@ -61,7 +61,18 @@ namespace Minimap
         [SerializeField, Range(0.5f, 1f)] private float markerEdgeClamp = 0.92f;
 
         [BoxGroup("View")]
-        [Tooltip("Flip if the map rotates the wrong way relative to the vehicle heading.")]
+        [Tooltip("Optional transform the map heading aligns to (its forward on the XZ plane). Leave empty to " +
+                 "use the gameplay camera (GameManager's RCC camera actualCamera). The minimap is still " +
+                 "centred on the vehicle - only the rotation comes from here.")]
+        [SerializeField] private Transform rotationSource;
+
+        [BoxGroup("View")]
+        [Tooltip("Rotate the centre player icon to the vehicle's heading relative to the (camera-aligned) " +
+                 "map. Off keeps it pointing straight up.")]
+        [SerializeField] private bool rotatePlayerToVehicle = true;
+
+        [BoxGroup("View")]
+        [Tooltip("Flip if the map rotates the wrong way relative to the camera direction.")]
         [SerializeField] private bool invertMapRotation;
 
         [BoxGroup("Capture")]
@@ -236,6 +247,26 @@ namespace Minimap
             UpdateMinimap(widget);
         }
 
+        // The heading (degrees) the map aligns to: the rotation source if set, else the gameplay camera, with
+        // the vehicle as a last resort. Uses the forward vector projected on the XZ plane so it stays correct
+        // even though the camera is pitched down.
+        private float ResolveViewYaw()
+        {
+            Transform source = rotationSource;
+            if (!source && GameManager.Exists())
+            {
+                RCC_Camera rccCamera = GameManager.Instance.RccCamera;
+                if (rccCamera && rccCamera.actualCamera)
+                    source = rccCamera.actualCamera.transform;
+            }
+
+            if (!source) source = _target;
+            if (!source) return 0f;
+
+            Vector3 forward = source.forward;
+            return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+        }
+
         private void UpdateMinimap(MinimapWidget widget)
         {
             float viewHalf = viewWorldDiameter * 0.5f;
@@ -243,13 +274,25 @@ namespace Minimap
             float invHalf = 1f / viewHalf;
 
             Vector3 p = _target.position;
-            float yaw = _target.eulerAngles.y;
+            float yaw = ResolveViewYaw();
             float rotZ = invertMapRotation ? -yaw : yaw;
 
             // Scroll the map so the vehicle sits at the centre, and rotate so its heading points up. The
             // extent ratio is pushed every frame so changing the zoom (viewWorldDiameter) responds live.
             Vector2 rawPlayerNorm = new Vector2((p.x - areaCenter.x) * invHalf, (p.z - areaCenter.z) * invHalf);
             widget.SetMapView(rawPlayerNorm, rotZ, MapExtentRatio);
+
+            // Rotate the centre player icon to the vehicle heading relative to the camera-aligned map (so it
+            // shows which way the car points while "up" stays the camera/view direction).
+            float playerZ = 0f;
+            if (rotatePlayerToVehicle)
+            {
+                Vector3 vehicleForward = _target.forward;
+                float vehicleYaw = Mathf.Atan2(vehicleForward.x, vehicleForward.z) * Mathf.Rad2Deg;
+                playerZ = rotZ - vehicleYaw;
+            }
+
+            widget.SetPlayerHeading(playerZ);
 
             float rad = rotZ * Mathf.Deg2Rad;
             float cos = Mathf.Cos(rad);

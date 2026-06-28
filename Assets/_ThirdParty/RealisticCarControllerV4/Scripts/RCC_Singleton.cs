@@ -22,7 +22,7 @@ public class RCC_Singleton<T> : RCC_Core where T : RCC_Core {
     /// <summary>
     /// The singleton instance, lazily initialized on first access.
     /// </summary>
-    private static T m_Instance;
+    protected static T m_Instance;
 
     /// <summary>
     /// Lock object for thread-safe singleton access.
@@ -75,6 +75,11 @@ public class RCC_Singleton<T> : RCC_Core where T : RCC_Core {
 
     }
 
+    public bool Exist()
+    {
+        return m_Instance;
+    }
+    
     protected virtual void OnApplicationQuit() {
 
         applicationIsQuitting = true;

@@ -24,6 +24,8 @@ public class RCC_UI_Tooltip : RCC_Singleton<RCC_UI_Tooltip> {
 
     private void Awake() {
 
+        m_Instance = this;
+        
         //  Getting text component and disabling it.
         if (TryGetComponent(out text))
             text.enabled = false;

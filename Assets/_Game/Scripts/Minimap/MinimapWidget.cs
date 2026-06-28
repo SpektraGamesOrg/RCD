@@ -160,6 +160,13 @@ namespace Minimap
             }
         }
 
+        /// <summary>Rotates the centre player arrow to show the vehicle heading relative to the
+        /// (camera-aligned) map. Pass 0 to keep it pointing up.</summary>
+        public void SetPlayerHeading(float rotationZ)
+        {
+            if (playerArrow) playerArrow.localEulerAngles = new Vector3(0f, 0f, rotationZ);
+        }
+
         /// <summary>Shows or hides the map + player arrow. Used while no vehicle is being tracked.</summary>
         public void SetTrackingActive(bool on)
         {

@@ -31,7 +31,7 @@ public class RCC_InfoLabel : RCC_Singleton<RCC_InfoLabel> {
     private float timer = 1.5f;
 
     private void Awake() {
-
+        m_Instance = this;
         //  Getting text component and disabling it.
         if (TryGetComponent(out text))
             text.enabled = false;
