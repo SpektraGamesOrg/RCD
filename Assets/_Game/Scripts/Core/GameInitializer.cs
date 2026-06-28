@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using _Game.Scripts.Utils.VContainer;
 using Cysharp.Threading.Tasks;
 using Milestones;
 using Save;
@@ -22,7 +23,7 @@ namespace Core
         public static bool Initialized { get; private set; } = false;
         private static bool Initializing { get; set; } = false;
 
-        protected override void Awake() 
+        protected override void Awake()
         {
             bool willDestroy = Exists();
 
@@ -41,7 +42,7 @@ namespace Core
         private void Start()
         {
         }
-        
+
         private async UniTask InitializeAsync(IProgress<float> progress)
         {
 #if DISABLE_SRDEBUGGER && !UNITY_SERVER
@@ -50,13 +51,13 @@ namespace Core
             Debug.developerConsoleVisible = false;
 #endif
             progress?.Report(0f);
-            
+
             if (Initialized)
             {
                 progress?.Report(1f); // Logical end of the bootstrap slice.
                 return;
             }
-            
+
             if (Initializing)
             {
                 // Wait for the in-flight init to COMPLETE, not merely to be in-progress: the predicate
@@ -67,22 +68,10 @@ namespace Core
                 progress?.Report(1f); // Logical end of the bootstrap slice.
                 return;
             }
-            
+
             Initializing = true;
 
-            // Auto-enable RCC's on-screen mobile controller on real Android / iOS device builds AND in the
-            // Editor. This MUST stay before the first await below: RCC_MobileButtons.Start() reads
-            // mobileControllerEnabled during scene startup, which happens before this async method resumes
-            // after the first await, so setting it any later leaves the mobile buttons disabled on the first
-            // read (and re-disabled on the next RCC_Events.OnVehicleChanged, e.g. when a vehicle is registered).
-            // We deliberately enable it in the Editor too (Application.isEditor) so the on-screen Gas/Brake/
-            // handbrake/arrow buttons stay visible while iterating on the in-game HUD, instead of being hidden
-            // because Application.isMobilePlatform is false in the Editor. To avoid losing keyboard driving in
-            // the Editor, RCC_InputManager.GetInputs() merges the keyboard inputs with the mobile button inputs
-            // whenever it runs in the Editor (see the UNITY_EDITOR block there), so WASD/arrows AND the on-screen
-            // buttons both drive the car. On device, only the mobile buttons feed input as before.
-            // RCC_Settings.Instance is a play-mode clone (see RCC_Settings.Instance), so this in-memory
-            // change never modifies or dirties the RCC_Settings asset on disk.
+            // Auto-enable RCC's on-screen mobile controller on real Android / iOS device builds
             RCC_Settings rccSettings = RCC_Settings.Instance;
             if (rccSettings && (Application.isMobilePlatform || Application.isEditor))
                 rccSettings.mobileControllerEnabled = true;
@@ -111,13 +100,13 @@ namespace Core
 
             // Screen should never sleep
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            
+
             // To avoid the use of specific features used by different cultures like comma(',') character in floats
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture;
             CultureInfo.DefaultThreadCurrentCulture = Thread.CurrentThread.CurrentUICulture;
             CultureInfo.DefaultThreadCurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-            
+
             // Core UI
             RuntimeUI.Init();
             progress?.Report(0.6f); // Logical 0..1 within the bootstrap slice (scaled by RangedProgress).
@@ -140,19 +129,9 @@ namespace Core
             {
                 Debug.LogError(e.ToString());
             }
-            
-            // Disable unity debug runtime ui
-            try
-            {
-                //DebugManager.instance.enableRuntimeUI = false;
-                Debug.developerConsoleVisible = false;
-                Debug.developerConsoleEnabled = false;
-            }
-            catch
-            {
-                // ignored
-            }
-            
+
+            MainLifetimeScope mainScope = ServiceLocator.GetScope<MainLifetimeScope>();
+
             // Completed
             Initializing = false;
             Initialized = true;

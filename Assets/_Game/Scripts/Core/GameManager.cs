@@ -5,6 +5,8 @@ using Save;
 using Sirenix.OdinInspector;
 using SpektraGames.ResourceObject.Runtime;
 using SpektraGames.SpektraUtilities.Runtime;
+using UI;
+using UIManager;
 using Unity.Cinemachine;
 using UnityEngine;
 using Vehicles;
@@ -21,14 +23,13 @@ namespace Core
         [Tooltip("World-space pose used when the selected vehicle is spawned for gameplay.")]
         [SerializeField] private Transform vehicleSpawnPoint;
 
-        [Tooltip("Gameplay virtual camera that follows and looks at the spawned vehicle.")]
-        [SerializeField] private CinemachineVirtualCamera vehicleCameraCinemachine;
+        [SerializeField] private RCC_Camera rccCamera;
 
         [Tooltip("The active gameplay vehicle instance. Assigned after the async spawn completes.")]
         [ShowInInspector, ReadOnly] private MainVehicleBehaviour _spawnedVehicle = null;
 
         public Transform VehicleSpawnPoint => vehicleSpawnPoint;
-        public CinemachineVirtualCamera VehicleCameraCinemachine => vehicleCameraCinemachine;
+        public RCC_Camera RccCamera => rccCamera;
         public MainVehicleBehaviour SpawnedVehicle => _spawnedVehicle;
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace Core
 
             if (_spawnedVehicle != null)
             {
-                BindCamera(_spawnedVehicle.transform);
+                BindCamera(_spawnedVehicle.VehicleController);
                 progress?.Report(1f);
                 return _spawnedVehicle;
             }
@@ -51,12 +52,6 @@ namespace Core
             if (vehicleSpawnPoint == null)
             {
                 Debug.LogError("[GameManager] No vehicle spawn point assigned.");
-                return null;
-            }
-
-            if (vehicleCameraCinemachine == null)
-            {
-                Debug.LogError("[GameManager] No Cinemachine vehicle camera assigned.");
                 return null;
             }
 
@@ -107,29 +102,24 @@ namespace Core
             _spawnedVehicle.VehicleController.SetExternalControl(false);
             _spawnedVehicle.VehicleController.StartEngine(true);
 
-            BindCamera(_spawnedVehicle.transform);
+            BindCamera(_spawnedVehicle.VehicleController);
             progress?.Report(1f);
             return _spawnedVehicle;
         }
 
         protected override void OnDestroy()
         {
-            if (vehicleCameraCinemachine != null && _spawnedVehicle != null)
-            {
-                Transform vehicleTransform = _spawnedVehicle.transform;
-                if (vehicleCameraCinemachine.Follow == vehicleTransform)
-                    vehicleCameraCinemachine.Follow = null;
-                if (vehicleCameraCinemachine.LookAt == vehicleTransform)
-                    vehicleCameraCinemachine.LookAt = null;
-            }
+            // The milestone HUD overlay is a DontDestroyOnLoad view shown for gameplay (see GameSceneLoader).
+            // Hide it as the Game scene tears down so it never lingers over the loading screen or main menu.
+            if (GameUIManager.Instance)
+                GameUIManager.Instance.GetOverlayUI<DriveDistanceMilestoneOverlay>()?.Hide(immediate: true);
 
             base.OnDestroy();
         }
 
-        private void BindCamera(Transform target)
+        private void BindCamera(RCC_CarControllerV4 target)
         {
-            vehicleCameraCinemachine.Follow = target;
-            vehicleCameraCinemachine.LookAt = target;
+            // rccCamera.SetTarget(target); // Not needed to cal lthis because of RCC Scene Manager
         }
     }
 }

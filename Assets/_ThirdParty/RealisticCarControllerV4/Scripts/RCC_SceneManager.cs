@@ -173,8 +173,10 @@ public class RCC_SceneManager : RCC_Singleton<RCC_SceneManager> {
         activeMainCamera = cam;
     }
 
-    private void Awake() {
-
+    private void Awake()
+    {
+        m_Instance = this;
+        
         // Override Unity's fixedDeltaTime if enabled in RCC_Settings.
         if (Settings.overrideFixedTimeStep)
             Time.fixedDeltaTime = Settings.fixedTimeStep;

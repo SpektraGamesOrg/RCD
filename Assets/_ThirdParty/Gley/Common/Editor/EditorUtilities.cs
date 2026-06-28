@@ -30,9 +30,9 @@ namespace Gley.Common.Editor
 
         public static string CreateRootFolder(string rootFolderName, string childFolderName)
         {
-            const string assetsRoot = "Assets";
+            const string assetsRoot = "Assets/_ThirdParty";
 
-            // Assets/Gley
+            // Assets/_ThirdParty/Gley
             string rootPath = $"{assetsRoot}/{rootFolderName}";
 
             if (!AssetDatabase.IsValidFolder(rootPath))
@@ -40,7 +40,7 @@ namespace Gley.Common.Editor
                 AssetDatabase.CreateFolder(assetsRoot, rootFolderName);
             }
 
-            // Assets/Gley/AllPlatformsSave
+            // Assets/_ThirdParty/Gley/AllPlatformsSave
             string finalPath = $"{rootPath}/{childFolderName}";
 
             if (!AssetDatabase.IsValidFolder(finalPath))

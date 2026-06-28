@@ -56,7 +56,7 @@ public class RCC_SceneManagerEditor : Editor {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("activePlayerVehicle"), new GUIContent("Active Player Vehicle"), false);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("activePlayerCamera"), new GUIContent("Active Player Camera"), false);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("activePlayerCanvas"), new GUIContent("Active Player UI Canvas"), false);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("activePlayerCharacter"), new GUIContent("Active Player FPS / TPS Character"), false);
+            //EditorGUILayout.PropertyField(serializedObject.FindProperty("activePlayerCharacter"), new GUIContent("Active Player FPS / TPS Character"), false);
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("recordMode"), new GUIContent("Record Mode"), false);
             EditorGUILayout.Space();

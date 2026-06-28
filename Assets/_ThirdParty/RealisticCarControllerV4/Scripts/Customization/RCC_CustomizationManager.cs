@@ -34,6 +34,11 @@ public class RCC_CustomizationManager : RCC_Singleton<RCC_CustomizationManager> 
 
     }
 
+    private void Awake()
+    {
+        m_Instance = this;
+    }
+
     private void Start() {
 
         if (RCCSceneManager.activePlayerVehicle)

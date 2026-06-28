@@ -44,6 +44,10 @@ namespace Core
                 await GameUIManager.Instance.SwitchScreenAsync(gameplayScreen).AttachExternalCancellation(token);
             else
                 Debug.LogError("[GameSceneLoader] No GameplayScreen available to open.");
+
+            // Show the gameplay-only milestone HUD overlay together with the gameplay screen. It is hidden
+            // again by GameManager.OnDestroy when this scene is torn down, so it never lingers over the menu.
+            GameUIManager.Instance.GetOverlayUI<DriveDistanceMilestoneOverlay>()?.Show(immediate: true);
         }
     }
 }
