@@ -5,6 +5,8 @@ using Save;
 using Sirenix.OdinInspector;
 using SpektraGames.ResourceObject.Runtime;
 using SpektraGames.SpektraUtilities.Runtime;
+using UI;
+using UIManager;
 using Unity.Cinemachine;
 using UnityEngine;
 using Vehicles;
@@ -107,6 +109,11 @@ namespace Core
 
         protected override void OnDestroy()
         {
+            // The milestone HUD overlay is a DontDestroyOnLoad view shown for gameplay (see GameSceneLoader).
+            // Hide it as the Game scene tears down so it never lingers over the loading screen or main menu.
+            if (GameUIManager.Instance)
+                GameUIManager.Instance.GetOverlayUI<DriveDistanceMilestoneOverlay>()?.Hide(immediate: true);
+
             base.OnDestroy();
         }
 
