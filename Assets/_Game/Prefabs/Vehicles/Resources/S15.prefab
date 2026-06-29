@@ -3172,6 +3172,7 @@ GameObject:
   - component: {fileID: 8748479895557792293}
   - component: {fileID: 9203690258300023547}
   - component: {fileID: 6415223577592894797}
+  - component: {fileID: 7460870217195605473}
   m_Layer: 11
   m_Name: S15
   m_TagString: Vehicle
@@ -3215,6 +3216,7 @@ MonoBehaviour:
   rigidbody: {fileID: 8610039743974546447}
   kmTracker: {fileID: 8748479895557792293}
   vehicleKinematicMoverBehaviour: {fileID: 6415223577592894797}
+  nitroBehaviour: {fileID: 7460870217195605473}
 --- !u!54 &8610039743974546447
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3575,6 +3577,22 @@ MonoBehaviour:
   mainVehicleBehaviour: {fileID: 7325439861583851814}
   radiusTolerance: 0.3
   angleThreshold: 300
+--- !u!114 &7460870217195605473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3169881558704331022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b294dd4c825564c26a8317a61deaad57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.NitroBehaviour
+  mainVehicleBehaviour: {fileID: 7325439861583851814}
+  controller: {fileID: 4086271425527388819}
+  nitroDuration: 5
+  boostAmount: 1
 --- !u!1 &3182020374730869870
 GameObject:
   m_ObjectHideFlags: 0

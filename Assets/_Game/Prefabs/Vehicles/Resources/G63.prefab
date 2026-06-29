@@ -6985,6 +6985,7 @@ GameObject:
   - component: {fileID: 3696076023223020613}
   - component: {fileID: 9216149049354854587}
   - component: {fileID: -5677259837281401336}
+  - component: {fileID: 925017246201292513}
   m_Layer: 11
   m_Name: G63
   m_TagString: Vehicle
@@ -7028,6 +7029,7 @@ MonoBehaviour:
   rigidbody: {fileID: 2876864644366488510}
   kmTracker: {fileID: 3696076023223020613}
   vehicleKinematicMoverBehaviour: {fileID: -5677259837281401336}
+  nitroBehaviour: {fileID: 925017246201292513}
 --- !u!54 &2876864644366488510
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7388,6 +7390,22 @@ MonoBehaviour:
   mainVehicleBehaviour: {fileID: 837328319677564937}
   radiusTolerance: 0.3
   angleThreshold: 300
+--- !u!114 &925017246201292513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6837961465406096342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b294dd4c825564c26a8317a61deaad57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.NitroBehaviour
+  mainVehicleBehaviour: {fileID: 837328319677564937}
+  controller: {fileID: 5744570399445355598}
+  nitroDuration: 5
+  boostAmount: 1
 --- !u!1 &6890184296956405698
 GameObject:
   m_ObjectHideFlags: 0

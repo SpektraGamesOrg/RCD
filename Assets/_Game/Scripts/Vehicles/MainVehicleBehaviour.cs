@@ -31,6 +31,10 @@ namespace Vehicles
         private VehicleKinematicMoverBehaviour vehicleKinematicMoverBehaviour = null;
         public VehicleKinematicMoverBehaviour VehicleKinematicMoverBehaviour => vehicleKinematicMoverBehaviour;
 
+        [SerializeField]
+        private NitroBehaviour nitroBehaviour = null;
+        public NitroBehaviour NitroBehaviour => nitroBehaviour;
+
         private void OnValidate()
         {
             Validate();
@@ -116,6 +120,14 @@ namespace Vehicles
                 if (vehicleKinematicMoverBehaviour != vehicleKinematicMoverBehaviourLocal)
                 {
                     vehicleKinematicMoverBehaviour = vehicleKinematicMoverBehaviourLocal;
+                    anyChange = true;
+                }
+
+                var nitroBehaviourLocal = gameObject.GetOrAddComponent<NitroBehaviour>();
+                nitroBehaviourLocal.EditorAutoWire();
+                if (nitroBehaviour != nitroBehaviourLocal)
+                {
+                    nitroBehaviour = nitroBehaviourLocal;
                     anyChange = true;
                 }
 

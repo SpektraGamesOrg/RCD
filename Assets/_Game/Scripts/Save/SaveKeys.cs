@@ -22,5 +22,8 @@ namespace Save
 
         // Gold collection
         public const string GoldCooldowns   = "gold_cooldowns"; // GoldCooldownList serialized as JSON
+
+        // Nitro
+        public const string NitroCount      = "nitro_count"; // remaining free nitro charges (device-level)
     }
 }

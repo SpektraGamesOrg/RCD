@@ -1427,6 +1427,7 @@ GameObject:
   - component: {fileID: 8038520113241986743}
   - component: {fileID: 9184467920347050367}
   - component: {fileID: 4916068741825611518}
+  - component: {fileID: 5624453251563984271}
   m_Layer: 11
   m_Name: 'Challenger_Hellcat '
   m_TagString: Vehicle
@@ -1470,6 +1471,7 @@ MonoBehaviour:
   rigidbody: {fileID: 2648790810260707459}
   kmTracker: {fileID: 8038520113241986743}
   vehicleKinematicMoverBehaviour: {fileID: 4916068741825611518}
+  nitroBehaviour: {fileID: 5624453251563984271}
 --- !u!54 &2648790810260707459
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1830,6 +1832,22 @@ MonoBehaviour:
   mainVehicleBehaviour: {fileID: 547450924300502003}
   radiusTolerance: 0.3
   angleThreshold: 300
+--- !u!114 &5624453251563984271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915925527561201160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b294dd4c825564c26a8317a61deaad57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.NitroBehaviour
+  mainVehicleBehaviour: {fileID: 547450924300502003}
+  controller: {fileID: 8772737133869369294}
+  nitroDuration: 5
+  boostAmount: 1
 --- !u!1 &954152959263531464
 GameObject:
   m_ObjectHideFlags: 0

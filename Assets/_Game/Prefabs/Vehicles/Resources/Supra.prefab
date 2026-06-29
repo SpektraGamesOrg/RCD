@@ -3254,6 +3254,7 @@ GameObject:
   - component: {fileID: 8108563259994746695}
   - component: {fileID: 839609831419405386}
   - component: {fileID: 2353844675636040226}
+  - component: {fileID: 5778563536831629675}
   m_Layer: 11
   m_Name: Supra
   m_TagString: Vehicle
@@ -3297,6 +3298,7 @@ MonoBehaviour:
   rigidbody: {fileID: 6448389183193360085}
   kmTracker: {fileID: 8108563259994746695}
   vehicleKinematicMoverBehaviour: {fileID: 2353844675636040226}
+  nitroBehaviour: {fileID: 5778563536831629675}
 --- !u!54 &6448389183193360085
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3556,7 +3558,7 @@ MonoBehaviour:
     damageResolution: 100
     damageFilter:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 131071
     damageRadius: 0.75
     damageMultiplier: 1
     maximumDamage: 0.5
@@ -3608,7 +3610,7 @@ MonoBehaviour:
   driftMode: 0
   turboBoost: 0
   NoS: 100
-  useNOS: 0
+  useNOS: 1
   useTurbo: 0
   attachedTrailer: {fileID: 0}
 --- !u!114 &8108563259994746695
@@ -3659,6 +3661,22 @@ MonoBehaviour:
   mainVehicleBehaviour: {fileID: 3459056531034866381}
   radiusTolerance: 0.3
   angleThreshold: 300
+--- !u!114 &5778563536831629675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337518441148050883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b294dd4c825564c26a8317a61deaad57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.NitroBehaviour
+  mainVehicleBehaviour: {fileID: 3459056531034866381}
+  controller: {fileID: 2845316561103630150}
+  nitroDuration: 5
+  boostAmount: 1
 --- !u!1 &3351551007746191189
 GameObject:
   m_ObjectHideFlags: 0

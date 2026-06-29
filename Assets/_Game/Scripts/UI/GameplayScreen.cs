@@ -1,5 +1,9 @@
+using _Game.Scripts.Utils.VContainer;
+using Ads;
 using Core;
+using Cysharp.Threading.Tasks;
 using Save;
+using SpektraGames.RuntimeUI.Runtime;
 using TMPro;
 using UIManager;
 using UnityEngine;
@@ -22,6 +26,33 @@ namespace UI
         [SerializeField] private Button recoveryButton;
         [SerializeField] private Button fixButton;
         [SerializeField] private Button pauseButton;
+        [SerializeField] private Button nitroButton;
+
+        [SerializeField]
+        [Tooltip("Shows the remaining free nitro count. Always visible (shows \"0\" when out of charges).")]
+        private TMP_Text nitroCountText;
+
+        [SerializeField]
+        [Tooltip("The NOS_icon image whose tint reflects nitro state: white when usable, the active color " +
+                 "while boosting, and the inactive (limit-reached) color when the count is 0.")]
+        private Image nitroIconImage;
+
+        [SerializeField]
+        [Tooltip("NOS_icon tint while a boost is active.")]
+        private Color nitroActiveColor = new Color(0x73 / 255f, 0xDE / 255f, 0xFF / 255f, 1f); // #73DEFF
+
+        [SerializeField]
+        [Tooltip("NOS_icon tint when out of charges and not boosting (limit reached / inactive).")]
+        private Color nitroInactiveColor = new Color(0x7B / 255f, 0x7B / 255f, 0x7B / 255f, 1f); // #7B7B7B
+
+        [SerializeField]
+        [Tooltip("Child rewarded-ad icon on the nitro button. Enabled when the free nitro count hits 0; " +
+                 "tapping the button in that state shows a rewarded ad that grants more nitros.")]
+        private GameObject nitroRewardedIconObject;
+
+        [SerializeField]
+        [Tooltip("How many nitros a successfully watched rewarded ad grants. GDD 5.1 default is 2.")]
+        private int nitroAdRewardAmount = 2;
 
         [SerializeField]
         [Tooltip("The top-bar gold counter (Widget_Gold). Collect VFX particles fly toward this on screen " +
@@ -50,6 +81,10 @@ namespace UI
         // RCC behavior preset, so there is no per-wheel state to track here.
         private bool _driftEnabled;
 
+        // Tracks whether the nitro button is currently showing the active-boost countdown, so the idle
+        // count/icon visual is restored exactly once when the boost window ends.
+        private bool _nitroBoostActive;
+
         protected override void Awake()
         {
             base.Awake();
@@ -58,6 +93,9 @@ namespace UI
             if (recoveryButton) recoveryButton.onClick.AddListener(OnRecoveryClicked);
             if (fixButton) fixButton.onClick.AddListener(OnFixClicked);
             if (pauseButton) pauseButton.onClick.AddListener(OnPauseClicked);
+            if (nitroButton) nitroButton.onClick.AddListener(OnNitroClicked);
+
+            SaveManager.OnNitroChanged += OnNitroCountChanged;
         }
 
         private void OnDestroy()
@@ -66,6 +104,9 @@ namespace UI
             if (recoveryButton) recoveryButton.onClick.RemoveListener(OnRecoveryClicked);
             if (fixButton) fixButton.onClick.RemoveListener(OnFixClicked);
             if (pauseButton) pauseButton.onClick.RemoveListener(OnPauseClicked);
+            if (nitroButton) nitroButton.onClick.RemoveListener(OnNitroClicked);
+
+            SaveManager.OnNitroChanged -= OnNitroCountChanged;
         }
 
         protected override void OnBeforeShowing(bool immediate, object uiData = null)
@@ -75,6 +116,9 @@ namespace UI
             // Drift starts OFF every time the HUD opens: force the normal (Balanced) behavior and the OFF
             // icon. This also clears any Drift preset left selected from an earlier run in the same session.
             ResetDriftState();
+
+            // Show the current free-nitro count / rewarded-ad affordance from the moment the HUD appears.
+            RefreshNitroVisual();
         }
 
         protected override void OnHidden(bool immediate = false)
@@ -124,6 +168,118 @@ namespace UI
         private void OnPauseClicked()
         {
             Debug.LogError("OnPauseClicked");
+        }
+
+        // When the player has free nitros, spend one and boost. When the count is 0, the button instead
+        // offers a rewarded ad (its child icon is showing) that grants more nitros on success. Taps are
+        // ignored while a boost is already running.
+        private void OnNitroClicked()
+        {
+            NitroBehaviour nitro = ActiveNitro;
+
+            // No re-trigger while a boost window is open.
+            if (nitro && nitro.IsActive)
+                return;
+
+            if (SaveManager.NitroCount > 0)
+            {
+                if (!nitro)
+                {
+                    Debug.LogError("[Gameplay] Nitro requested but no active vehicle / NitroBehaviour.");
+                    return;
+                }
+
+                nitro.TryActivate();
+                return;
+            }
+
+            ShowNitroRewardedAd().Forget();
+        }
+
+        // ---------------------------------------------------------------------
+        // Nitro
+        // ---------------------------------------------------------------------
+
+        // Plays a rewarded ad through the shared MaxAdService; on a completed watch it grants nitros.
+        // Mirrors the project's ClaimGoldMultiplierWithAdsOverlay flow (placement string + toast on failure).
+        private async UniTaskVoid ShowNitroRewardedAd()
+        {
+            // Block re-taps while the ad is in flight.
+            if (nitroButton) nitroButton.interactable = false;
+
+            bool isSuccess = await ServiceLocator.GetService<MaxAdService>().ShowRewardedAdAsync("nitro_refill");
+
+            if (nitroButton) nitroButton.interactable = true;
+
+            if (!isSuccess)
+            {
+                RuntimeUI.ShowToast("Rewarded ad was not completed");
+                return;
+            }
+
+            SaveManager.AddNitro(nitroAdRewardAmount);
+            SaveManager.Save();
+            // RefreshNitroVisual runs via OnNitroChanged; the icon/count update as the count goes positive.
+        }
+
+        private void OnNitroCountChanged(int newCount) => RefreshNitroVisual();
+
+        // Idle visual: count is always shown (including "0"), the NOS icon is white when usable or the
+        // inactive (limit) color at 0, and the rewarded-ad icon shows at 0. The active-boost visual is
+        // driven in Update while a boost window is open.
+        private void RefreshNitroVisual()
+        {
+            _nitroBoostActive = false;
+
+            // Re-enable the button once no boost is running (it is disabled during the active window, and
+            // briefly while a rewarded ad is in flight).
+            if (nitroButton && !nitroButton.interactable)
+                nitroButton.interactable = true;
+
+            int count = SaveManager.NitroCount;
+            bool outOfNitro = count <= 0;
+
+            // Rewarded-ad icon shows only when out of charges.
+            if (nitroRewardedIconObject && nitroRewardedIconObject.activeSelf != outOfNitro)
+                nitroRewardedIconObject.SetActive(outOfNitro);
+
+            // Count is always written (never disabled) - shows "0" when out of charges.
+            if (nitroCountText)
+                nitroCountText.text = count.ToString();
+
+            // White when there are charges to spend; the inactive (limit) color when there are none.
+            if (nitroIconImage)
+                nitroIconImage.color = outOfNitro ? nitroInactiveColor : Color.white;
+        }
+
+        // Drives the active-boost visual: the NOS icon turns the active color, the button is locked, and the
+        // rewarded icon shows for the duration. Touches UI only while the HUD is shown, so there is no
+        // per-frame work once the boost ends.
+        private void Update()
+        {
+            if (!ShowingOrShown)
+                return;
+
+            NitroBehaviour nitro = ActiveNitro;
+            bool active = nitro && nitro.IsActive;
+
+            if (!active)
+            {
+                // Restore the idle count/icon/interactable the first frame after a boost ends.
+                if (_nitroBoostActive)
+                    RefreshNitroVisual();
+                return;
+            }
+
+            // Entering the boost: block re-taps, tint the icon active, and hide the rewarded icon.
+            if (!_nitroBoostActive)
+            {
+                _nitroBoostActive = true;
+                if (nitroButton) nitroButton.interactable = false;
+                if (nitroIconImage) nitroIconImage.color = nitroActiveColor;
+                if (nitroRewardedIconObject && nitroRewardedIconObject.activeSelf)
+                    nitroRewardedIconObject.SetActive(false);
+            }
         }
 
         // ---------------------------------------------------------------------
@@ -209,5 +365,16 @@ namespace UI
         // button tap - never per-frame - so there is no runtime lookup cost.
         private static MainVehicleBehaviour ActiveVehicle =>
             GameManager.Exists() ? GameManager.Instance.SpawnedVehicle : null;
+
+        // The active vehicle's nitro component, or null if no car is spawned. Resolved through the spawned
+        // vehicle's serialized reference - no runtime scene lookup.
+        private static NitroBehaviour ActiveNitro
+        {
+            get
+            {
+                MainVehicleBehaviour vehicle = ActiveVehicle;
+                return vehicle ? vehicle.NitroBehaviour : null;
+            }
+        }
     }
 }

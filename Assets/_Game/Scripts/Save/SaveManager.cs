@@ -26,6 +26,7 @@ namespace Save
         // Default values
         // ---------------------------------------------------------------------
         private const int DefaultGold = 150;
+        private const int DefaultNitro = 2;
         private const float DefaultMasterVolume = 1f;
         private const float DefaultSfxVolume = 1f;
         private const bool DefaultVibration = true;
@@ -92,6 +93,41 @@ namespace Save
         public static void AddDistanceDriven(int amount)
         {
             DistanceDrivenKm += amount;
+        }
+
+        // ---------------------------------------------------------------------
+        // Nitro
+        // ---------------------------------------------------------------------
+
+        /// <summary>
+        /// Fired whenever the remaining nitro count changes, carrying the new (clamped) value.
+        /// </summary>
+        public static event System.Action<int> OnNitroChanged;
+
+        /// <summary>
+        /// Remaining free nitro charges. Device-level (not per vehicle); players start with
+        /// <see cref="DefaultNitro"/>. Never goes below 0. Does not flush; call <see cref="Save"/>
+        /// to persist.
+        /// </summary>
+        public static int NitroCount
+        {
+            get => PlayerPrefs.GetInt(SaveKeys.NitroCount, DefaultNitro);
+            set
+            {
+                int clamped = value < 0 ? 0 : value;
+                PlayerPrefs.SetInt(SaveKeys.NitroCount, clamped);
+                OnNitroChanged?.Invoke(clamped);
+            }
+        }
+
+        /// <summary>
+        /// Adds (or, with a negative amount, removes) nitro charges and fires
+        /// <see cref="OnNitroChanged"/>. Convenience for the activate/reward paths so callers don't
+        /// repeat the read-modify-write.
+        /// </summary>
+        public static void AddNitro(int amount)
+        {
+            NitroCount += amount;
         }
 
         /// <summary>
