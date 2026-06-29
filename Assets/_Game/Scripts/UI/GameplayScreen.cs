@@ -15,10 +15,18 @@ namespace UI
     /// </summary>
     public class GameplayScreen : ScreenBase
     {
+        /// <summary>The top-bar gold counter the collect VFX particles fly toward. Wired in the Inspector.</summary>
+        public RectTransform GoldWidget => goldWidget;
+
         [SerializeField] private Button driftButton;
         [SerializeField] private Button recoveryButton;
         [SerializeField] private Button fixButton;
         [SerializeField] private Button pauseButton;
+
+        [SerializeField]
+        [Tooltip("The top-bar gold counter (Widget_Gold). Collect VFX particles fly toward this on screen " +
+                 "when gold is picked up; ParticlesToCoin resolves it from here at runtime.")]
+        private RectTransform goldWidget;
 
         [SerializeField] private Sprite driftOnSprite;
         [SerializeField] private Sprite driftOffSprite;

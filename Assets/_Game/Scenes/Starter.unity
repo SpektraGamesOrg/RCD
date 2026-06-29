@@ -8106,6 +8106,7 @@ MonoBehaviour:
   recoveryButton: {fileID: 2033953543}
   fixButton: {fileID: 1072353028}
   pauseButton: {fileID: 824833377}
+  goldWidget: {fileID: 362341140}
   driftOnSprite: {fileID: 21300000, guid: da42ac838203a4dd0a341776d9e0b7aa, type: 3}
   driftOffSprite: {fileID: 21300000, guid: 2020dd27f662642dead7d882ae05b4ee, type: 3}
   driftBehaviorName: Drift
