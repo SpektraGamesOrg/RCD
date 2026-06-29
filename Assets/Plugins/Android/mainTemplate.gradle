@@ -30,15 +30,6 @@ dependencies {
 // Android Resolver Dependencies End
 **DEPS**}
 
-// Drop AppsFlyer purchase-connector: it shares the 'com.appsflyer' namespace with
-// af-android-sdk, which AGP 9 rejects (duplicate library namespace in the manifest
-// merger). This game is ads-only with no IAP, so the purchase connector is unused.
-// Placed outside the Android Resolver markers so it survives EDM4U re-resolution.
-// Remove this block if in-app purchases (and their revenue attribution) are ever added.
-configurations.all {
-    exclude group: 'com.appsflyer', module: 'purchase-connector'
-}
-
 // Android Resolver Exclusions Start
 android {
   packaging {
