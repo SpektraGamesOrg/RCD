@@ -1,6 +1,9 @@
+using _Game.Scripts.Utils.VContainer;
 using Ads;
+using Cysharp.Threading.Tasks;
 using Gold;
 using Sirenix.OdinInspector;
+using SpektraGames.RuntimeUI.Runtime;
 using TMPro;
 using UIManager;
 using UnityEngine;
@@ -196,29 +199,31 @@ namespace UI
             if (claimButton)
                 claimButton.interactable = false;
 
+            ShowRewardedAdAsync().Forget();
+        }
+
+        // Plays the rewarded ad for the current offer through the shared MaxAdService. The offer is captured
+        // up front so the right flow still resolves even though OnHidden clears _offer while the ad is in
+        // flight. A successful watch grants the bonus (OnRewarded); any failure surfaces a toast and falls
+        // back to the offer's OnAdFailed path (the player keeps whatever base reward was already granted).
+        private async UniTaskVoid ShowRewardedAdAsync()
+        {
             GoldMultiplierAdOffer offer = _offer;
 
             // Tell the caller the ad is starting so it can freeze any coordinating timer of its own.
             offer?.OnClaimInitiated?.Invoke();
 
-            // Idempotency guard: a real ad SDK could (mis)fire both callbacks or fire one twice. Honour only
-            // the first outcome so the offer's terminal callback runs exactly once and we never double-close.
-            bool handled = false;
-            RewardedAds.Service.Show(
-                onRewarded: () =>
-                {
-                    if (handled) return;
-                    handled = true;
-                    HideSelf();
-                    offer?.OnRewarded?.Invoke();
-                },
-                onFailed: () =>
-                {
-                    if (handled) return;
-                    handled = true;
-                    HideSelf();
-                    offer?.OnAdFailed?.Invoke();
-                });
+            bool isSuccess = await ServiceLocator.GetService<MaxAdService>().ShowRewardedAdAsync("gold_multiplier");
+            if (!isSuccess)
+            {
+                RuntimeUI.ShowToast("Rewarded ad was not completed");
+                HideSelf();
+                offer?.OnAdFailed?.Invoke();
+                return;
+            }
+
+            HideSelf();
+            offer?.OnRewarded?.Invoke();
         }
 
         // Dismiss guard: only hide while actually on screen, so a coordinating view closing us and our own

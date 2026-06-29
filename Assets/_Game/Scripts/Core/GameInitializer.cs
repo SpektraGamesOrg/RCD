@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using _Game.Scripts.Utils.VContainer;
+using Ads;
 using Analytics;
 using Analytics.AppsFlyer;
 using Cysharp.Threading.Tasks;
@@ -169,6 +170,14 @@ namespace Core
                 Debug.LogError(e.ToString());
             }
 
+            // Applovin Max
+            var adService = ServiceLocator.GetService<MaxAdService>();
+            adService.Initialize(true);
+            await UniTask.WaitUntil(() => adService.IsInitialized).TimeoutWithoutException(TimeSpan.FromSeconds(5));
+            if (!adService.IsInitialized)
+                Debug.LogError("AdInitTimeout");
+
+            // User id
             SetUserIdForServices();
 
             // Completed
@@ -205,16 +214,15 @@ namespace Core
                 Debug.LogError(e.ToString());
             }
 
-            // try
-            // {
-            //     var adService = ServiceLocator.GetService<IAdService>();
-            //     adService.Initialize(hasTrackingConsent);
-            //     adService.SetUserId(userId);
-            // }
-            // catch (Exception e)
-            // {
-            //     Debug.LogError(e.ToString());
-            // }
+            try
+            {
+                var adService = ServiceLocator.GetService<MaxAdService>();
+                adService.SetUserId(userId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
         }
 
         // Loads the main menu scene through the SceneManager singleton once bootstrap completes.

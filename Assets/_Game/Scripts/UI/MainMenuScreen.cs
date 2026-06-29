@@ -1,4 +1,6 @@
 using System;
+using _Game.Scripts.Utils.VContainer;
+using Ads;
 using Core;
 using Cysharp.Threading.Tasks;
 using Save;
@@ -419,13 +421,15 @@ namespace UI
             SaveManager.Save();
         }
 
-        // TODO: Replace with the real rewarded-ad SDK call once it is integrated. For now this stub
-        // simulates a successful ad watch so the unlock-by-ads flow can be built and tested end to end.
+        // Plays a rewarded ad through the shared MaxAdService and reports whether it was watched to completion.
+        // On any failure it surfaces the shared toast, so callers can simply branch on the returned bool.
         private static async UniTask<bool> ShowRewardedAdAsync()
         {
-            await UniTask.Yield();
-            Debug.Log("[MainMenu] (stub) Rewarded ad watched - ad SDK not integrated yet.");
-            return true;
+            bool isSuccess = await ServiceLocator.GetService<MaxAdService>().ShowRewardedAdAsync("vehicle_unlock");
+            if (!isSuccess)
+                RuntimeUI.ShowToast("Rewarded ad was not completed");
+
+            return isSuccess;
         }
 
         // Turns "GTR_R35" into "GTR R35" for display. Cheap, allocation-light, only runs on swaps.
