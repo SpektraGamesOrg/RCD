@@ -21,6 +21,7 @@ namespace Vehicles
 #if DEV_GAME_ENVIRONMENT || UNITY_EDITOR || !DISABLE_SRDEBUGGER
         [ShowInInspector, ReadOnly] private bool _isKinematicMoverActive = false;
         private bool _flipOverWasActiveBeforeKinematic = true;
+        private bool _cameraFreeFallWasEnabledBeforeKinematic = true;
 
         private readonly float _minRadiusRatio = 0.36f; // 20% of screen height
 
@@ -121,6 +122,17 @@ namespace Vehicles
 
                 if (RCC_Settings.Instance)
                     RCC_Settings.Instance.autoReset = false;
+
+                // While kinematic the rigidbody is kinematic, so the wheel colliders stop reporting
+                // grounded and RCC_CarControllerV4.isGrounded becomes false. RCC's TPS camera zeroes
+                // its rotation damping while the vehicle is "airborne" (TPSFreeFall), which freezes the
+                // camera yaw and stops it from following the Q/E rotation. Temporarily disable
+                // TPSFreeFall so the camera keeps tracking the vehicle's heading, and restore it on exit.
+                if (RCC_Camera.Instance)
+                {
+                    _cameraFreeFallWasEnabledBeforeKinematic = RCC_Camera.Instance.TPSFreeFall;
+                    RCC_Camera.Instance.TPSFreeFall = false;
+                }
             }
             else
             {
@@ -142,6 +154,10 @@ namespace Vehicles
 
                 if (RCC_Settings.Instance)
                     RCC_Settings.Instance.autoReset = true;
+
+                // Restore the camera's free-fall behaviour now that physics is driving the vehicle again.
+                if (RCC_Camera.Instance)
+                    RCC_Camera.Instance.TPSFreeFall = _cameraFreeFallWasEnabledBeforeKinematic;
             }
         }
 
@@ -379,6 +395,10 @@ namespace Vehicles
         {
             if (RCC_Settings.Instance)
                 RCC_Settings.Instance.autoReset = true;
+
+            // If we are torn down while still kinematic, make sure the camera's free-fall flag is restored.
+            if (_isKinematicMoverActive && RCC_Camera.Instance)
+                RCC_Camera.Instance.TPSFreeFall = _cameraFreeFallWasEnabledBeforeKinematic;
         }
 #endif
     }

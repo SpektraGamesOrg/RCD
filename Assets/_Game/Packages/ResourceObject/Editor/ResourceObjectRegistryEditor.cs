@@ -29,13 +29,13 @@ namespace SpektraGames.ResourceObject.Editor
             EditorGUILayout.LabelField("Indexed owners", registry.OwnerCount.ToString());
             EditorGUILayout.LabelField("Distinct referenced assets", registry.DistinctReferencedCount.ToString());
 
-            if (registry.PendingSceneCount > 0)
-            {
-                EditorGUILayout.HelpBox(
-                    $"{registry.PendingSceneCount} closed scene(s) were imported since the last scan and are not indexed " +
-                    "yet. Run Sync or \"Scan Pending Scenes\" to cover them.",
-                    MessageType.Warning);
-            }
+            // if (registry.PendingSceneCount > 0)
+            // {
+            //     EditorGUILayout.HelpBox(
+            //         $"{registry.PendingSceneCount} closed scene(s) were imported since the last scan and are not indexed " +
+            //         "yet. Run Sync or \"Scan Pending Scenes\" to cover them.",
+            //         MessageType.Warning);
+            // }
 
             EditorGUILayout.Space();
 
@@ -53,11 +53,11 @@ namespace SpektraGames.ResourceObject.Editor
                         Debug.Log($"[ResourceObject] Heal All: {changed} owner(s) updated.");
                     }
 
-                    using (new EditorGUI.DisabledScope(registry.PendingSceneCount == 0))
-                    {
-                        if (GUILayout.Button("Scan Pending Scenes"))
-                            registry.ScanPendingScenes();
-                    }
+                    // using (new EditorGUI.DisabledScope(registry.PendingSceneCount == 0))
+                    // {
+                    //     if (GUILayout.Button("Scan Pending Scenes"))
+                    //         registry.ScanPendingScenes();
+                    // }
                 }
             }
 

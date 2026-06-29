@@ -38,7 +38,7 @@ namespace SpektraGames.ResourceObject.Editor
 
         // Closed scenes that were imported but not loaded, so we could not scan them in place without disruptively opening
         // them. Surfaced in the inspector; cleared by a full Sync or "Scan pending scenes".
-        [SerializeField] private List<string> pendingSceneGuids = new();
+        //[SerializeField] private List<string> pendingSceneGuids = new();
 
         // ----- runtime-only lookup (the inverted index, rebuilt lazily from `owners`, never serialized) -----
         [NonSerialized] private Dictionary<string, List<string>> ownersByReferencedGuid;
@@ -133,9 +133,9 @@ namespace SpektraGames.ResourceObject.Editor
         // =====================================================================
 
         internal int OwnerCount => owners.Count;
-        internal int PendingSceneCount => pendingSceneGuids.Count;
+        //internal int PendingSceneCount => pendingSceneGuids.Count;
         internal IReadOnlyList<OwnerRecord> Owners => owners;
-        internal IReadOnlyList<string> PendingSceneGuids => pendingSceneGuids;
+        //internal IReadOnlyList<string> PendingSceneGuids => pendingSceneGuids;
 
         internal int DistinctReferencedCount
         {
@@ -224,38 +224,38 @@ namespace SpektraGames.ResourceObject.Editor
                 }
             }
 
-            for (int i = pendingSceneGuids.Count - 1; i >= 0; i--)
-            {
-                var guid = pendingSceneGuids[i];
-                if (string.IsNullOrEmpty(guid) || string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(guid)))
-                {
-                    pendingSceneGuids.RemoveAt(i);
-                    removed = true;
-                }
-            }
+            // for (int i = pendingSceneGuids.Count - 1; i >= 0; i--)
+            // {
+            //     var guid = pendingSceneGuids[i];
+            //     if (string.IsNullOrEmpty(guid) || string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(guid)))
+            //     {
+            //         pendingSceneGuids.RemoveAt(i);
+            //         removed = true;
+            //     }
+            // }
 
             if (removed)
                 InvalidateAndDirty();
             return removed;
         }
 
-        internal void MarkPendingScene(string sceneGuid)
-        {
-            if (string.IsNullOrEmpty(sceneGuid) || pendingSceneGuids.Contains(sceneGuid))
-                return;
-            pendingSceneGuids.Add(sceneGuid);
-            needsSave = true;
-            EditorUtility.SetDirty(this);
-        }
+        // internal void MarkPendingScene(string sceneGuid)
+        // {
+        //     if (string.IsNullOrEmpty(sceneGuid) || pendingSceneGuids.Contains(sceneGuid))
+        //         return;
+        //     pendingSceneGuids.Add(sceneGuid);
+        //     needsSave = true;
+        //     EditorUtility.SetDirty(this);
+        // }
 
-        internal void ClearPendingScene(string sceneGuid)
-        {
-            if (pendingSceneGuids.Remove(sceneGuid))
-            {
-                needsSave = true;
-                EditorUtility.SetDirty(this);
-            }
-        }
+        // internal void ClearPendingScene(string sceneGuid)
+        // {
+        //     if (pendingSceneGuids.Remove(sceneGuid))
+        //     {
+        //         needsSave = true;
+        //         EditorUtility.SetDirty(this);
+        //     }
+        // }
 
         /// <summary>Persist the asset only if something changed since the last save. Cheap to call repeatedly.</summary>
         internal void SaveIfDirty()
@@ -288,7 +288,7 @@ namespace SpektraGames.ResourceObject.Editor
             try
             {
                 owners.Clear();
-                pendingSceneGuids.Clear();
+                //pendingSceneGuids.Clear();
                 invertedDirty = true;
 
                 var allPaths = AssetDatabase.GetAllAssetPaths();
@@ -347,49 +347,49 @@ namespace SpektraGames.ResourceObject.Editor
         }
 
         /// <summary>Scan the scenes that were marked pending (imported while closed) and fold them into the index.</summary>
-        public void ScanPendingScenes(bool showProgress = true)
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                Debug.LogError("[ResourceObject] Cannot scan scenes in Play Mode. Exit Play Mode and retry.");
-                return;
-            }
-
-            bool previousSuppress = SuppressTracking;
-            SuppressTracking = true;
-            try
-            {
-                var referenced = new HashSet<string>();
-                for (int i = pendingSceneGuids.Count - 1; i >= 0; i--)
-                {
-                    var guid = pendingSceneGuids[i];
-                    var path = AssetDatabase.GUIDToAssetPath(guid);
-                    pendingSceneGuids.RemoveAt(i);
-                    needsSave = true;
-
-                    if (string.IsNullOrEmpty(path) || !ResourceObjectScanner.IsScenePath(path))
-                        continue;
-
-                    if (showProgress)
-                        ReportProgress("Scan pending scenes", path, pendingSceneGuids.Count - i, pendingSceneGuids.Count + 1);
-
-                    referenced.Clear();
-                    // Only open the scene if it could contain a ResourceObject; otherwise an empty set removes any stale entry.
-                    if (ResourceObjectScanner.ShouldInspectFile(path))
-                        ResourceObjectScanner.CollectFromSceneAtPath(path, referenced);
-                    UpsertOwner(guid, referenced);
-                }
-
-                EditorUtility.SetDirty(this);
-                SaveIfDirty();
-            }
-            finally
-            {
-                SuppressTracking = previousSuppress;
-                if (showProgress)
-                    EditorUtility.ClearProgressBar();
-            }
-        }
+        // public void ScanPendingScenes(bool showProgress = true)
+        // {
+        //     if (EditorApplication.isPlayingOrWillChangePlaymode)
+        //     {
+        //         Debug.LogError("[ResourceObject] Cannot scan scenes in Play Mode. Exit Play Mode and retry.");
+        //         return;
+        //     }
+        //
+        //     bool previousSuppress = SuppressTracking;
+        //     SuppressTracking = true;
+        //     try
+        //     {
+        //         var referenced = new HashSet<string>();
+        //         for (int i = pendingSceneGuids.Count - 1; i >= 0; i--)
+        //         {
+        //             var guid = pendingSceneGuids[i];
+        //             var path = AssetDatabase.GUIDToAssetPath(guid);
+        //             pendingSceneGuids.RemoveAt(i);
+        //             needsSave = true;
+        //
+        //             if (string.IsNullOrEmpty(path) || !ResourceObjectScanner.IsScenePath(path))
+        //                 continue;
+        //
+        //             if (showProgress)
+        //                 ReportProgress("Scan pending scenes", path, pendingSceneGuids.Count - i, pendingSceneGuids.Count + 1);
+        //
+        //             referenced.Clear();
+        //             // Only open the scene if it could contain a ResourceObject; otherwise an empty set removes any stale entry.
+        //             if (ResourceObjectScanner.ShouldInspectFile(path))
+        //                 ResourceObjectScanner.CollectFromSceneAtPath(path, referenced);
+        //             UpsertOwner(guid, referenced);
+        //         }
+        //
+        //         EditorUtility.SetDirty(this);
+        //         SaveIfDirty();
+        //     }
+        //     finally
+        //     {
+        //         SuppressTracking = previousSuppress;
+        //         if (showProgress)
+        //             EditorUtility.ClearProgressBar();
+        //     }
+        // }
 
         /// <summary>
         /// Proactively re-derive <c>resourcesPath</c> for every ResourceObject in every indexed owner (not just moved ones).

@@ -171,11 +171,11 @@ namespace SpektraGames.ResourceObject.Editor
                     referenced.Clear();
                     ResourceObjectScanner.CollectFromScene(scene, referenced);
                     registry.UpsertOwner(guid, referenced);
-                    registry.ClearPendingScene(guid);
+                    //registry.ClearPendingScene(guid);
                 }
                 else
                 {
-                    registry.MarkPendingScene(guid);
+                    //registry.MarkPendingScene(guid);
                 }
             }
         }
@@ -227,42 +227,42 @@ namespace SpektraGames.ResourceObject.Editor
 
         private static void HealPendingScenesReferencing(ResourceObjectRegistry registry, HashSet<string> movedResourceGuids)
         {
-            // Closed scenes can't be opened in play mode; leave them pending until the editor is back in edit mode.
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-                return;
-
-            var pending = registry.PendingSceneGuids;
-            if (pending.Count == 0)
-                return;
-
-            // Snapshot: healing+indexing a pending scene mutates the registry's pending list as we go.
-            var pendingGuids = new List<string>(pending);
-            var referenced = new HashSet<string>();
-            for (int i = 0; i < pendingGuids.Count; i++)
-            {
-                var guid = pendingGuids[i];
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                if (string.IsNullOrEmpty(path) || !ResourceObjectScanner.IsScenePath(path))
-                {
-                    registry.ClearPendingScene(guid);
-                    continue;
-                }
-
-                // A loaded pending scene was already healed in memory above; skip the disk path for it.
-                if (ResourceObjectScanner.TryGetLoadedScene(path, out _))
-                    continue;
-
-                // Cheap text prefilter: only open scenes whose file actually mentions one of the moved guids.
-                if (!ResourceObjectScanner.FileMentionsAnyGuid(path, movedResourceGuids))
-                    continue;
-
-                // Open once to both heal the stale paths and learn what the scene references, then index it so future
-                // moves resolve it through the index and it leaves the pending list.
-                referenced.Clear();
-                ResourceObjectScanner.HealAndCollectSceneAtPath(path, movedResourceGuids, referenced);
-                registry.UpsertOwner(guid, referenced);
-                registry.ClearPendingScene(guid);
-            }
+            // // Closed scenes can't be opened in play mode; leave them pending until the editor is back in edit mode.
+            // if (EditorApplication.isPlayingOrWillChangePlaymode)
+            //     return;
+            //
+            // var pending = registry.PendingSceneGuids;
+            // if (pending.Count == 0)
+            //     return;
+            //
+            // // Snapshot: healing+indexing a pending scene mutates the registry's pending list as we go.
+            // var pendingGuids = new List<string>(pending);
+            // var referenced = new HashSet<string>();
+            // for (int i = 0; i < pendingGuids.Count; i++)
+            // {
+            //     var guid = pendingGuids[i];
+            //     var path = AssetDatabase.GUIDToAssetPath(guid);
+            //     if (string.IsNullOrEmpty(path) || !ResourceObjectScanner.IsScenePath(path))
+            //     {
+            //         registry.ClearPendingScene(guid);
+            //         continue;
+            //     }
+            //
+            //     // A loaded pending scene was already healed in memory above; skip the disk path for it.
+            //     if (ResourceObjectScanner.TryGetLoadedScene(path, out _))
+            //         continue;
+            //
+            //     // Cheap text prefilter: only open scenes whose file actually mentions one of the moved guids.
+            //     if (!ResourceObjectScanner.FileMentionsAnyGuid(path, movedResourceGuids))
+            //         continue;
+            //
+            //     // Open once to both heal the stale paths and learn what the scene references, then index it so future
+            //     // moves resolve it through the index and it leaves the pending list.
+            //     referenced.Clear();
+            //     ResourceObjectScanner.HealAndCollectSceneAtPath(path, movedResourceGuids, referenced);
+            //     registry.UpsertOwner(guid, referenced);
+            //     registry.ClearPendingScene(guid);
+            // }
         }
 
         private static void HealAllLoadedScenes(HashSet<string> movedResourceGuids)
