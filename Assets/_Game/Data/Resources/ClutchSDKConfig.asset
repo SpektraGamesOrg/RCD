@@ -17,3 +17,5 @@ MonoBehaviour:
   devEnvironmentId: 3bee7bf6-bf45-4fed-864e-0a12359c28b1
   prodBaseUrl: https://api.clutch.spektragames.com
   prodEnvironmentId: 539e9af2-ce3e-49b7-8963-1d5e5612e33c
+  devApiKey: clutch_proj_4954319F84A96B41_625eee6a03b947a383a2f067b3eb772e
+  prodApiKey: clutch_proj_4954319F84A96B41_625eee6a03b947a383a2f067b3eb772e

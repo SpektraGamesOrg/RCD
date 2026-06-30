@@ -28,5 +28,13 @@ namespace Save
 
         // Clutch remote config
         public const string ClutchConfig    = "clutch_config_cache"; // combined flag JSON blob (see ClutchConfigCache)
+
+        // Clutch auth tokens (see ClutchAuth)
+        public const string ClutchAccessToken   = "clutch_access_token";
+        public const string ClutchRefreshToken  = "clutch_refresh_token";
+        public const string ClutchAccessExpires  = "clutch_access_expires";
+        public const string ClutchRefreshExpires = "clutch_refresh_expires";
+        public const string ClutchAuthUserId    = "clutch_auth_user_id";
+        public const string ClutchAuthEnvId     = "clutch_auth_env_id";
     }
 }

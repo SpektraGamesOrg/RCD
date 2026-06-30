@@ -62,9 +62,16 @@ namespace Clutch
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(InitializeTimeoutSeconds));
                 try
                 {
+                    // Authenticate with the device id (no Nakama), then evaluate on the Bearer route so
+                    // non-public flags are returned. Any auth/fetch failure falls through to cache/SO -
+                    // we do NOT fall back to the public route (it returns nothing for non-public flags).
+                    string userId = SaveManager.UserId;
+                    await ClutchAuth.EnsureValidAccessTokenAsync(
+                        config.BaseUrl, config.EnvironmentId, userId, timeoutCts.Token);
+
                     JObject properties = BuildProperties();
-                    fetched = await ClutchClient.EvaluatePublicAsync(
-                        config.BaseUrl, config.EnvironmentId, keys, properties, timeoutCts.Token);
+                    fetched = await ClutchClient.EvaluateAuthenticatedAsync(
+                        config.BaseUrl, config.EnvironmentId, ClutchAuth.AccessToken, userId, keys, properties, timeoutCts.Token);
                 }
                 catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested &&
                                                          !cancellationToken.IsCancellationRequested)
@@ -79,7 +86,7 @@ namespace Clutch
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"[ClutchConfigService] Clutch fetch failed, falling back: {e.Message}");
+                    Debug.LogError($"[ClutchConfigService] Clutch auth/fetch failed, falling back: {e.Message}");
                 }
             }
 
@@ -94,13 +101,19 @@ namespace Clutch
                     else
                         EnsureCachedOrSeedFallback(keys[i]);
                 }
+
+                Debug.Log($"[ClutchConfigService] Fetched {fetched.Count} flag(s) from Clutch and cached to prefs.");
             }
             else
             {
                 // Failure or timeout: cache wins if present (scenario 4), else seed from SO fallback (scenario 3).
                 ResolveFromFailure();
+                bool cached = ClutchConfigCache.HasAny();
+                Debug.Log($"[ClutchConfigService] Clutch unavailable; using {(cached ? "cached prefs values" : "SO fallback values")}.");
             }
 
+            // Flush the cache to disk NOW so a subsequent offline launch always finds it. This is the write
+            // that makes "online once, then offline" reuse the real Clutch values instead of the SO fallback.
             ClutchConfigCache.Save();
             Finish();
         }
