@@ -41,6 +41,21 @@ namespace Clutch
         [Tooltip("Clutch environment id (Production build).")]
         private string prodEnvironmentId = "539e9af2-ce3e-49b7-8963-1d5e5612e33c";
 
+#if UNITY_EDITOR
+        // EDITOR-ONLY project API keys for the trusted server route (X-API-Key) used by the
+        // "update from Clutch" tooling. These are gated behind UNITY_EDITOR so the key NEVER compiles
+        // into a client (Android/iOS) player build - mirrors HRP's ServerSideClutch security model.
+        // Left blank in source: paste the real keys in the Inspector (keeps them out of git history).
+        [Header("Editor API Keys (server route - never shipped)")]
+        [SerializeField]
+        [Tooltip("EDITOR-ONLY Clutch project API key for the Development environment (X-API-Key). Never compiled into player builds.")]
+        private string devApiKey = "";
+
+        [SerializeField]
+        [Tooltip("EDITOR-ONLY Clutch project API key for the Production environment (X-API-Key). Never compiled into player builds.")]
+        private string prodApiKey = "";
+#endif
+
         /// <summary>Clutch project id (reference / editor tooling only).</summary>
         public string ProjectId => projectId;
 
@@ -75,8 +90,10 @@ namespace Clutch
         // so expose the raw pairs to editor code only.
         public string DevBaseUrl => devBaseUrl;
         public string DevEnvironmentId => devEnvironmentId;
+        public string DevApiKey => devApiKey;
         public string ProdBaseUrl => prodBaseUrl;
         public string ProdEnvironmentId => prodEnvironmentId;
+        public string ProdApiKey => prodApiKey;
 
         [MenuItem("Tools/Clutch/Select Clutch SDK Config")]
         public static void SelectAsset()
