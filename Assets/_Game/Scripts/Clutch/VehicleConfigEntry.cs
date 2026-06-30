@@ -1,4 +1,3 @@
-using System;
 using Newtonsoft.Json;
 using Vehicles;
 
@@ -16,9 +15,9 @@ namespace Clutch
     /// </code>
     /// Path values are nullable so an absent key reads as "path off". <see cref="free"/> is exclusive:
     /// when true the car is Free regardless of the other keys. Field names are snake_case to match the
-    /// flag JSON verbatim.
+    /// flag JSON verbatim. This is a Newtonsoft JSON DTO (never Unity-serialized), so it carries no
+    /// [Serializable] attribute - that would only invite the UAC1001 nullable-field analyzer warning.
     /// </summary>
-    [Serializable]
     public class VehicleConfigEntry
     {
         [JsonProperty("by_gold")]
