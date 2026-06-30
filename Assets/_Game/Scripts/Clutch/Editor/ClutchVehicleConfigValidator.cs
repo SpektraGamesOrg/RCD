@@ -12,7 +12,8 @@ namespace _Game.Scripts.Clutch.Editor
     /// (see ClutchConfigService.GetVehicleConfig); a missing or malformed entry silently falls back to the
     /// serialized values. This validator checks the <see cref="global::Clutch.ClutchConfig"/> fallback
     /// asset against the live vehicle roster and reports:
-    ///   * fallback entries whose obtain_type does not parse to a valid VehicleObtainType,
+    ///   * fallback entries that declare no obtain path (no by_gold/by_watch_ads/distance_km and not free),
+    ///     mix free with path values, or carry a non-positive path value,
     ///   * fallback keys that match no vehicle in the container (dead keys / typos),
     ///   * roster vehicles that have no fallback entry (offline they use the serialized obtain config).
     /// Editor-only; uses Debug.LogError per project rules.
@@ -64,7 +65,8 @@ namespace _Game.Scripts.Clutch.Editor
 
             int problems = 0;
 
-            // 1) Every fallback entry must have a parseable obtain_type.
+            // 1) Every fallback entry must declare at least one obtain path (a per-path value or free=true);
+            //    free is exclusive (a free car must not also carry path values); present values must be > 0.
             foreach (KeyValuePair<string, global::Clutch.VehicleConfigEntry> kvp in fallbackMap)
             {
                 global::Clutch.VehicleConfigEntry entry = kvp.Value;
@@ -75,9 +77,23 @@ namespace _Game.Scripts.Clutch.Editor
                     continue;
                 }
 
-                if (!global::Clutch.ObtainTypeParser.TryParse(entry.obtain_type, out _))
+                bool hasPathValue = entry.by_gold.HasValue || entry.by_watch_ads.HasValue || entry.distance_km.HasValue;
+
+                if (!entry.free && !hasPathValue)
                 {
-                    Debug.LogError($"[ClutchVehicleConfigValidator] VehicleConfig key '{kvp.Key}' has an unparseable obtain_type '{entry.obtain_type}'.");
+                    Debug.LogError($"[ClutchVehicleConfigValidator] VehicleConfig key '{kvp.Key}' declares no obtain path (no by_gold/by_watch_ads/distance_km and free=false).");
+                    problems++;
+                }
+
+                if (entry.free && hasPathValue)
+                {
+                    Debug.LogError($"[ClutchVehicleConfigValidator] VehicleConfig key '{kvp.Key}' is free=true but also carries path values; free is exclusive.");
+                    problems++;
+                }
+
+                if (entry.by_gold is <= 0 || entry.by_watch_ads is <= 0 || entry.distance_km is <= 0)
+                {
+                    Debug.LogError($"[ClutchVehicleConfigValidator] VehicleConfig key '{kvp.Key}' has a non-positive path value (by_gold={entry.by_gold}, by_watch_ads={entry.by_watch_ads}, distance_km={entry.distance_km}).");
                     problems++;
                 }
             }

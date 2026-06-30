@@ -219,7 +219,7 @@ namespace Clutch
         }
 
         // ---------------------------------------------------------------------
-        // VehicleConfig (per-vehicle obtain type + value)
+        // VehicleConfig (per-vehicle obtain paths, each with its own value)
         // ---------------------------------------------------------------------
 
         public ResolvedVehicleConfig GetVehicleConfig(VehicleID id, VehicleObtainType fallbackType, int fallbackAmount)
@@ -232,15 +232,18 @@ namespace Clutch
                 map.TryGetValue(vehicleKey, out VehicleConfigEntry entry) &&
                 entry != null)
             {
-                // Clutch entry present: obtain type + value are authoritative. A malformed/empty
-                // obtain_type keeps the serialized type (value still applies).
-                VehicleObtainType obtainType = ObtainTypeParser.TryParse(entry.obtain_type, out VehicleObtainType parsed)
-                    ? parsed
-                    : fallbackType;
-                return new ResolvedVehicleConfig(obtainType, entry.value);
+                // Clutch entry present: the paths it declares (by key presence) and their per-path values
+                // are authoritative. Absent path values default to 0.
+                return new ResolvedVehicleConfig(
+                    entry.ToObtainType(),
+                    entry.by_gold ?? 0,
+                    entry.by_watch_ads ?? 0,
+                    entry.distance_km ?? 0);
             }
 
-            return new ResolvedVehicleConfig(fallbackType, fallbackAmount);
+            // No Clutch entry: keep the serialized type, and use the single serialized amount for whichever
+            // path(s) it enables (the SO has no per-path values - this preserves pre-migration behavior).
+            return new ResolvedVehicleConfig(fallbackType, fallbackAmount, fallbackAmount, fallbackAmount);
         }
 
         // Parses (and memoizes) the VehicleConfig flag into a vehicle-key -> entry map.

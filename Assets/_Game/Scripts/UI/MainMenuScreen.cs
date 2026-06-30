@@ -161,7 +161,7 @@ namespace UI
             if (entry == null || SaveManager.IsOwned(id) || !Has(config.ObtainType, VehicleObtainType.ByGold))
                 return;
 
-            int price = config.Amount;
+            int price = config.GoldValue;
             if (SaveManager.Gold < price)
             {
                 Debug.LogError($"[MainMenu] Not enough coins to buy {id}. Need {price}, have {SaveManager.Gold}.");
@@ -200,7 +200,7 @@ namespace UI
                 if (!await ShowRewardedAdAsync())
                     return;
 
-                int target = config.Amount;
+                int target = config.AdsValue;
                 int watched = SaveManager.GetVehicleWatchAdCount(id) + 1;
                 SaveManager.SetVehicleWatchAdCount(id, watched);
 
@@ -225,7 +225,7 @@ namespace UI
             if (entry == null || SaveManager.IsOwned(id) || !Has(config.ObtainType, VehicleObtainType.DistanceMilestoneKm))
                 return;
 
-            if (SaveManager.DistanceDrivenKm < config.Amount)
+            if (SaveManager.DistanceDrivenKm < config.DistanceKm)
             {
                 Debug.LogError($"[MainMenu] Cannot claim {id}: distance milestone not reached.");
                 return;
@@ -316,7 +316,6 @@ namespace UI
             VehicleEntry entry = GetEntry(id);
             ResolvedVehicleConfig config = Resolve(entry);
             VehicleObtainType obtain = config.ObtainType;
-            int target = config.Amount;
 
             // --- Obtain by gold: show the price and gate the button on the player's balance. ---
             bool byGold = Has(obtain, VehicleObtainType.ByGold);
@@ -324,7 +323,7 @@ namespace UI
             {
                 buyButton.gameObject.SetActive(byGold);
             }
-            if (byGold && buyPriceText) buyPriceText.text = "BUY " + target.ToString("N0");
+            if (byGold && buyPriceText) buyPriceText.text = "BUY " + config.GoldValue.ToString("N0");
 
             // --- Obtain by watching ads: show "WATCH AD watched/target" for this specific car. ---
             bool byAds = Has(obtain, VehicleObtainType.ByWatchAds);
@@ -335,8 +334,9 @@ namespace UI
             }
             if (byAds && watchAdsButtonText)
             {
-                int watched = Mathf.Min(SaveManager.GetVehicleWatchAdCount(id), target);
-                watchAdsButtonText.text = $"WATCH AD {watched}/{target}";
+                int adsTarget = config.AdsValue;
+                int watched = Mathf.Min(SaveManager.GetVehicleWatchAdCount(id), adsTarget);
+                watchAdsButtonText.text = $"WATCH AD {watched}/{adsTarget}";
             }
 
             // --- Obtain by distance milestone: global km progress, with Claim Now once the target is hit. ---
@@ -346,15 +346,16 @@ namespace UI
             bool milestoneReached = false;
             if (byDistance)
             {
+                int kmTarget = config.DistanceKm;
                 int driven = SaveManager.DistanceDrivenKm;
-                float progress01 = target > 0 ? Mathf.Clamp01((float)driven / target) : 1f;
+                float progress01 = kmTarget > 0 ? Mathf.Clamp01((float)driven / kmTarget) : 1f;
                 int percent = Mathf.Clamp(Mathf.FloorToInt(progress01 * 100f), 0, 100);
-                milestoneReached = driven >= target;
+                milestoneReached = driven >= kmTarget;
 
                 if (unlockStatusText)
                     unlockStatusText.text = $"UNLOCK STATUS: <color=#FFC31A>{percent}%</color>";
                 if (unlockStatusDistanceText)
-                    unlockStatusDistanceText.text = $"{DistanceFormat.Km(Mathf.Min(driven, target))} / {DistanceFormat.KmTarget(target)} KM";
+                    unlockStatusDistanceText.text = $"{DistanceFormat.Km(Mathf.Min(driven, kmTarget))} / {DistanceFormat.KmTarget(kmTarget)} KM";
                 if (unlockStatusLoadingBar)
                     unlockStatusLoadingBar.SetProgress(progress01);
             }
@@ -409,18 +410,20 @@ namespace UI
 
         // Effective obtain config for an entry, resolving the Clutch "VehicleConfig" flag (keyed by the
         // VehicleID enum name) over the entry's serialized values. When Clutch has an entry for the vehicle,
-        // both its obtain type and value are authoritative; otherwise the serialized type/amount are used.
-        // Callers should resolve ONCE and read both ObtainType and Amount, so the obtain controls and the
-        // target stay consistent within a single refresh.
+        // its declared paths and per-path values are authoritative; otherwise the serialized type/amount are
+        // used (the single serialized amount applies to whichever path(s) the serialized type enables).
+        // Callers should resolve ONCE and read the path(s) and per-path values they need, so the obtain
+        // controls and targets stay consistent within a single refresh.
         private static ResolvedVehicleConfig Resolve(VehicleEntry entry)
         {
             if (entry == null)
-                return new ResolvedVehicleConfig(default, 0);
+                return new ResolvedVehicleConfig(default, 0, 0, 0);
 
             if (ServiceLocator.TryGetService(out IClutchConfigService clutchConfig))
                 return clutchConfig.GetVehicleConfig(entry.ID, entry.VehicleObtainType, entry.VehicleObtainTargetAmount);
 
-            return new ResolvedVehicleConfig(entry.VehicleObtainType, entry.VehicleObtainTargetAmount);
+            int amount = entry.VehicleObtainTargetAmount;
+            return new ResolvedVehicleConfig(entry.VehicleObtainType, amount, amount, amount);
         }
 
         // Allocation-free flag test (Enum.HasFlag boxes); VehicleObtainType is a [Flags] enum.

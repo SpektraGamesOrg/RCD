@@ -8,10 +8,11 @@ namespace Clutch
     {
         /// <summary>
         /// Per-vehicle obtain config, keyed by vehicle key (VehicleID enum name). Each value is an object
-        /// { "value": &lt;int&gt;, "obtain_type": "&lt;flags&gt;" } where obtain_type is one or more of
-        /// ByGold / ByWatchAds / DistanceMilestoneKm / Free, combined with '|' or ',' (case-insensitive).
-        /// "value" is the numeric target (gold price, ad count, or km). Example:
-        /// {"GTR_R35":{"value":1500,"obtain_type":"ByGold"},"M4":{"value":0,"obtain_type":"Free"}}.
+        /// whose KEYS are the obtain paths a car offers, each carrying that path's own target value:
+        /// "by_gold" (gold price), "by_watch_ads" (ad count), "distance_km" (milestone km). A path's
+        /// presence turns it on; a car can offer several at once with distinct values. "free":true marks
+        /// the car free and is exclusive of the path keys. Example:
+        /// {"G63":{"by_gold":5000,"by_watch_ads":8},"GTR_R35":{"by_gold":1500},"Supra":{"free":true}}.
         /// </summary>
         public const string VehicleConfig = "VehicleConfig";
 
