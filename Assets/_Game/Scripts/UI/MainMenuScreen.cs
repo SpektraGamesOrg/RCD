@@ -432,14 +432,15 @@ namespace UI
         // controls and targets stay consistent within a single refresh.
         private static ResolvedVehicleConfig Resolve(VehicleEntry entry)
         {
-            if (entry == null)
-                return new ResolvedVehicleConfig(default, 0, 0, 0);
+            if (entry == null || entry.ID == VehicleID.None)
+                return ResolvedVehicleConfig.None;
 
+            // Clutch is the single source: the service resolves the cached Clutch value, then the
+            // ClutchConfig SO fallback. The VehicleContainer no longer carries obtain data.
             if (ServiceLocator.TryGetService(out IClutchConfigService clutchConfig))
-                return clutchConfig.GetVehicleConfig(entry.ID, entry.VehicleObtainType, entry.VehicleObtainTargetAmount);
+                return clutchConfig.GetVehicleConfig(entry.ID);
 
-            int amount = entry.VehicleObtainTargetAmount;
-            return new ResolvedVehicleConfig(entry.VehicleObtainType, amount, amount, amount);
+            return ResolvedVehicleConfig.None;
         }
 
         // Allocation-free flag test (Enum.HasFlag boxes); VehicleObtainType is a [Flags] enum.

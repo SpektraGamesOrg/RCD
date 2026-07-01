@@ -235,28 +235,31 @@ namespace Clutch
         // VehicleConfig (per-vehicle obtain paths, each with its own value)
         // ---------------------------------------------------------------------
 
-        public ResolvedVehicleConfig GetVehicleConfig(VehicleID id, VehicleObtainType fallbackType, int fallbackAmount)
+        public ResolvedVehicleConfig GetVehicleConfig(VehicleID id)
         {
             // Clutch keys are the VehicleID enum names (e.g. "GTR_R35"); see the fallback SO + dashboard.
             string vehicleKey = id.ToString();
 
+            // 1) Resolved Clutch value (from the prefs cache, populated on a successful fetch).
             Dictionary<string, VehicleConfigEntry> map = GetVehicleConfigMap();
             if (map != null &&
                 map.TryGetValue(vehicleKey, out VehicleConfigEntry entry) &&
                 entry != null)
             {
-                // Clutch entry present: the paths it declares (by key presence) and their per-path values
-                // are authoritative. Absent path values default to 0.
-                return new ResolvedVehicleConfig(
-                    entry.ToObtainType(),
-                    entry.by_gold ?? 0,
-                    entry.by_watch_ads ?? 0,
-                    entry.distance_km ?? 0);
+                return ResolvedVehicleConfig.From(entry);
             }
 
-            // No Clutch entry: keep the serialized type, and use the single serialized amount for whichever
-            // path(s) it enables (the SO has no per-path values - this preserves pre-migration behavior).
-            return new ResolvedVehicleConfig(fallbackType, fallbackAmount, fallbackAmount, fallbackAmount);
+            // 2) Offline fallback: the ClutchConfig SO (single source of truth for defaults, keyed by
+            //    VehicleID name). The VehicleContainer no longer carries obtain data.
+            if (ClutchConfig.Instance &&
+                ClutchConfig.Instance.TryGetVehicleConfigEntry(id, out VehicleConfigEntry fallbackEntry))
+            {
+                return ResolvedVehicleConfig.From(fallbackEntry);
+            }
+
+            // 3) Neither Clutch nor SO has this vehicle: no obtain path.
+            Debug.LogError($"[ClutchConfigService] No VehicleConfig for '{vehicleKey}' in Clutch cache or fallback SO.");
+            return ResolvedVehicleConfig.None;
         }
 
         // Parses (and memoizes) the VehicleConfig flag into a vehicle-key -> entry map.

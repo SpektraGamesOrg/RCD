@@ -17,83 +17,55 @@ MonoBehaviour:
     <MainBehaviour>k__BackingField:
       guid: 5278952d133644c4289804999ac08302
       resourcesPath: Supra
-    <VehicleObtainType>k__BackingField: 8
-    <VehicleObtainTargetAmount>k__BackingField: 0
   - <ID>k__BackingField: 2
     <MainBehaviour>k__BackingField:
       guid: d808e783f3edb47e9a32c1d45d55ff06
       resourcesPath: R35
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 3
     <MainBehaviour>k__BackingField:
       guid: 2150d2e91a5a841319918b13b8b8cd2d
       resourcesPath: Rx7
-    <VehicleObtainType>k__BackingField: 2
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 4
     <MainBehaviour>k__BackingField:
       guid: b5bdaff2c21e847d1918e4a9adc8c8d6
       resourcesPath: S15
-    <VehicleObtainType>k__BackingField: 4
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 5
     <MainBehaviour>k__BackingField:
       guid: 7d72f9cd1aee04f82a4930001b795b55
       resourcesPath: Gt500
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 6
     <MainBehaviour>k__BackingField:
       guid: 45041822b3d86453784c017de344a67a
       resourcesPath: G63
-    <VehicleObtainType>k__BackingField: 3
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 7
     <MainBehaviour>k__BackingField:
       guid: 8160bafef8a294fe4a5bcf3682343955
       resourcesPath: 'Challenger_Hellcat '
-    <VehicleObtainType>k__BackingField: 6
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 9
     <MainBehaviour>k__BackingField:
       guid: d928e401b3a7d49aeb5f6433326cb227
       resourcesPath: M4
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 10
     <MainBehaviour>k__BackingField:
       guid: 9ac5a244b614d4e3dacfae9a03baf0c0
       resourcesPath: F-Type
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 11
     <MainBehaviour>k__BackingField:
       guid: 375d554edbeb0488c8dc46b31abc2fa3
       resourcesPath: f488
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 12
     <MainBehaviour>k__BackingField:
       guid: b7af76e6e7513434c8cd3c3fd67e6bc3
       resourcesPath: Sf90
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 13
     <MainBehaviour>k__BackingField:
       guid: c92cec79a61b44bbc928b3deedbbcf53
       resourcesPath: DBS
-    <VehicleObtainType>k__BackingField: 5
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 14
     <MainBehaviour>k__BackingField:
       guid: b2562729d3b2142a3aaebfe4933dcb1e
       resourcesPath: Huayra
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500
   - <ID>k__BackingField: 15
     <MainBehaviour>k__BackingField:
       guid: ae319c4236ccf4d3ebf2a0e891b5db58
       resourcesPath: Fenyr
-    <VehicleObtainType>k__BackingField: 1
-    <VehicleObtainTargetAmount>k__BackingField: 1500

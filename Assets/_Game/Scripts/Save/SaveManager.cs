@@ -377,7 +377,10 @@ namespace Save
             EnsureStarterVehicle();
         }
 
-        // Grants the first roster vehicle (the free starter) when the player owns nothing yet.
+        // Grants the free starter car(s) when the player owns nothing yet. Runs synchronously at boot BEFORE
+        // Clutch loads, so it reads "which car is Free" from the ClutchConfig SO fallback (available without
+        // network) - the container no longer carries obtain data. A car promoted to Free remotely (present
+        // in Clutch but not the SO) is handled later by GrantClutchFreeVehicles once Clutch resolves.
         private static void EnsureStarterVehicle()
         {
             VehicleContainer container = VehicleContainer.Instance;
@@ -387,46 +390,45 @@ namespace Save
                 return;
             }
 
-            //Debug.LogError("EnsureStarterVehicle");
+            ClutchConfig fallback = ClutchConfig.Instance;
+            if (!fallback)
+            {
+                Debug.LogError("[SaveManager] ClutchConfig fallback asset missing; cannot determine the free starter.");
+                return;
+            }
 
             bool anyChange = false;
 
             for (var i = 0; i < container.Vehicles.Count; i++)
             {
-                var vehicle = container.Vehicles[i];
+                VehicleEntry vehicle = container.Vehicles[i];
+                if (vehicle == null || IsOwned(vehicle.ID))
+                    continue;
 
-                //Debug.LogError($"vehicle.ID: {vehicle.ID}, VehicleObtainType: {vehicle.VehicleObtainType}, IsOwned: {IsOwned(vehicle.ID)}");
-
-                if (vehicle.VehicleObtainType == VehicleObtainType.Free &&
-                    !IsOwned(vehicle.ID))
+                if (!fallback.TryGetVehicleConfigEntry(vehicle.ID, out VehicleConfigEntry entry) ||
+                    entry.ToObtainType() != VehicleObtainType.Free)
                 {
-                    AddOwned(vehicle.ID);
-
-                    //Debug.LogError("Added owned: " + vehicle.ID);
-                    //Debug.LogError("SelectedVehicle: " + SelectedVehicle);
-
-                    if (SelectedVehicle == VehicleID.None)
-                        SelectVehicle(vehicle.ID);
-
-                    //Debug.LogError("SelectedVehicle: " + SelectedVehicle);
-
-                    anyChange = true;
+                    continue;
                 }
+
+                AddOwned(vehicle.ID);
+                if (SelectedVehicle == VehicleID.None)
+                    SelectVehicle(vehicle.ID);
+
+                anyChange = true;
             }
 
             if (anyChange)
-            {
                 Save();
-            }
         }
 
         /// <summary>
         /// Second-phase free grant, run AFTER Clutch resolves (see GameInitializer). Grants any vehicle
         /// whose Clutch-resolved obtain type is <see cref="VehicleObtainType.Free"/> but that the player does
-        /// not own yet - so the product team can promote a car to Free remotely even when the serialized
-        /// <see cref="VehicleEntry.VehicleObtainType"/> still says otherwise. Phase one
-        /// (<see cref="EnsureStarterVehicle"/>) already runs synchronously at boot from the serialized data,
-        /// guaranteeing an owned car before this Clutch-dependent pass; this pass only ever ADDS ownership.
+        /// not own yet - so the product team can promote a car to Free remotely even when the SO fallback
+        /// says otherwise. Phase one (<see cref="EnsureStarterVehicle"/>) already runs synchronously at boot
+        /// from the ClutchConfig SO fallback, guaranteeing an owned car before this Clutch-dependent pass;
+        /// this pass only ever ADDS ownership.
         /// </summary>
         public static void GrantClutchFreeVehicles(IClutchConfigService clutchConfig)
         {
@@ -445,8 +447,7 @@ namespace Save
                 if (vehicle == null || IsOwned(vehicle.ID))
                     continue;
 
-                ResolvedVehicleConfig resolved = clutchConfig.GetVehicleConfig(
-                    vehicle.ID, vehicle.VehicleObtainType, vehicle.VehicleObtainTargetAmount);
+                ResolvedVehicleConfig resolved = clutchConfig.GetVehicleConfig(vehicle.ID);
 
                 // Free is exclusive (enforced by the obtain-type drawer and the parser), so test equality.
                 if (resolved.ObtainType != VehicleObtainType.Free)

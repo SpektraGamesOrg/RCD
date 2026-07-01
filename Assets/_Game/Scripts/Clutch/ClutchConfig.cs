@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SpektraGames.SpektraUtilities.Runtime;
 using UnityEngine;
+using Vehicles;
 #if UNITY_EDITOR
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -64,6 +65,48 @@ namespace Clutch
             return false;
         }
 
+        // Parsed VehicleConfig fallback (vehicle key -> entry), memoized. Null until first read.
+        [NonSerialized] private Dictionary<string, VehicleConfigEntry> _vehicleConfigFallback;
+
+        /// <summary>
+        /// The offline fallback obtain config for a vehicle, parsed from this asset's "VehicleConfig"
+        /// fallback JSON (keyed by <see cref="VehicleID"/> enum name). Returns false when the vehicle has no
+        /// fallback entry. This is the single fallback source once the VehicleContainer no longer carries
+        /// obtain data - both the runtime resolver and the synchronous boot starter-grant read it here.
+        /// </summary>
+        public bool TryGetVehicleConfigEntry(VehicleID id, out VehicleConfigEntry entry)
+        {
+            entry = null;
+            Dictionary<string, VehicleConfigEntry> map = GetVehicleConfigFallbackMap();
+            return map != null && map.TryGetValue(id.ToString(), out entry) && entry != null;
+        }
+
+        private Dictionary<string, VehicleConfigEntry> GetVehicleConfigFallbackMap()
+        {
+            if (_vehicleConfigFallback != null)
+                return _vehicleConfigFallback;
+
+            if (!TryGetFallback(ClutchFlagKeys.VehicleConfig, out string json) || string.IsNullOrEmpty(json))
+            {
+                _vehicleConfigFallback = new Dictionary<string, VehicleConfigEntry>();
+                return _vehicleConfigFallback;
+            }
+
+            try
+            {
+                _vehicleConfigFallback =
+                    JsonConvert.DeserializeObject<Dictionary<string, VehicleConfigEntry>>(json)
+                    ?? new Dictionary<string, VehicleConfigEntry>();
+            }
+            catch (JsonException e)
+            {
+                Debug.LogError($"[ClutchConfig] VehicleConfig fallback is not valid JSON: {e.Message}");
+                _vehicleConfigFallback = new Dictionary<string, VehicleConfigEntry>();
+            }
+
+            return _vehicleConfigFallback;
+        }
+
 #if UNITY_EDITOR
         private const int EditorFetchTimeoutSeconds = 15;
 
@@ -75,6 +118,9 @@ namespace Clutch
         {
             if (string.IsNullOrEmpty(flagKey))
                 return;
+
+            // Invalidate the parsed VehicleConfig memo so the next read re-parses the updated JSON.
+            _vehicleConfigFallback = null;
 
             for (int i = 0; i < fallbacks.Count; i++)
             {
@@ -91,10 +137,12 @@ namespace Clutch
         // ---------------------------------------------------------------------
         // Update from Clutch (editor-only, inspector buttons)
         // ---------------------------------------------------------------------
-        // Click a button to fetch the live flags for an environment and write them into this asset's
-        // fallbacks + the PlayerPrefs cache. Uses the trusted SERVER route (X-API-Key, the same route HRP's
-        // ServerSideClutch uses) when an editor API key is configured on ClutchSDKConfig, else the public
-        // route. The whole block is #if UNITY_EDITOR so the API key never compiles into a player build.
+        // Click a button to fetch the live flags for an environment and write them into THIS ASSET's
+        // fallbacks only. This is an EDITOR authoring step: it updates the offline-fallback config, it does
+        // NOT touch PlayerPrefs (the runtime prefs cache is owned by ClutchConfigService at play time).
+        // Uses the trusted SERVER route (X-API-Key, the same route HRP's ServerSideClutch uses) when an
+        // editor API key is configured on ClutchSDKConfig, else the public route. The whole block is
+        // #if UNITY_EDITOR so the API key never compiles into a player build.
 
         [Button("Update from Clutch (Dev)", ButtonSizes.Medium), PropertyOrder(-1)]
         private void UpdateFromClutchDev() => UpdateFromClutchEditor(useDev: true);
@@ -104,7 +152,8 @@ namespace Clutch
 
         /// <summary>
         /// Editor-only: fetches the configured flags from Clutch for the chosen environment and writes them
-        /// into this asset's fallbacks and the PlayerPrefs cache. Also callable from the Tools/Clutch menu.
+        /// into this asset's fallbacks (the offline config). Does NOT write PlayerPrefs - the runtime cache
+        /// is populated by ClutchConfigService at play time. Also callable from the Tools/Clutch menu.
         /// </summary>
         public void UpdateFromClutchEditor(bool useDev)
         {
@@ -160,19 +209,17 @@ namespace Clutch
             foreach (KeyValuePair<string, string> kvp in fetched)
             {
                 SetFallbackEditor(kvp.Key, kvp.Value);
-                WriteToCache(kvp.Key, kvp.Value);
                 Debug.Log($"[ClutchConfig] {envLabel} {kvp.Key} = {kvp.Value}");
             }
 
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssets();
-            PlayerPrefs.Save();
 
             string[] missing = keys.Where(k => !fetched.ContainsKey(k)).ToArray();
             if (missing.Length > 0)
                 Debug.LogError($"[ClutchConfig] {envLabel} did not return: {string.Join(", ", missing)} (kept existing fallback).");
 
-            Debug.Log($"[ClutchConfig] Wrote {fetched.Count} flag(s) from {envLabel} ({route}) into fallbacks + PlayerPrefs cache.");
+            Debug.Log($"[ClutchConfig] Wrote {fetched.Count} flag(s) from {envLabel} ({route}) into the fallback SO.");
         }
 
         // Synchronous evaluate-batch. Server route (X-API-Key) when apiKey is non-null, else public route.
@@ -217,24 +264,6 @@ namespace Clutch
             }
 
             return result;
-        }
-
-        // Mirrors ClutchConfigCache's combined-blob layout (one PlayerPrefs key, key -> json-string).
-        private static void WriteToCache(string flagKey, string json)
-        {
-            string raw = PlayerPrefs.GetString(Save.SaveKeys.ClutchConfig, string.Empty);
-            JObject blob;
-            try
-            {
-                blob = string.IsNullOrEmpty(raw) ? new JObject() : JObject.Parse(raw);
-            }
-            catch (JsonException)
-            {
-                blob = new JObject();
-            }
-
-            blob[flagKey] = json ?? string.Empty;
-            PlayerPrefs.SetString(Save.SaveKeys.ClutchConfig, blob.ToString(Formatting.None));
         }
 #endif
     }

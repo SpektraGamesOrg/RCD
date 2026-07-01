@@ -71,5 +71,22 @@ namespace Clutch
         }
 
         public bool Has(VehicleObtainType flag) => (ObtainType & flag) != 0;
+
+        /// <summary>An empty config (no obtain path, all values 0) - the last-resort when a vehicle has no
+        /// entry in Clutch or the fallback SO.</summary>
+        public static ResolvedVehicleConfig None => new ResolvedVehicleConfig(default, 0, 0, 0);
+
+        /// <summary>Builds a resolved config from a parsed <see cref="VehicleConfigEntry"/>.</summary>
+        public static ResolvedVehicleConfig From(VehicleConfigEntry entry)
+        {
+            if (entry == null)
+                return None;
+
+            return new ResolvedVehicleConfig(
+                entry.ToObtainType(),
+                entry.by_gold ?? 0,
+                entry.by_watch_ads ?? 0,
+                entry.distance_km ?? 0);
+        }
     }
 }

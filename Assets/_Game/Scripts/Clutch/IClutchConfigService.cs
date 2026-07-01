@@ -42,12 +42,11 @@ namespace Clutch
         int GetInt(string flagKey, string entryKey, int fallback);
 
         /// <summary>
-        /// Effective obtain config for a vehicle, resolving the Clutch "VehicleConfig" flag (keyed by the
-        /// vehicle's <see cref="VehicleID"/> enum name) over the supplied serialized fallbacks. When Clutch
-        /// has an entry for the vehicle, both its obtain type and value are authoritative; when it does not
-        /// (or the entry is malformed), the serialized <paramref name="fallbackType"/> /
-        /// <paramref name="fallbackAmount"/> are returned unchanged.
+        /// Effective obtain config (paths + per-path values) for a vehicle, keyed by the vehicle's
+        /// <see cref="VehicleID"/> enum name. Resolution order: the resolved Clutch value (from the prefs
+        /// cache) first, then the <see cref="ClutchConfig"/> SO fallback, then an empty config. The
+        /// VehicleContainer no longer carries obtain data - Clutch + the fallback SO are the single source.
         /// </summary>
-        ResolvedVehicleConfig GetVehicleConfig(VehicleID id, VehicleObtainType fallbackType, int fallbackAmount);
+        ResolvedVehicleConfig GetVehicleConfig(VehicleID id);
     }
 }
