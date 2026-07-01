@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Vehicles.CarDeformationSystem
@@ -69,6 +70,7 @@ namespace Vehicles.CarDeformationSystem
         }
 
         /// <summary>Clears all damage and deletes the saved files.</summary>
+        [Button]
         public void ResetAllDamage()
         {
             for (int p = 0; p < painters.Length; p++)
