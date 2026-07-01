@@ -6491,6 +6491,7 @@ GameObject:
   - component: {fileID: 5947496929184004136}
   - component: {fileID: 8320863259382793843}
   - component: {fileID: 7786326635057090307}
+  - component: {fileID: 8274500376450808136}
   m_Layer: 11
   m_Name: glass
   m_TagString: Untagged
@@ -6570,6 +6571,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8274500376450808136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140124039220712347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f859f1f0fc17f743b7bc6ed19d69a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.CarDeformationSystem.VertexDamagePainter
+  radius: 2
+  accumulate: 1
+  saveKey: panel
+  meshFilter: {fileID: 8320863259382793843}
 --- !u!1 &7299039293622821108
 GameObject:
   m_ObjectHideFlags: 0
@@ -6784,6 +6801,7 @@ GameObject:
   - component: {fileID: 1563462446106837685}
   - component: {fileID: 6365007621704399818}
   - component: {fileID: 7866999643763625028}
+  - component: {fileID: 865280572328179622}
   m_Layer: 11
   m_Name: car_color
   m_TagString: Untagged
@@ -6864,6 +6882,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &865280572328179622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7589362067079337440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f859f1f0fc17f743b7bc6ed19d69a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.CarDeformationSystem.VertexDamagePainter
+  radius: 0.6
+  accumulate: 1
+  saveKey: panel
+  meshFilter: {fileID: 6365007621704399818}
 --- !u!1 &7764924374164654086
 GameObject:
   m_ObjectHideFlags: 0
@@ -8202,6 +8236,7 @@ GameObject:
   - component: {fileID: 9172952002398128669}
   - component: {fileID: 7436604437422022810}
   - component: {fileID: 6696363899965053468}
+  - component: {fileID: -2325042043129449619}
   m_Layer: 11
   m_Name: Sf90
   m_TagString: Vehicle
@@ -8590,7 +8625,9 @@ MonoBehaviour:
   mainVehicleBehaviour: {fileID: -1675130923991458579}
   maxImpact: 25
   minImpact: 3
-  painters: []
+  painters:
+  - {fileID: 865280572328179622}
+  - {fileID: 8274500376450808136}
 --- !u!114 &7436604437422022810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8619,9 +8656,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Vehicles.NitroBehaviour
   mainVehicleBehaviour: {fileID: -1675130923991458579}
+  exhausts: []
   controller: {fileID: 4896386272245514388}
-  nitroDuration: 5
-  boostAmount: 1
+  body: {fileID: 3187561804787696407}
+--- !u!114 &-2325042043129449619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8853281711238901858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e304bdabbbce74ba49d09f0091bbde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicles.CarDeformationSystem.VehicleDamageReceiver
+  mainVehicleBehaviour: {fileID: -1675130923991458579}
+  maxImpact: 25
+  minImpact: 3
+  painters:
+  - {fileID: 865280572328179622}
+  - {fileID: 8274500376450808136}
 --- !u!1 &9003935459097182026
 GameObject:
   m_ObjectHideFlags: 0
