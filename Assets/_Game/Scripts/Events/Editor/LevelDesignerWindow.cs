@@ -307,17 +307,30 @@ namespace Events.Editor
 
         private void CreateNewLevel()
         {
+            // Ask which mode (DisplayDialogComplex: 0 = first, 1 = second/Cancel, 2 = third).
+            int choice = EditorUtility.DisplayDialogComplex(
+                "New Level", "Which event type is this level?", "Jump Challenge", "Cancel", "Time Trial");
+            if (choice == 1)
+                return;
+
+            Events.EventType type = choice == 0 ? Events.EventType.JumpChallenge : Events.EventType.TimeTrial;
+
             if (!AssetDatabase.IsValidFolder(DefaultLevelFolder))
                 CreateFolders(DefaultLevelFolder);
 
-            string path = EditorUtility.SaveFilePanelInProject(
-                "Create Level", "LevelData", "asset", "Choose where to save the new level.", DefaultLevelFolder);
-            if (string.IsNullOrEmpty(path))
-                return;
+            // Auto level number = next in that mode; name the asset to match.
+            int number = (EventLevelContainer.Instance ? EventLevelContainer.Instance.GetLevelCount(type) : 0) + 1;
+            string modeName = type == Events.EventType.JumpChallenge ? "Jump" : "TimeTrial";
+            string path = AssetDatabase.GenerateUniqueAssetPath($"{DefaultLevelFolder}/{modeName}_{number:00}.asset");
 
             var level = CreateInstance<LevelData>();
             AssetDatabase.CreateAsset(level, path);
+            level.EditorSetEventType(type);
+            level.EditorSetLevelNumber(number);
             AssetDatabase.SaveAssets();
+
+            // Add it to the container immediately (and normalize ordering/numbering).
+            EventLevelContainer.EditorSync();
 
             _target = level;
             EditorGUIUtility.PingObject(level);

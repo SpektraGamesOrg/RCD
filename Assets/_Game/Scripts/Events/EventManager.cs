@@ -38,7 +38,14 @@ namespace Events
         // Starting = the launch sequence (fade/spawn/teleport/countdown) BEFORE the live run. It is a distinct
         // phase so teleporting the car out of the EventArea trigger during launch does not get treated as
         // "left the entry prompt" (which would auto-close the prompt and wipe the active level mid-launch).
-        private enum EventPhase { Idle, EntryPrompt, Starting, Running, Result }
+        private enum EventPhase
+        {
+            Idle,
+            EntryPrompt,
+            Starting,
+            Running,
+            Result
+        }
 
         [Title("Timing")]
         [SerializeField, Min(0f)] private float fadeDuration = 0.35f;
@@ -61,13 +68,14 @@ namespace Events
         private EventType _activeType;
         private LevelData _activeLevel;
         private int _activeLevelNumber;
+        private int _rewardAmount;
 
-        private bool _isolated;         // true while a run has the world isolated (HUD hidden, traffic off)
-        private bool _poseCaptured;     // guards the restore teleport so we never snap to (0,0,0)
+        private bool _isolated; // true while a run has the world isolated (HUD hidden, traffic off)
+        private bool _poseCaptured; // guards the restore teleport so we never snap to (0,0,0)
         private Vector3 _preEventPos;
         private Quaternion _preEventRot;
 
-        private float _timeRemaining;   // Time Trial clock
+        private float _timeRemaining; // Time Trial clock
         private UniTaskCompletionSource<bool> _outcome; // completed by finish / obstacle / timeout
 
         private LevelRuntime _level;
@@ -161,8 +169,9 @@ namespace Events
 
             if (type == EventType.WatchAndEarn)
             {
-                title = "WATCH & EARN";
+                title = "WATCH &\nEARN";
                 action = "WATCH AD";
+                _rewardAmount = Config.WatchAndEarnGold;
             }
             else
             {
@@ -178,8 +187,9 @@ namespace Events
                     return;
                 }
 
-                title = $"{ModeTitle(type)} - LV {levelNumber}";
+                title = (type == EventType.JumpChallenge) ? "JUMP\nCHALLANGE" : "TIME TRAIL";
                 action = "START";
+                _rewardAmount = level.WinRewardGold;
             }
 
             _activeArea = area;
@@ -188,7 +198,7 @@ namespace Events
             _activeLevelNumber = levelNumber;
             _phase = EventPhase.EntryPrompt;
 
-            EntryOverlay?.Show(uiData: new EventEntryData(title, action));
+            EntryOverlay?.Show(uiData: new EventEntryData(title, action, _rewardAmount, type));
         }
 
         // -----------------------------------------------------------------
@@ -362,7 +372,7 @@ namespace Events
             _phase = EventPhase.Result;
 
             ArmLevel(false);
-            StopVehicle(vehicle);            // GDD: the car is forced to stop at the finish
+            StopVehicle(vehicle); // GDD: the car is forced to stop at the finish
             SetVehicleControl(vehicle, false);
             HudOverlay?.Hide();
 
@@ -378,9 +388,10 @@ namespace Events
             int baseReward = win
                 ? _activeLevel.WinRewardGold
                 : _activeLevel.WinRewardGold / Mathf.Max(1, config.FailRewardDivider);
+            int bonusReward = win ? _activeLevel.BonusRewardGold : 0;
 
             int multiplier = win ? config.WinAdMultiplier : 1;
-            ResultOverlay?.Show(uiData: new LevelResultData(win, baseReward, multiplier));
+            ResultOverlay?.Show(uiData: new LevelResultData(win, baseReward, bonusReward, multiplier));
         }
 
         /// <summary>Called by <see cref="LevelResultOverlay"/> once the reward is decided (base, or base * ad).</summary>

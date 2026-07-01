@@ -11,13 +11,15 @@ namespace UI
     public sealed class LevelResultData
     {
         public readonly bool Win;
-        public readonly int BaseReward;   // full reward on win, 1/3 on fail (already computed by the manager)
+        public readonly int BaseReward; // full reward on win, 1/3 on fail (already computed by the manager)
+        public readonly int BonusReward;
         public readonly int AdMultiplier; // 3X upsell offered on a win; 1 (no upsell) on a fail
 
-        public LevelResultData(bool win, int baseReward, int adMultiplier)
+        public LevelResultData(bool win, int baseReward, int bonusReward, int adMultiplier)
         {
             Win = win;
             BaseReward = baseReward;
+            BonusReward = bonusReward;
             AdMultiplier = adMultiplier;
         }
     }
@@ -45,6 +47,7 @@ namespace UI
 
         private bool _win;
         private int _baseReward;
+        private int _bonusReward;
         private int _adMultiplier;
 
         private bool _resolved;
@@ -77,6 +80,7 @@ namespace UI
             var data = uiData as LevelResultData;
             _win = data?.Win ?? false;
             _baseReward = data?.BaseReward ?? 0;
+            _bonusReward = data?.BonusReward ?? 0;
             _adMultiplier = data?.AdMultiplier ?? 1;
 
             if (titleText) titleText.text = _win ? winTitle : failTitle;
@@ -99,9 +103,9 @@ namespace UI
             var offer = new GoldMultiplierAdOffer(
                 multiplier: _adMultiplier,
                 closeSeconds: popupCloseSeconds,
-                onRewarded: () => Resolve(_baseReward * _adMultiplier),
-                onAdFailed: () => Resolve(_baseReward),
-                onExpired: null,                     // our own countdown auto-claims the base at the same time
+                onRewarded: () => Resolve((_baseReward + _bonusReward) * _adMultiplier),
+                onAdFailed: () => Resolve(_baseReward + _bonusReward),
+                onExpired: null, // our own countdown auto-claims the base at the same time
                 onClaimInitiated: OnUpsellClaimInitiated);
 
             if (overlay.TryShowOffer(offer))
@@ -123,10 +127,10 @@ namespace UI
 
             _timeLeft -= Time.unscaledDeltaTime;
             if (_timeLeft <= 0f)
-                Resolve(_baseReward); // auto-claim the base so a reward is never lost
+                Resolve(_baseReward + _bonusReward); // auto-claim the base so a reward is never lost
         }
 
-        private void OnClaimClicked() => Resolve(_baseReward);
+        private void OnClaimClicked() => Resolve(_baseReward + _bonusReward);
 
         // Single guarded resolve+close path. Closes the upsell we own, hides self, then reports the final reward
         // to the manager (which grants gold, advances the level and restores the world).

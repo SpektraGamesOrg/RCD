@@ -25,8 +25,8 @@ namespace Events
         [SerializeField, Min(1)] private int levelNumber = 1;
 
         [Title("Reward & Rules")]
-        [Tooltip("Gold granted on a win. A fail grants one third of this (GDD 3.1).")]
         [SerializeField, Min(0)] private int winRewardGold = 2000;
+        [SerializeField, Min(0)] private int bonusRewardGold = 180;
 
         [Tooltip("Time Trial only: seconds allowed to reach the finish. Ignored by Jump Challenge.")]
         [SerializeField, Min(1f)] private float timeLimitSeconds = 30f;
@@ -39,10 +39,18 @@ namespace Events
         public EventType EventType => eventType;
         public int LevelNumber => levelNumber;
         public int WinRewardGold => winRewardGold;
+        public int BonusRewardGold => bonusRewardGold;
         public float TimeLimitSeconds => timeLimitSeconds;
         public IReadOnlyList<LevelPlacement> Placements => placements;
 
 #if UNITY_EDITOR
+        // Keep the EventLevelContainer's per-mode ordered lists in sync when a level's mode or number changes in
+        // the inspector. Deferred + coalesced so it never scans the project on every keystroke.
+        private void OnValidate()
+        {
+            EventLevelContainer.EditorSyncDeferred();
+        }
+
         /// <summary>
         /// Editor-only: replaces the baked layout from the Level Designer window. Marks the asset dirty so the
         /// caller only needs to save the asset database.
@@ -50,6 +58,27 @@ namespace Events
         public void EditorSetPlacements(List<LevelPlacement> newPlacements)
         {
             placements = newPlacements ?? new List<LevelPlacement>();
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        /// <summary>Editor-only: set the level's mode. Direct field write (no OnValidate) - callers re-sync.</summary>
+        public void EditorSetEventType(EventType type)
+        {
+            if (eventType == type)
+                return;
+
+            eventType = type;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        /// <summary>Editor-only: set the 1-based level number. Direct field write, so it never loops OnValidate.</summary>
+        public void EditorSetLevelNumber(int number)
+        {
+            int clamped = number < 1 ? 1 : number;
+            if (levelNumber == clamped)
+                return;
+
+            levelNumber = clamped;
             UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif

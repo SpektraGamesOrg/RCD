@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using SpektraGames.SpektraUtilities.Runtime;
 using UnityEngine;
+#if UNITY_EDITOR
+using System.Linq;
+#endif
 
 namespace Events
 {
@@ -62,5 +65,86 @@ namespace Events
                 default: return null; // Watch & Earn has no levels
             }
         }
+
+#if UNITY_EDITOR
+        // Coalesces a burst of change notifications (many OnValidate calls, an import, etc.) into one rebuild.
+        private static bool _syncQueued;
+
+        [Title("Editor")]
+        [Button(ButtonSizes.Large), GUIColor(0.4f, 0.8f, 1f)]
+        private void SyncFromProject() => EditorSync();
+
+        /// <summary>
+        /// Schedules a single deferred rebuild. Called by <see cref="LevelData"/>.OnValidate and the asset
+        /// postprocessor so the container stays in sync automatically when levels are added / removed / retyped /
+        /// renumbered - without doing a project scan on every keystroke.
+        /// </summary>
+        public static void EditorSyncDeferred()
+        {
+            if (_syncQueued)
+                return;
+
+            _syncQueued = true;
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                _syncQueued = false;
+                if (UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating)
+                {
+                    EditorSyncDeferred(); // try again once the editor is idle
+                    return;
+                }
+
+                EditorSync();
+            };
+        }
+
+        /// <summary>Rebuilds both ordered lists from every <see cref="LevelData"/> asset in the project.</summary>
+        public static void EditorSync()
+        {
+            EventLevelContainer container = Instance;
+            if (!container)
+            {
+                Debug.LogError("[EventLevelContainer] Asset not found in Resources; cannot sync.");
+                return;
+            }
+
+            container.RebuildFromProject();
+        }
+
+        private void RebuildFromProject()
+        {
+            var all = new List<LevelData>();
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:LevelData");
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+                var level = UnityEditor.AssetDatabase.LoadAssetAtPath<LevelData>(path);
+                if (level)
+                    all.Add(level);
+            }
+
+            jumpChallengeLevels = BuildOrdered(all, EventType.JumpChallenge);
+            timeTrialLevels = BuildOrdered(all, EventType.TimeTrial);
+
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssets();
+        }
+
+        // Levels of a mode, ordered by their current number (then name for stability), then renumbered 1..N so the
+        // stored LevelNumber always matches the play order. Editor LINQ is allowed (CLAUDE.md).
+        private static List<LevelData> BuildOrdered(List<LevelData> all, EventType type)
+        {
+            List<LevelData> list = all
+                .Where(l => l.EventType == type)
+                .OrderBy(l => l.LevelNumber)
+                .ThenBy(l => l.name)
+                .ToList();
+
+            for (int i = 0; i < list.Count; i++)
+                list[i].EditorSetLevelNumber(i + 1);
+
+            return list;
+        }
+#endif
     }
 }
