@@ -14,6 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Clutch.ClutchConfig
   fallbacks:
   - key: VehicleConfig
-    fallbackJson: '{"M4":{"by_gold":2},"G63":{"by_gold":2,"by_watch_ads":2},"RX7":{"by_watch_ads":2},"FType":{"by_gold":2},"Fenyr":{"by_gold":2},"Supra":{"free":true},"Huayra":{"by_gold":2},"GTR_R35":{"by_gold":2},"SilviaS15":{"distance_km":2},"Challenger":{"distance_km":2,"by_watch_ads":2},"Ferrari488":{"by_gold":2},"FerrariSF90":{"by_gold":2},"MustangGT500":{"by_gold":2},"AstonMartinDBS":{"by_gold":2,"distance_km":2}}'
+    fallbackJson: "{\n  \"M4\": {\n    \"by_gold\": 2\n  },\n  \"G63\": {\n    \"by_gold\":
+      2,\n    \"by_watch_ads\": 2\n  },\n  \"RX7\": {\n    \"by_watch_ads\": 2\n 
+      },\n  \"FType\": {\n    \"by_gold\": 2\n  },\n  \"Fenyr\": {\n    \"by_gold\":
+      2\n  },\n  \"Supra\": {\n    \"free\": true\n  },\n  \"Huayra\": {\n    \"by_gold\":
+      2\n  },\n  \"GTR_R35\": {\n    \"by_gold\": 2\n  },\n  \"SilviaS15\": {\n   
+      \"distance_km\": 2\n  },\n  \"Challenger\": {\n    \"distance_km\": 2,\n   
+      \"by_watch_ads\": 2\n  },\n  \"Ferrari488\": {\n    \"by_gold\": 2\n  },\n 
+      \"FerrariSF90\": {\n    \"by_gold\": 2\n  },\n  \"MustangGT500\": {\n    \"by_gold\":
+      2\n  },\n  \"AstonMartinDBS\": {\n    \"by_gold\": 2,\n    \"distance_km\":
+      2\n  }\n}"
   - key: AdConfig
-    fallbackJson: '{"interstitial_frequency":200}'
+    fallbackJson: "{\n  \"interstitial_frequency\": 200\n}"

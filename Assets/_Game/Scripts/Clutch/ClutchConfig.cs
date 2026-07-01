@@ -35,8 +35,9 @@ namespace Clutch
             [Tooltip("Clutch flag key, e.g. \"VehicleConfig\" or \"AdConfig\".")]
             public string key;
 
-            [Tooltip("Fallback value as JSON, matching the exact shape Clutch returns for this flag.")]
-            [TextArea(2, 8)]
+            [Tooltip("Fallback value as JSON, matching the exact shape Clutch returns for this flag. " +
+                     "Stored indented for easy editing; use the 'Format JSON' button to re-indent after edits.")]
+            [TextArea(4, 20)]
             public string fallbackJson;
         }
 
@@ -151,6 +152,58 @@ namespace Clutch
         private void UpdateFromClutchProd() => UpdateFromClutchEditor(useDev: false);
 
         /// <summary>
+        /// Editor-only: re-indents every fallback entry's JSON in place so it stays readable after manual
+        /// edits. Invalid JSON is left untouched and logged, so a typo is caught here (not silently at
+        /// runtime). Whitespace does not affect runtime deserialization.
+        /// </summary>
+        [Button("Format JSON", ButtonSizes.Medium), PropertyOrder(-1)]
+        private void FormatFallbackJson()
+        {
+            Undo.RecordObject(this, "Format Clutch Config JSON");
+            int formatted = 0;
+
+            for (int i = 0; i < fallbacks.Count; i++)
+            {
+                ClutchFlagFallback f = fallbacks[i];
+                if (f == null || string.IsNullOrEmpty(f.fallbackJson))
+                    continue;
+
+                try
+                {
+                    f.fallbackJson = Newtonsoft.Json.Linq.JToken.Parse(f.fallbackJson)
+                        .ToString(Newtonsoft.Json.Formatting.Indented);
+                    formatted++;
+                }
+                catch (JsonException e)
+                {
+                    Debug.LogError($"[ClutchConfig] '{f.key}' is not valid JSON, left unchanged: {e.Message}");
+                }
+            }
+
+            _vehicleConfigFallback = null; // re-parse on next read
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[ClutchConfig] Formatted {formatted} fallback entr(ies).");
+        }
+
+        // Pretty-prints a JSON string; returns it unchanged if it can't be parsed (so a Clutch response
+        // that isn't strictly JSON is never lost).
+        private static string IndentJson(string json)
+        {
+            if (string.IsNullOrEmpty(json))
+                return json;
+
+            try
+            {
+                return Newtonsoft.Json.Linq.JToken.Parse(json).ToString(Newtonsoft.Json.Formatting.Indented);
+            }
+            catch (JsonException)
+            {
+                return json;
+            }
+        }
+
+        /// <summary>
         /// Editor-only: fetches the configured flags from Clutch for the chosen environment and writes them
         /// into this asset's fallbacks (the offline config). Does NOT write PlayerPrefs - the runtime cache
         /// is populated by ClutchConfigService at play time. Also callable from the Tools/Clutch menu.
@@ -208,7 +261,9 @@ namespace Clutch
             Undo.RecordObject(this, "Update Clutch Config");
             foreach (KeyValuePair<string, string> kvp in fetched)
             {
-                SetFallbackEditor(kvp.Key, kvp.Value);
+                // Store indented so the value is comfortable to read/edit in the Inspector. Runtime
+                // deserialization is unaffected by whitespace.
+                SetFallbackEditor(kvp.Key, IndentJson(kvp.Value));
                 Debug.Log($"[ClutchConfig] {envLabel} {kvp.Key} = {kvp.Value}");
             }
 
