@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 151b8a3ba5d344f47b4955a0d785806a, type: 3}
+  m_Name: VehiclePool
+  m_EditorClassIdentifier: Gley.TrafficSystem::Gley.TrafficSystem.VehiclePool
+  trafficCars:
+  - vehiclePrefab: {fileID: 2686641857511172997, guid: d3b45908c15d176439026b1bbffba6de, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 545488122049983063, guid: 42a310a6b6ece014280ac1352892c95d, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 7093414300667452773, guid: dc6a144df0deb5f4cab2cf6da9846448, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 415365931888716986, guid: a424a74200504404f9a8b643bb1007af, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 2473178064294694045, guid: 5ab924755eda5cb48aafee449853611b, type: 3}
+    percent: 6
+    ignore: 1
+  - vehiclePrefab: {fileID: 5859250986567729722, guid: 3a7585059989ac240bec396e9a992a39, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 943585119788125467, guid: 71eefff75e9abd648b080cc200b63db3, type: 3}
+    percent: 6
+    ignore: 1
+  - vehiclePrefab: {fileID: 7903893986249896478, guid: 39cc39ec00bb3da499d531f7c08f5edb, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 6293603821012734176, guid: bf23f5dd57e6c144689e175fb3da1d25, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 801429773913558424, guid: cc9619a841d6ac44caeec87cfa9df3af, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 8464168230878328033, guid: aa69261790242e347be008b1bab99250, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 4960893348241537655, guid: b8a0a524fc58c4c40a7683300a96fa19, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 8625163830425004979, guid: ef15dd2e17af8d446a9ce4f581a71096, type: 3}
+    percent: 6
+    ignore: 0
+  - vehiclePrefab: {fileID: 4555775700049356306, guid: 0a72438e8c46f99419f727dbb787bdd5, type: 3}
+    percent: 3
+    ignore: 0
+  - vehiclePrefab: {fileID: 4419960079562620849, guid: 02ca562bf5094fb43a9132be7a8d100e, type: 3}
+    percent: 3
+    ignore: 1

@@ -4,7 +4,7 @@ namespace Gley.TrafficSystem.User
 {
 	public enum VehicleTypes
 	{
-		Car,
+		Car,Truck
 	}
 }
 #endif
