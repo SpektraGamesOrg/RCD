@@ -373,6 +373,18 @@ namespace Save
         /// </summary>
         public static void Initialize()
         {
+            // Diagnostic: log what actually loaded from prefs at boot. If progress ever "resets", this shows
+            // whether the data was already gone at startup (lost before boot - a flush/platform issue) vs.
+            // still present here (then something clears it during the session). user_id is self-healing (its
+            // getter re-creates it), so a NEW guid here means the whole store was wiped; a SAME guid with
+            // missing coins/vehicles means only those keys were lost.
+            bool hadUser = !string.IsNullOrEmpty(PlayerPrefs.GetString(SaveKeys.UserId, string.Empty));
+            bool hadCoins = PlayerPrefs.HasKey(SaveKeys.Gold);
+            bool hadVehicles = !string.IsNullOrEmpty(PlayerPrefs.GetString(SaveKeys.Vehicles, string.Empty));
+            Debug.Log($"[SaveManager] Boot load: user_id={(hadUser ? "present" : "MISSING")}, " +
+                      $"coins={(hadCoins ? PlayerPrefs.GetInt(SaveKeys.Gold).ToString() : "MISSING")}, " +
+                      $"vehicles={(hadVehicles ? "present" : "MISSING")}");
+
             string userId = UserId; // To generate user id
             EnsureStarterVehicle();
         }
