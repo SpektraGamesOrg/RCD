@@ -169,7 +169,7 @@ namespace UI
         private void OnFixClicked()
         {
             // TODO: Trigger the repair/fix-car flow on the active vehicle.
-            Debug.LogError("[Gameplay] Fix car requested.");
+        
             ActiveVehicle.GetComponent<VehicleDamageReceiver>().ResetAllDamage();
         }
 
