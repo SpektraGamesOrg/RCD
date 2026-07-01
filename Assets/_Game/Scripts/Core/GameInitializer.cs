@@ -201,12 +201,29 @@ namespace Core
                 Debug.LogError($"[GameInitializer] Clutch config init failed: {e.Message}");
             }
 
+            // Ad config provider: parse the typed AdConfig from the now-resolved Clutch flag BEFORE the ad
+            // service (and its gating/banner consumers) initialize, so Current is populated for the first read.
+            if (ServiceLocator.TryGetService(out IAdConfigProvider adConfigProvider))
+                adConfigProvider.Initialize();
+            else
+                Debug.LogError("[GameInitializer] IAdConfigProvider not found in scope.");
+
             // Applovin Max
             var adService = ServiceLocator.GetService<MaxAdService>();
             adService.Initialize(true);
             await UniTask.WaitUntil(() => adService.IsInitialized).TimeoutWithoutException(TimeSpan.FromSeconds(5));
             if (!adService.IsInitialized)
                 Debug.LogError("AdInitTimeout");
+
+            // App Open lifecycle owner (cold start + warm resume). Created programmatically as a
+            // DontDestroyOnLoad service so no scene wiring is required; it is inert until a real App Open
+            // ad unit id is configured (CTR-6257). Cold-start show is attempted right after SDK init.
+            if (!AppOpenAdController.Exists())
+            {
+                var appOpenGo = new GameObject("[AppOpenAdController]");
+                appOpenGo.AddComponent<AppOpenAdController>();
+            }
+            AppOpenAdController.Instance.TryShowColdStart();
 
             // User id
             SetUserIdForServices();

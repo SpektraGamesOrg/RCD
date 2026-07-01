@@ -92,6 +92,11 @@ namespace UI
         // count/icon visual is restored exactly once when the boost window ends.
         private bool _nitroBoostActive;
 
+        // Timed Commercial Break interstitials. Created as a child component so it ticks with the HUD and is
+        // torn down with it; time only accrues while the HUD is showing (see Update). Not serialized — this
+        // is runtime-only state.
+        private CommercialBreakController _commercialBreak;
+
         protected override void Awake()
         {
             base.Awake();
@@ -103,6 +108,11 @@ namespace UI
             if (nitroButton) nitroButton.onClick.AddListener(OnNitroClicked);
 
             SaveManager.OnNitroChanged += OnNitroCountChanged;
+
+            // Own the commercial-break timer on this HUD object. No countdown presenter is wired yet, so the
+            // controller uses its built-in 3s delay before the ad (the overlay can be injected later).
+            _commercialBreak = gameObject.AddComponent<CommercialBreakController>();
+            _commercialBreak.Configure(countdownPresenter: null);
         }
 
         private void OnDestroy()
@@ -126,11 +136,25 @@ namespace UI
 
             // Show the current free-nitro count / rewarded-ad affordance from the moment the HUD appears.
             RefreshNitroVisual();
+
+            // Start accruing active-gameplay time for Commercial Breaks while the HUD is up.
+            if (_commercialBreak) _commercialBreak.SetActive(true);
+
+            // Persistent in-game banner (gated by ad_banner_enabled inside the ad service/table).
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.ShowBanner(BannerPlacement.GameplayBottom);
         }
 
         protected override void OnHidden(bool immediate = false)
         {
             base.OnHidden(immediate);
+
+            // Stop the Commercial Break timer while the HUD is not shown (pause/menu/loading).
+            if (_commercialBreak) _commercialBreak.SetActive(false);
+
+            // Hide the persistent banner while the HUD is not shown (kept loaded for cheap re-show).
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.HideBanner(BannerPlacement.GameplayBottom);
         }
 
         /// <summary>
@@ -240,7 +264,13 @@ namespace UI
                 return;
             }
 
-            SaveManager.AddNitro(nitroAdRewardAmount);
+            // Reward amount is the remote rewarded_multipliers.nitro when present, else the serialized
+            // GDD default. Rounded because the amount is stored as double in the config.
+            int nitroReward = nitroAdRewardAmount;
+            if (ServiceLocator.TryGetService(out IAdConfigProvider adConfigProvider))
+                nitroReward = Mathf.RoundToInt((float)adConfigProvider.Current.RewardedMultiplier("nitro", nitroAdRewardAmount));
+
+            SaveManager.AddNitro(nitroReward);
             SaveManager.Save();
             // RefreshNitroVisual runs via OnNitroChanged; the icon/count update as the count goes positive.
         }

@@ -33,6 +33,10 @@ namespace Save
         // Save durability
         public const string SaveCounter     = "save_counter"; // monotonic counter bumped on every Save(); read by the editor-only Save System Forensics tool to detect a PlayerPrefs rollback
 
+        // Ads — per-user/day interstitial cap (see AdGatingService). Count resets when the stored day changes.
+        public const string AdDailyInterDay   = "ad_daily_inter_day";   // yyyy-MM-dd (UTC) the count below belongs to
+        public const string AdDailyInterCount = "ad_daily_inter_count"; // interstitials shown on AdDailyInterDay
+
         // Clutch remote config
         public const string ClutchConfig    = "clutch_config_cache"; // combined flag JSON blob (see ClutchConfigCache)
 

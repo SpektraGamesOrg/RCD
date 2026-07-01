@@ -25,23 +25,23 @@ MonoBehaviour:
       22\n  },\n  \"AstonMartinDBS\": {\n    \"by_gold\": 32,\n    \"distance_km\":
       50\n  }\n}"
   - key: AdConfig
-    fallbackJson: "{\n  \"tutorial_enabled\": true,\n  \"ad_banner_enabled\": true,\n 
+    fallbackJson: "{\n  \"tutorial_enabled\": true,\n  \"ad_banner_enabled\": true,\n
       \"ad_daily_inter_cap\": 20,\n  \"rewarded_multipliers\": {\n    \"nitro\":
       2,\n    \"restore\": 1,\n    \"free_cash\": 2000,\n    \"milestone_completion\":
-      3\n  },\n  \"ad_city_start_overlay\": true,\n  \"ad_pause_mrec_enabled\": true,\n 
+      3\n  },\n  \"ad_city_start_overlay\": true,\n  \"ad_pause_mrec_enabled\": true,\n
       \"ad_app_open_min_bg_sec\": 60,\n  \"ad_button_inter_enabled\": true,\n  \"ad_loading_mrec_enabled\":
       true,\n  \"ad_milestone_close_inter\": true,\n  \"ad_button_inter_whitelist\":
       [],\n  \"ad_max_inters_per_session\": 12,\n  \"ad_fullscreen_cooldown_sec\":
       30,\n  \"ad_commercial_break_enabled\": true,\n  \"ad_commercial_break_interval_sec\":
       60\n}"
   - key: MilestonesConfig
-    fallbackJson: "{\n  \"milestones\": [\n    {\n      \"reward_gold\": 1000,\n     
+    fallbackJson: "{\n  \"milestones\": [\n    {\n      \"reward_gold\": 1000,\n
       \"threshold_km\": 1\n    },\n    {\n      \"reward_gold\": 2000,\n      \"threshold_km\":
-      3\n    },\n    {\n      \"reward_gold\": 3000,\n      \"threshold_km\": 6\n   
-      },\n    {\n      \"reward_gold\": 4000,\n      \"threshold_km\": 10\n    },\n   
-      {\n      \"reward_gold\": 5000,\n      \"threshold_km\": 15\n    },\n    {\n     
+      3\n    },\n    {\n      \"reward_gold\": 3000,\n      \"threshold_km\": 6\n
+      },\n    {\n      \"reward_gold\": 4000,\n      \"threshold_km\": 10\n    },\n
+      {\n      \"reward_gold\": 5000,\n      \"threshold_km\": 15\n    },\n    {\n
       \"reward_gold\": 5000,\n      \"threshold_km\": 20\n    },\n    {\n      \"reward_gold\":
-      5000,\n      \"threshold_km\": 25\n    },\n    {\n      \"reward_gold\": 5000,\n     
+      5000,\n      \"threshold_km\": 25\n    },\n    {\n      \"reward_gold\": 5000,\n
       \"threshold_km\": 30\n    }\n  ],\n  \"repeat_reward\": 5000,\n  \"repeat_step_km\":
       5,\n  \"popup_close_seconds\": 6,\n  \"reward_ad_multiplier\": 3\n}"
   - key: FreeGoldConfig

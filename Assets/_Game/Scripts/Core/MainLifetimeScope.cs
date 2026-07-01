@@ -30,10 +30,14 @@ namespace Core
         {
             builder.Register<IMMPService, AppsFlyerMMPService>(Lifetime.Singleton).AsSelf();
             builder.Register<IAnalyticsService, FirebaseAnalyticsService>(Lifetime.Singleton).AsSelf();
-            builder.Register<IAdService, MaxAdService>(Lifetime.Singleton).AsSelf();
             builder.Register<IClutchConfigService, ClutchConfigService>(Lifetime.Singleton).AsSelf();
 
-           //TODO: Add AdGatingService
+            // Ads. Order of declaration does not matter for VContainer resolution, but the runtime
+            // dependency chain is: AdConfigProvider -> (reads) IClutchConfigService;
+            // AdGatingService -> IAdConfigProvider; MaxAdService -> IAdConfigProvider + IAdGatingService.
+            builder.Register<IAdConfigProvider, AdConfigProvider>(Lifetime.Singleton).AsSelf();
+            builder.Register<IAdGatingService, AdGatingService>(Lifetime.Singleton).AsSelf();
+            builder.Register<IAdService, MaxAdService>(Lifetime.Singleton).AsSelf();
         }
     }
 }
