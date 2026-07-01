@@ -1175,6 +1175,61 @@ public class RCC_WheelCollider : RCC_Core {
     #region Ground Material & Terrain
 
     /// <summary>
+    /// Cached index of the Grass friction preset, resolved once by material name. -1 until resolved.
+    /// </summary>
+    private int _driftGroundIndex = -1;
+
+    /// <summary>
+    /// Friction index used while the Drift behavior is active. Resolves to the "Grass" ground material
+    /// (low stiffness) so the car slides during drift without lowering asphalt grip for normal driving.
+    /// Falls back to 0 (default surface) if no Grass material is found.
+    /// </summary>
+    private int DriftGroundIndex {
+
+        get {
+
+            if (_driftGroundIndex < 0) {
+
+                for (int i = 0; i < GroundMaterials.frictions.Length; i++) {
+
+                    var mat = GroundMaterials.frictions[i].groundMaterial;
+
+                    if (mat && mat.name.Contains("Grass")) {
+
+                        _driftGroundIndex = i;
+                        break;
+
+                    }
+
+                }
+
+                if (_driftGroundIndex < 0)
+                    _driftGroundIndex = 0;
+
+            }
+
+            return _driftGroundIndex;
+
+        }
+
+    }
+
+    /// <summary>
+    /// True when the active RCC behavior is the drift preset (the one that applies external wheel frictions).
+    /// </summary>
+    private bool IsDriftBehaviorActive {
+
+        get {
+
+            return !CarController.overrideBehavior
+                && Settings.selectedBehaviorType != null
+                && Settings.selectedBehaviorType.applyExternalWheelFrictions;
+
+        }
+
+    }
+
+    /// <summary>
     /// Determines current ground surface index by checking shared PhysicMaterial or terrain splatmap.
     /// </summary>
     private void GroundMaterial() {
@@ -1184,6 +1239,16 @@ public class RCC_WheelCollider : RCC_Core {
         if (!isGrounded || wheelHit.point == Vector3.zero || wheelHit.collider == null) {
 
             groundIndex = 0;
+            return;
+
+        }
+
+        // While the Drift behavior is active, treat the surface as Grass (low stiffness) so the car
+        // breaks loose and slides. Normal driving keeps the real (asphalt) grip. This also swaps the
+        // skid sound/particles/skidmarks to the Grass preset for the duration of the drift.
+        if (IsDriftBehaviorActive) {
+
+            groundIndex = DriftGroundIndex;
             return;
 
         }
