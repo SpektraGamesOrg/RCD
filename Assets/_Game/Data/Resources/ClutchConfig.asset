@@ -14,15 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Clutch.ClutchConfig
   fallbacks:
   - key: VehicleConfig
-    fallbackJson: "{\n  \"M4\": {\n    \"by_gold\": 2\n  },\n  \"G63\": {\n    \"by_gold\":
-      2,\n    \"by_watch_ads\": 2\n  },\n  \"RX7\": {\n    \"by_watch_ads\": 2\n 
-      },\n  \"FType\": {\n    \"by_gold\": 2\n  },\n  \"Fenyr\": {\n    \"by_gold\":
-      2\n  },\n  \"Supra\": {\n    \"free\": true\n  },\n  \"Huayra\": {\n    \"by_gold\":
-      2\n  },\n  \"GTR_R35\": {\n    \"by_gold\": 2\n  },\n  \"SilviaS15\": {\n   
-      \"distance_km\": 2\n  },\n  \"Challenger\": {\n    \"distance_km\": 2,\n   
-      \"by_watch_ads\": 2\n  },\n  \"Ferrari488\": {\n    \"by_gold\": 2\n  },\n 
-      \"FerrariSF90\": {\n    \"by_gold\": 2\n  },\n  \"MustangGT500\": {\n    \"by_gold\":
-      2\n  },\n  \"AstonMartinDBS\": {\n    \"by_gold\": 2,\n    \"distance_km\":
-      2\n  }\n}"
+    fallbackJson: "{\n  \"M4\": {\n    \"by_gold\": 211\n  },\n  \"G63\": {\n   
+      \"by_gold\": 212,\n    \"by_watch_ads\": 5\n  },\n  \"RX7\": {\n    \"by_watch_ads\":
+      14\n  },\n  \"FType\": {\n    \"by_gold\": 152\n  },\n  \"Fenyr\": {\n    \"by_gold\":
+      12\n  },\n  \"Supra\": {\n    \"free\": true\n  },\n  \"Huayra\": {\n    \"by_gold\":
+      22\n  },\n  \"GTR_R35\": {\n    \"by_gold\": 23\n  },\n  \"SilviaS15\": {\n   
+      \"distance_km\": 26\n  },\n  \"Challenger\": {\n    \"distance_km\": 27,\n   
+      \"by_watch_ads\": 2\n  },\n  \"Ferrari488\": {\n    \"by_gold\": 21\n  },\n 
+      \"FerrariSF90\": {\n    \"by_gold\": 21\n  },\n  \"MustangGT500\": {\n    \"by_gold\":
+      22\n  },\n  \"AstonMartinDBS\": {\n    \"by_gold\": 32,\n    \"distance_km\":
+      50\n  }\n}"
   - key: AdConfig
     fallbackJson: "{\n  \"interstitial_frequency\": 200\n}"
+  - key: MilestonesConfig
+    fallbackJson: "{\n  \"milestones\": [\n    {\n      \"reward_gold\": 1000,\n     
+      \"threshold_km\": 1\n    },\n    {\n      \"reward_gold\": 2000,\n      \"threshold_km\":
+      3\n    },\n    {\n      \"reward_gold\": 3000,\n      \"threshold_km\": 6\n   
+      },\n    {\n      \"reward_gold\": 4000,\n      \"threshold_km\": 10\n    },\n   
+      {\n      \"reward_gold\": 5000,\n      \"threshold_km\": 15\n    },\n    {\n     
+      \"reward_gold\": 5000,\n      \"threshold_km\": 20\n    },\n    {\n      \"reward_gold\":
+      5000,\n      \"threshold_km\": 25\n    },\n    {\n      \"reward_gold\": 5000,\n     
+      \"threshold_km\": 30\n    }\n  ],\n  \"repeat_reward\": 5000,\n  \"repeat_step_km\":
+      5,\n  \"popup_close_seconds\": 6,\n  \"reward_ad_multiplier\": 3\n}"
+  - key: FreeGoldConfig
+    fallbackJson: "{\n  \"claim_popup_seconds\": 5\n}"
+  - key: CurrencyConfig
+    fallbackJson: "{\n  \"default_gold\": 150\n}"

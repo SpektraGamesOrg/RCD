@@ -26,6 +26,10 @@ namespace Save
         // Nitro
         public const string NitroCount      = "nitro_count"; // remaining free nitro charges (device-level)
 
+        // In-game events (device-level current level per mode; 1-based, endless loop). See Events.EventManager.
+        public const string JumpChallengeLevel = "jump_challenge_level";
+        public const string TimeTrialLevel     = "time_trial_level";
+
         // Save durability
         public const string SaveCounter     = "save_counter"; // monotonic counter bumped on every Save(); read by the editor-only Save System Forensics tool to detect a PlayerPrefs rollback
 

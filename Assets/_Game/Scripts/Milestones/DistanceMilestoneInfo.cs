@@ -4,7 +4,7 @@ namespace Milestones
     /// Immutable description of a single distance milestone: its 0-based <see cref="Index"/>, the total
     /// driven distance (km) at which it unlocks (<see cref="ThresholdKm"/>) and the soft-currency (gold)
     /// reward it grants (<see cref="RewardGold"/>). Pure data resolved from
-    /// <see cref="DistanceMilestoneContainer"/>; it carries no behaviour.
+    /// <see cref="MilestonesConfig"/>; it carries no behaviour.
     /// </summary>
     public readonly struct DistanceMilestoneInfo
     {

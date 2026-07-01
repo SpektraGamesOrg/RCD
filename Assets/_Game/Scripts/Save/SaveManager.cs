@@ -26,7 +26,6 @@ namespace Save
         // ---------------------------------------------------------------------
         // Default values
         // ---------------------------------------------------------------------
-        private const int DefaultGold = 150;
         private const int DefaultNitro = 2;
         private const float DefaultMasterVolume = 1f;
         private const float DefaultSfxVolume = 1f;
@@ -64,13 +63,23 @@ namespace Save
 
         public static int Gold
         {
-            get => PlayerPrefs.GetInt(SaveKeys.Gold, DefaultGold);
+            // The fresh-install default comes from the CurrencyConfig Clutch flag; only resolve it when no
+            // balance is saved yet, so the common read path stays a single PlayerPrefs hit.
+            get => PlayerPrefs.HasKey(SaveKeys.Gold)
+                ? PlayerPrefs.GetInt(SaveKeys.Gold)
+                : DefaultStartingGold;
             set
             {
                 PlayerPrefs.SetInt(SaveKeys.Gold, value);
                 OnCoinsChanged?.Invoke(value);
             }
         }
+
+        // Starting gold granted on a fresh install (before the player has earned or spent anything), sourced
+        // from the "CurrencyConfig" Clutch flag (remote, with the ClutchConfig SO fallback). Replaces the old
+        // hard-coded DefaultGold constant.
+        private static int DefaultStartingGold =>
+            ClutchConfigResolver.Get<CurrencyConfig>(ClutchFlagKeys.CurrencyConfig).DefaultGold;
 
         public static int DistanceDrivenKm
         {
@@ -86,7 +95,7 @@ namespace Save
         /// Adds (or, with a negative amount, removes) coins and fires <see cref="OnCoinsChanged"/>.
         /// Convenience for reward paths so callers don't repeat the read-modify-write.
         /// </summary>
-        public static void AddCoins(int amount)
+        public static void AddGolds(int amount)
         {
             Gold += amount;
         }
@@ -142,6 +151,31 @@ namespace Save
         {
             get => PlayerPrefs.GetInt(SaveKeys.DistanceMilestonesClaimed, 0);
             set => PlayerPrefs.SetInt(SaveKeys.DistanceMilestonesClaimed, value < 0 ? 0 : value);
+        }
+
+        // ---------------------------------------------------------------------
+        // In-game events (Jump Challenge / Time Trial)
+        // ---------------------------------------------------------------------
+
+        /// <summary>
+        /// The player's current Jump Challenge level (1-based). Every Jump area in the map plays this level; a
+        /// win advances it and it wraps back to 1 after the last level (endless loop). Owned by
+        /// <see cref="Events.EventManager"/>. Does not flush; call <see cref="Save"/> to persist.
+        /// </summary>
+        public static int JumpChallengeLevel
+        {
+            get => PlayerPrefs.GetInt(SaveKeys.JumpChallengeLevel, 1);
+            set => PlayerPrefs.SetInt(SaveKeys.JumpChallengeLevel, value < 1 ? 1 : value);
+        }
+
+        /// <summary>
+        /// The player's current Time Trial level (1-based). Behaves exactly like <see cref="JumpChallengeLevel"/>
+        /// for the Time Trial mode.
+        /// </summary>
+        public static int TimeTrialLevel
+        {
+            get => PlayerPrefs.GetInt(SaveKeys.TimeTrialLevel, 1);
+            set => PlayerPrefs.SetInt(SaveKeys.TimeTrialLevel, value < 1 ? 1 : value);
         }
 
         // ---------------------------------------------------------------------

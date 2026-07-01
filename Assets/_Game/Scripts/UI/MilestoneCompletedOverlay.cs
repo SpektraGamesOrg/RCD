@@ -128,8 +128,18 @@ namespace UI
             _offer = null;
 
             ClaimGoldMultiplierWithAdsOverlay overlay = MultiplierOverlay;
-            if (!overlay || overlay.IsBusy) // already in use (e.g. a gold pickup) -> skip, no conflict
+            if (!overlay)
+            {
+                Debug.LogError("ClaimGoldMultiplierWithAdsOverlay not found");
                 return;
+            }
+            
+            if (overlay.IsBusy)
+            {
+                Debug.LogError("ClaimGoldMultiplierWithAdsOverlay is busy");
+                return;
+            }
+            
 
             var offer = new GoldMultiplierAdOffer(
                 multiplier: DistanceMilestoneManager.RewardAdMultiplier,

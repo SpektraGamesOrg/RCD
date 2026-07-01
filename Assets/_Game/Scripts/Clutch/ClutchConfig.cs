@@ -108,6 +108,31 @@ namespace Clutch
             return _vehicleConfigFallback;
         }
 
+        /// <summary>
+        /// Deserializes a flag's authored fallback JSON into <typeparamref name="T"/>. Returns false when the
+        /// flag has no fallback entry or the JSON is invalid. The single offline source for the typed config
+        /// flags (MilestonesConfig, FreeGoldConfig, CurrencyConfig): the runtime service reads it when the
+        /// prefs cache is empty, and static boot callers read it directly (via <see cref="ClutchConfigResolver"/>)
+        /// before the DI service exists - mirroring <see cref="TryGetVehicleConfigEntry"/>.
+        /// </summary>
+        public bool TryGetConfig<T>(string flagKey, out T config) where T : class
+        {
+            config = null;
+            if (!TryGetFallback(flagKey, out string json) || string.IsNullOrEmpty(json))
+                return false;
+
+            try
+            {
+                config = JsonConvert.DeserializeObject<T>(json);
+                return config != null;
+            }
+            catch (JsonException e)
+            {
+                Debug.LogError($"[ClutchConfig] '{flagKey}' fallback is not valid JSON for {typeof(T).Name}: {e.Message}");
+                return false;
+            }
+        }
+
 #if UNITY_EDITOR
         private const int EditorFetchTimeoutSeconds = 15;
 

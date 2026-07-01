@@ -121,6 +121,37 @@ namespace Core
             return _spawnedVehicle;
         }
 
+        /// <summary>
+        /// Enables or disables Gley traffic for the duration of an in-game event (see Events.EventManager).
+        /// Disabling stops new spawns AND removes every currently spawned traffic vehicle so the map is clear
+        /// (the event design wants no traffic during Jump Challenge / Time Trial); enabling restores the normal
+        /// density and lets traffic repopulate.
+        /// </summary>
+        public void SetTrafficActive(bool active)
+        {
+            if (!gleyTrafficComponent)
+                return;
+
+            if (active)
+            {
+                API.SetTrafficDensity(gleyTrafficComponent.nrOfVehicles);
+                return;
+            }
+
+            API.SetTrafficDensity(0);
+
+            VehicleComponent[] vehicles = API.GetAllVehicles();
+            if (vehicles == null)
+                return;
+
+            for (int i = 0; i < vehicles.Length; i++)
+            {
+                VehicleComponent vc = vehicles[i];
+                if (vc)
+                    API.RemoveVehicle(vc.gameObject);
+            }
+        }
+
         protected override void OnDestroy()
         {
             // The milestone HUD overlay and its completion pop-ups are DontDestroyOnLoad views shown for

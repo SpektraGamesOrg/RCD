@@ -19,7 +19,27 @@ namespace Clutch
         /// <summary>string -> int ad tuning, e.g. {"interstitial_frequency":200}.</summary>
         public const string AdConfig = "AdConfig";
 
+        /// <summary>
+        /// Distance-milestone table + tuning (see <see cref="Milestones.MilestonesConfig"/>): the explicit
+        /// milestone head, the repeating tail (step km + reward), the rewarded-ad multiplier, and the
+        /// MILESTONE COMPLETED pop-up close time. Replaces the old DistanceMilestoneContainer SO.
+        /// </summary>
+        public const string MilestonesConfig = "MilestonesConfig";
+
+        /// <summary>
+        /// Scattered "free gold" pickup tuning (see <see cref="global::Gold.FreeGoldConfig"/>). Currently the
+        /// "CLAIM Nx" ad-bonus pop-up close time.
+        /// </summary>
+        public const string FreeGoldConfig = "FreeGoldConfig";
+
+        /// <summary>
+        /// Soft-currency tuning (see <see cref="Save.CurrencyConfig"/>), e.g. the starting gold granted on a
+        /// fresh install.
+        /// </summary>
+        public const string CurrencyConfig = "CurrencyConfig";
+
         /// <summary>All keys requested from Clutch in one evaluate-batch call.</summary>
-        public static readonly string[] All = { VehicleConfig, AdConfig };
+        public static readonly string[] All =
+            { VehicleConfig, AdConfig, MilestonesConfig, FreeGoldConfig, CurrencyConfig };
     }
 }

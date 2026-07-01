@@ -1,4 +1,5 @@
 using System;
+using Clutch;
 using Save;
 using UnityEngine;
 
@@ -24,10 +25,18 @@ namespace Milestones
     ///
     /// Distance is global - driving with any car counts (read from the single saved odometer). This
     /// service is intentionally NOT wired to any UI. Call <see cref="Initialize"/> once at startup (see
-    /// GameInitializer); the table itself lives in <see cref="DistanceMilestoneContainer"/>.
+    /// GameInitializer); the table itself lives in the "MilestonesConfig" Clutch flag (see
+    /// <see cref="MilestonesConfig"/>), resolved remote-first with the ClutchConfig SO fallback.
     /// </summary>
     public static class DistanceMilestoneManager
     {
+        // The resolved milestone table + tuning from the "MilestonesConfig" Clutch flag. Never null. Resolved
+        // through the DI service when available - memoized and re-parsed after each Clutch init, so a value
+        // read from the SO fallback at boot is automatically upgraded to the resolved Clutch value - else the
+        // ClutchConfig SO fallback directly. Cheap enough to read on the per-frame HUD path.
+        private static MilestonesConfig Config =>
+            ClutchConfigResolver.Get<MilestonesConfig>(ClutchFlagKeys.MilestonesConfig);
+
         /// <summary>
         /// Raised whenever the always-on progress display could change - the distance changed (so the bar
         /// / "X / Y KM" moved) or a milestone was claimed. The HUD displayer subscribes to this and
@@ -78,30 +87,20 @@ namespace Milestones
         /// <summary>How many milestones have been claimed (and rewarded). Equals the index of the oldest unclaimed milestone.</summary>
         public static int MilestonesClaimed => SaveManager.DistanceMilestonesClaimed;
 
-        /// <summary>Rewarded-ad multiplier offered on milestone completion (e.g. 3 -> "3X"), or 1 if unavailable.</summary>
-        public static int RewardAdMultiplier
-        {
-            get
-            {
-                DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-                return container ? container.RewardAdMultiplier : 1;
-            }
-        }
+        /// <summary>Rewarded-ad multiplier offered on milestone completion (e.g. 3 -> "3X"), clamped to at least 1.</summary>
+        public static int RewardAdMultiplier => Mathf.Max(1, Config.RewardAdMultiplier);
+
+        /// <summary>
+        /// Seconds the MILESTONE COMPLETED pop-up stays up before it auto-claims the base reward (also drives
+        /// the shared multiplier upsell's countdown so they close together). Clamped to a small positive min.
+        /// </summary>
+        public static float PopupCloseSeconds => Mathf.Max(0.1f, Config.PopupCloseSeconds);
 
         /// <summary>
         /// Number of milestones whose distance threshold has been reached (claimed or not). Computed from
         /// the driven distance against the table; not stored.
         /// </summary>
-        public static int ReachedCount
-        {
-            get
-            {
-                DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-                return container
-                    ? ComputeReachedCount(container, SaveManager.DistanceDrivenKm)
-                    : SaveManager.DistanceMilestonesClaimed;
-            }
-        }
+        public static int ReachedCount => ComputeReachedCount(Config, SaveManager.DistanceDrivenKm);
 
         /// <summary>How many reached milestones are still awaiting a claim (the pending queue length).</summary>
         public static int PendingCount => Mathf.Max(0, ReachedCount - SaveManager.DistanceMilestonesClaimed);
@@ -120,8 +119,7 @@ namespace Milestones
                 if (!HasPending)
                     return default;
 
-                DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-                return container ? container.GetMilestone(SaveManager.DistanceMilestonesClaimed) : default;
+                return Config.GetMilestone(SaveManager.DistanceMilestonesClaimed);
             }
         }
 
@@ -135,8 +133,7 @@ namespace Milestones
         {
             get
             {
-                DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-                return container ? container.GetMilestone(ReachedCount) : default;
+                return Config.GetMilestone(ReachedCount);
             }
         }
 
@@ -166,14 +163,11 @@ namespace Milestones
         {
             get
             {
-                DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-                if (!container)
-                    return default;
-
                 // floor(liveKm) >= threshold(int) is equivalent to liveKm >= threshold, so the existing
                 // whole-km scan can be reused directly.
-                int reached = ComputeReachedCount(container, Mathf.FloorToInt(LiveDistanceKm));
-                return container.GetMilestone(reached);
+                MilestonesConfig config = Config;
+                int reached = ComputeReachedCount(config, Mathf.FloorToInt(LiveDistanceKm));
+                return config.GetMilestone(reached);
             }
         }
 
@@ -203,12 +197,9 @@ namespace Milestones
         /// </summary>
         public static bool HasUncommittedReachedMilestone()
         {
-            DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-            if (!container)
-                return false;
-
-            int committedReached = ComputeReachedCount(container, SaveManager.DistanceDrivenKm);
-            int liveReached = ComputeReachedCount(container, Mathf.FloorToInt(LiveDistanceKm));
+            MilestonesConfig config = Config;
+            int committedReached = ComputeReachedCount(config, SaveManager.DistanceDrivenKm);
+            int liveReached = ComputeReachedCount(config, Mathf.FloorToInt(LiveDistanceKm));
             return liveReached > committedReached;
         }
 
@@ -222,15 +213,14 @@ namespace Milestones
             if (_initialized)
                 return;
 
-            if (!DistanceMilestoneContainer.Instance)
-            {
-                Debug.LogError("[DistanceMilestoneManager] No DistanceMilestoneContainer found in Resources; " +
-                               "distance milestones are disabled. Create the asset at " +
-                               "Assets/_Game/Data/Resources/DistanceMilestoneContainer.asset.");
-                return;
-            }
-
             _initialized = true;
+
+            // The config always resolves (remote -> SO fallback -> schema defaults), so the service is never
+            // "disabled" for a missing asset; only warn when it resolves to an empty table (a misconfiguration).
+            if (Config.ExplicitCount == 0)
+                Debug.LogError("[DistanceMilestoneManager] MilestonesConfig has no milestones; distance " +
+                               "milestones will grant nothing. Check the 'MilestonesConfig' Clutch flag and the " +
+                               "ClutchConfig fallback asset (Assets/_Game/Data/Resources/ClutchConfig.asset).");
 
             // Defensive -= before += so a domain reload that kept these static delegates can't stack a
             // duplicate subscription (mirrors the pattern used by the save-value widgets).
@@ -285,21 +275,16 @@ namespace Milestones
         // persists the claimed count, and notifies listeners. No-op when nothing is pending.
         private static bool Resolve(bool useAdBonus)
         {
-            DistanceMilestoneContainer container = DistanceMilestoneContainer.Instance;
-            if (!container)
-            {
-                Debug.LogError("[DistanceMilestoneManager] Cannot claim a milestone: no DistanceMilestoneContainer.");
-                return false;
-            }
-
             if (!HasPending)
                 return false;
 
+            MilestonesConfig config = Config;
             int index = SaveManager.DistanceMilestonesClaimed;
-            DistanceMilestoneInfo milestone = container.GetMilestone(index);
-            int amount = useAdBonus ? milestone.RewardGold * container.RewardAdMultiplier : milestone.RewardGold;
+            DistanceMilestoneInfo milestone = config.GetMilestone(index);
+            int multiplier = Mathf.Max(1, config.RewardAdMultiplier);
+            int amount = useAdBonus ? milestone.RewardGold * multiplier : milestone.RewardGold;
 
-            SaveManager.AddCoins(amount);
+            SaveManager.AddGolds(amount);
             SaveManager.DistanceMilestonesClaimed = index + 1;
             SaveManager.Save();
 
@@ -311,12 +296,12 @@ namespace Milestones
         // Counts milestones whose threshold has been reached. Starts at the claimed count (claimed
         // milestones are by definition reached) and walks up the ascending thresholds while the driven
         // distance still covers them. The guard only ever trips on a misconfigured table or a debug jump.
-        private static int ComputeReachedCount(DistanceMilestoneContainer container, int driven)
+        private static int ComputeReachedCount(MilestonesConfig config, int driven)
         {
             int reached = SaveManager.DistanceMilestonesClaimed;
             int guard = 0;
 
-            while (driven >= container.GetThresholdKm(reached))
+            while (driven >= config.GetThresholdKm(reached))
             {
                 if (++guard > MaxMilestonesPerPass)
                 {

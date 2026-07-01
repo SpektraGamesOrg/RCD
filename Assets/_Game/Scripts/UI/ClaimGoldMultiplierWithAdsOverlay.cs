@@ -59,7 +59,7 @@ namespace UI
         /// presenting an offer and unavailable to another caller. Accounts for the in-between Showing/Hiding
         /// states so a caller never double-shows while an animation is still running.
         /// </summary>
-        public bool IsBusy => VisibilityState != UIVisibilityState.Hidden;
+        [ShowInInspector, ReadOnly] public bool IsBusy => VisibilityState != UIVisibilityState.Hidden;
 
         protected override void Awake()
         {

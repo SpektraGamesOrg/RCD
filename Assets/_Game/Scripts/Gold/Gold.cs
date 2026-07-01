@@ -1,4 +1,5 @@
 using System;
+using Clutch;
 using Save;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -39,10 +40,6 @@ namespace Gold
                  "so this is configurable. Total = baseReward * multiplier; the ad grants the extra " +
                  "(multiplier - 1) * baseReward on top of the base.")]
         [SerializeField, Min(1)] private int claimMultiplier = 5;
-
-        [Tooltip("Seconds the \"CLAIM Nx\" ad-bonus pop-up stays up before auto-dismissing (the player keeps " +
-                 "the base reward). Passed to the shared ClaimGoldMultiplierWithAdsOverlay as its close time.")]
-        [SerializeField, Min(0.1f)] private float claimPopupSeconds = 5f;
 
         [Title("Cooldown")]
         [Tooltip("Seconds the gold stays passive after collection before reactivating. GDD: 30 minutes.")]
@@ -156,7 +153,7 @@ namespace Gold
         private void Collect()
         {
             // Base reward is granted immediately, unconditionally.
-            SaveManager.AddCoins(baseReward);
+            SaveManager.AddGolds(baseReward);
 
             // Play the collect VFX: particle burst + shrink to the passive size (keeps the coin proportions).
             if (collectVfx != null)
@@ -173,15 +170,17 @@ namespace Gold
             // The collect VFX animates the shrink, so don't snap the scale here.
             EnterPassive(now + (long)cooldownSeconds, animateShrink: true);
 
-            // Offer the "CLAIM Nx" bonus via rewarded ad. The bonus is the extra over the base.
+            // Offer the "CLAIM Nx" bonus via rewarded ad. The bonus is the extra over the base. The pop-up
+            // close time comes from the FreeGoldConfig Clutch flag (remote, with the ClutchConfig SO fallback).
             int bonus = baseReward * claimMultiplier - baseReward;
+            float claimPopupSeconds = ClutchConfigResolver.Get<FreeGoldConfig>(ClutchFlagKeys.FreeGoldConfig).ClaimPopupSeconds;
             ClaimRequested?.Invoke(new GoldClaimRequest(baseReward, claimMultiplier, bonus, claimPopupSeconds, OnBonusClaimed));
         }
 
         private void OnBonusClaimed(int bonus)
         {
             // Invoked by the popup only if the player watched the rewarded ad.
-            SaveManager.AddCoins(bonus);
+            SaveManager.AddGolds(bonus);
             SaveManager.Save();
         }
 

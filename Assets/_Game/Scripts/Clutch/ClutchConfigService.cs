@@ -30,6 +30,10 @@ namespace Clutch
         // Parsed VehicleConfig map (vehicle key -> entry), memoized; null until first read after init.
         private Dictionary<string, VehicleConfigEntry> _vehicleConfigCache;
 
+        // Parsed typed configs (flag key -> deserialized DTO), memoized so a per-frame GetConfig read does
+        // not reparse JSON. Cleared on each init (see Finish) so the next read picks up the resolved value.
+        private readonly Dictionary<string, object> _typedConfigCache = new Dictionary<string, object>();
+
         public bool IsReady { get; private set; }
 
         public event Action OnConfigUpdated;
@@ -152,6 +156,7 @@ namespace Clutch
         {
             _intMapCache.Clear();
             _vehicleConfigCache = null;
+            _typedConfigCache.Clear();
             IsReady = true;
             OnConfigUpdated?.Invoke();
         }
@@ -236,6 +241,46 @@ namespace Clutch
         public int GetInt(string flagKey, string entryKey, int fallback)
         {
             return GetIntMap(flagKey).TryGetValue(entryKey, out int value) ? value : fallback;
+        }
+
+        public T GetConfig<T>(string flagKey) where T : class, new()
+        {
+            if (string.IsNullOrEmpty(flagKey))
+                return new T();
+
+            if (_typedConfigCache.TryGetValue(flagKey, out object cached) && cached is T typed)
+                return typed;
+
+            T result = ResolveConfig<T>(flagKey);
+            _typedConfigCache[flagKey] = result;
+            return result;
+        }
+
+        // Resolves a typed flag: the resolved Clutch value (prefs cache) first, then the ClutchConfig SO
+        // fallback, then a default-constructed T (so a consumer never sees null). Mirrors GetVehicleConfig.
+        private static T ResolveConfig<T>(string flagKey) where T : class, new()
+        {
+            string json = ClutchConfigCache.TryGet(flagKey, out string cachedJson) ? cachedJson : null;
+            if (!string.IsNullOrEmpty(json))
+            {
+                try
+                {
+                    T parsed = JsonConvert.DeserializeObject<T>(json);
+                    if (parsed != null)
+                        return parsed;
+                }
+                catch (JsonException e)
+                {
+                    Debug.LogError($"[ClutchConfigService] Failed to parse '{flagKey}' as {typeof(T).Name}: {e.Message}");
+                }
+            }
+
+            // Cache empty / unparseable (e.g. read before InitializeAsync, or a bad remote value): fall back
+            // to the authored SO fallback so a usable value is always available.
+            if (ClutchConfig.Instance && ClutchConfig.Instance.TryGetConfig(flagKey, out T fallback))
+                return fallback;
+
+            return new T();
         }
 
         private static readonly IReadOnlyDictionary<string, int> EmptyIntMap =

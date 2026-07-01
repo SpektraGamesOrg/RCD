@@ -42,6 +42,15 @@ namespace Clutch
         int GetInt(string flagKey, string entryKey, int fallback);
 
         /// <summary>
+        /// The flag deserialized into a typed config object <typeparamref name="T"/> (a Newtonsoft DTO).
+        /// Resolution order matches <see cref="GetVehicleConfig"/>: the resolved Clutch value from the prefs
+        /// cache first, then the <see cref="ClutchConfig"/> SO fallback, then a default-constructed
+        /// <typeparamref name="T"/>. Result is memoized per flag and re-parsed after each init, so it is cheap
+        /// to call every frame. Used for the typed flags (MilestonesConfig, FreeGoldConfig, CurrencyConfig).
+        /// </summary>
+        T GetConfig<T>(string flagKey) where T : class, new();
+
+        /// <summary>
         /// Effective obtain config (paths + per-path values) for a vehicle, keyed by the vehicle's
         /// <see cref="VehicleID"/> enum name. Resolution order: the resolved Clutch value (from the prefs
         /// cache) first, then the <see cref="ClutchConfig"/> SO fallback, then an empty config. The
