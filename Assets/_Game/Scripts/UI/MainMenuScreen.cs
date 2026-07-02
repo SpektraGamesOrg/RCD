@@ -164,7 +164,7 @@ namespace UI
             int price = config.GoldValue;
             if (SaveManager.Gold < price)
             {
-                Debug.LogError($"[MainMenu] Not enough coins to buy {id}. Need {price}, have {SaveManager.Gold}.");
+                Debug.LogError($"[MainMenu] Not enough golds to buy {id}. Need {price}, have {SaveManager.Gold}.");
                 RuntimeUI.ShowToast("Not enough gold to buy");
                 return;
             }
@@ -373,8 +373,8 @@ namespace UI
         // debug menu, etc.) keeps this screen correct without depending on a reference to it.
         private void SubscribeToSaveEvents()
         {
-            SaveManager.OnCoinsChanged -= HandleSaveValueChanged;
-            SaveManager.OnCoinsChanged += HandleSaveValueChanged;
+            SaveManager.OnGoldsChanged -= HandleSaveValueChanged;
+            SaveManager.OnGoldsChanged += HandleSaveValueChanged;
             SaveManager.OnDistanceDrivenChanged -= HandleSaveValueChanged;
             SaveManager.OnDistanceDrivenChanged += HandleSaveValueChanged;
             SaveManager.OnSaveReset -= HandleSaveReset;
@@ -392,7 +392,7 @@ namespace UI
 
         private void UnsubscribeFromSaveEvents()
         {
-            SaveManager.OnCoinsChanged -= HandleSaveValueChanged;
+            SaveManager.OnGoldsChanged -= HandleSaveValueChanged;
             SaveManager.OnDistanceDrivenChanged -= HandleSaveValueChanged;
             SaveManager.OnSaveReset -= HandleSaveReset;
 

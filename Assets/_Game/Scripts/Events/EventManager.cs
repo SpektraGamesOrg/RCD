@@ -87,7 +87,7 @@ namespace Events
         private EventEntryOverlay _entryOverlay;
         private EventCountdownOverlay _countdownOverlay;
         private EventHudOverlay _hudOverlay;
-        private LevelResultOverlay _resultOverlay;
+        private LevelResultScreen _resultScreen;
         private EventFadeOverlay _fadeOverlay;
 
         /// <summary>True while a run has the world isolated - used by the HUD pop-ups to stay out of the way.</summary>
@@ -96,7 +96,6 @@ namespace Events
         private EventEntryOverlay EntryOverlay => Resolve(ref _entryOverlay);
         private EventCountdownOverlay CountdownOverlay => Resolve(ref _countdownOverlay);
         private EventHudOverlay HudOverlay => Resolve(ref _hudOverlay);
-        private LevelResultOverlay ResultOverlay => Resolve(ref _resultOverlay);
         private EventFadeOverlay Fade => Resolve(ref _fadeOverlay);
 
         // Remote-tuned reward values (Clutch "EventsConfig" flag -> prefs cache -> SO fallback -> schema
@@ -391,10 +390,10 @@ namespace Events
             int bonusReward = win ? _activeLevel.BonusRewardGold : 0;
 
             int multiplier = win ? config.WinAdMultiplier : 1;
-            ResultOverlay?.Show(uiData: new LevelResultData(win, baseReward, bonusReward, multiplier));
+            GameUIManager.Instance.SwitchScreen<LevelResultScreen>(false, uiData: new LevelResultData(win, baseReward, bonusReward, multiplier));
         }
 
-        /// <summary>Called by <see cref="LevelResultOverlay"/> once the reward is decided (base, or base * ad).</summary>
+        /// <summary>Called by <see cref="LevelResultScreen"/> once the reward is decided (base, or base * ad).</summary>
         public void OnResultResolved(bool win, int reward)
         {
             if (_phase != EventPhase.Result)
@@ -735,7 +734,6 @@ namespace Events
                 GameUIManager.Instance.GetOverlayUI<EventEntryOverlay>()?.Hide(true);
                 GameUIManager.Instance.GetOverlayUI<EventCountdownOverlay>()?.Hide(true);
                 GameUIManager.Instance.GetOverlayUI<EventHudOverlay>()?.Hide(true);
-                GameUIManager.Instance.GetOverlayUI<LevelResultOverlay>()?.Hide(true);
                 GameUIManager.Instance.GetOverlayUI<EventFadeOverlay>()?.Hide(true);
             }
 

@@ -6,7 +6,7 @@ using Utils;
 namespace UI
 {
     /// <summary>
-    /// Result payload for <see cref="LevelResultOverlay"/>, built by <see cref="Events.EventManager"/>.
+    /// Result payload for <see cref="LevelResultScreen"/>, built by <see cref="Events.EventManager"/>.
     /// </summary>
     public sealed class LevelResultData
     {
@@ -24,14 +24,7 @@ namespace UI
         }
     }
 
-    /// <summary>
-    /// The level end screen (GDD "Completion"). Shows WIN/FAIL + the reward, and on a win offers the shared
-    /// "watch ad to multiply" upsell (<see cref="ClaimGoldMultiplierWithAdsOverlay"/>) exactly like
-    /// <see cref="MilestoneCompletedOverlay"/>. Every path (CLAIM button, auto-close timer, ad success/failure)
-    /// funnels through one guarded <see cref="Resolve"/> so the reward is reported exactly once, after which
-    /// <see cref="Events.EventManager"/> grants it, advances the level and tears the event down.
-    /// </summary>
-    public sealed class LevelResultOverlay : OverlayBase
+    public sealed class LevelResultScreen : ScreenBase
     {
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text rewardText;
@@ -148,7 +141,7 @@ namespace UI
 
             bool win = _win;
             if (ShowingOrShown)
-                Hide();
+                GameUIManager.Instance.SwitchScreen<GameplayScreen>();
 
             if (Events.EventManager.Exists())
                 Events.EventManager.Instance.OnResultResolved(win, finalReward);

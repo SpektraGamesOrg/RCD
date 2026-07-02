@@ -35,7 +35,7 @@ namespace Save
         // Currency
         // ---------------------------------------------------------------------
 
-        public static event System.Action<int> OnCoinsChanged;
+        public static event System.Action<int> OnGoldsChanged;
         public static event System.Action<int> OnDistanceDrivenChanged;
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Save
             set
             {
                 PlayerPrefs.SetInt(SaveKeys.Gold, value);
-                OnCoinsChanged?.Invoke(value);
+                OnGoldsChanged?.Invoke(value);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Save
         }
 
         /// <summary>
-        /// Adds (or, with a negative amount, removes) coins and fires <see cref="OnCoinsChanged"/>.
+        /// Adds (or, with a negative amount, removes) coins and fires <see cref="OnGoldsChanged"/>.
         /// Convenience for reward paths so callers don't repeat the read-modify-write.
         /// </summary>
         public static void AddGolds(int amount)
