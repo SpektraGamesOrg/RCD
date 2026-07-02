@@ -16,5 +16,12 @@ namespace Gold
         /// </summary>
         [JsonProperty("claim_popup_seconds")]
         public float ClaimPopupSeconds = 5f;
+
+        /// <summary>
+        /// Gold granted by the "watch an ad for free gold" screen (<see cref="global::UI.WatchAdsToGetFreeGoldsScreen"/>)
+        /// when the player completes the rewarded ad.
+        /// </summary>
+        [JsonProperty("watch_ads_reward_gold")]
+        public int WatchAdsRewardGold = 100;
     }
 }

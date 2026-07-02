@@ -247,7 +247,7 @@ namespace Events
                     int reward = Config.WatchAndEarnGold;
                     SaveManager.AddGolds(reward);
                     SaveManager.Save();
-                    RuntimeUI.ShowToast($"+{reward}G");
+                    RuntimeUI.ShowToast($"+{reward} G");
                 }
                 else
                 {
