@@ -10373,8 +10373,8 @@ MonoBehaviour:
   allScreens:
   - {fileID: 1246275618}
   - {fileID: 1952170609}
-  - {fileID: 224340480}
-  - {fileID: 61876148}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 273593776}
   allPopups: []
   allOverlays:
@@ -16374,8 +16374,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 68}
+  m_SizeDelta: {x: 0, y: -136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000012131392910
 RectTransform:
