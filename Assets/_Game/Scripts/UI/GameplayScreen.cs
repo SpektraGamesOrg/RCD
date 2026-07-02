@@ -178,7 +178,18 @@ namespace UI
 
         private void OnDriftClicked() => SetDrift(!_driftEnabled);
 
+        // This is the RCD "Ad Placements" *Restore* surface (restore/respawn after fail/flip). Per the doc it
+        // is a rewarded placement (rewarded_multipliers.restore, cooldown-exempt). The exact policy is not
+        // settled yet — likely N free recoveries, then a rewarded ad — so recovery stays FREE for now and the
+        // gated path below is left commented. To enable: route OnRecoveryClicked through RecoverWithRewardedAd
+        // and pick the free-count rule.
         private void OnRecoveryClicked()
+        {
+            RecoverVehicle();
+        }
+
+        // Uprights the active vehicle in place (drop pitch/roll, keep heading, lift clear, kill momentum).
+        private void RecoverVehicle()
         {
             MainVehicleBehaviour vehicle = ActiveVehicle;
             if (!vehicle)
@@ -204,6 +215,36 @@ namespace UI
                 body.angularVelocity = Vector3.zero;
             }
         }
+
+        // Rewarded-gated recovery (RCD "Restore"). NOT wired yet — the free-count policy is undecided. When we
+        // pick it, point OnRecoveryClicked at this. rewarded_multipliers.restore is intended as the number of
+        // FREE recoveries before the ad is required (default 1); tracked per run in a counter like nitro.
+        // private int _freeRecoveriesUsed;
+        // private async UniTaskVoid RecoverWithRewardedAd()
+        // {
+        //     int freeAllowed = 0;
+        //     if (ServiceLocator.TryGetService(out IAdConfigProvider adConfigProvider))
+        //         freeAllowed = Mathf.RoundToInt((float)adConfigProvider.Current.RewardedMultiplier("restore", 1));
+        //
+        //     if (_freeRecoveriesUsed < freeAllowed)
+        //     {
+        //         _freeRecoveriesUsed++;
+        //         RecoverVehicle();
+        //         return;
+        //     }
+        //
+        //     if (recoveryButton) recoveryButton.interactable = false;
+        //     bool isSuccess = await ServiceLocator.GetService<MaxAdService>().ShowRewardedAdAsync("restore");
+        //     if (recoveryButton) recoveryButton.interactable = true;
+        //
+        //     if (!isSuccess)
+        //     {
+        //         RuntimeUI.ShowToast("Rewarded ad was not completed");
+        //         return;
+        //     }
+        //
+        //     RecoverVehicle();
+        // }
 
         private void OnFixClicked()
         {
