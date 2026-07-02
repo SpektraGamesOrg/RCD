@@ -1,3 +1,4 @@
+using System;
 using _Game.Scripts.Utils.VContainer;
 using Ads;
 using Core;
@@ -109,10 +110,29 @@ namespace UI
 
             SaveManager.OnNitroChanged += OnNitroCountChanged;
 
-            // Own the commercial-break timer on this HUD object. No countdown presenter is wired yet, so the
-            // controller uses its built-in 3s delay before the ad (the overlay can be injected later).
+            // Own the commercial-break timer on this HUD object. The presenter shows the on-screen 3-2-1
+            // countdown before the interstitial; if the overlay isn't present, the controller falls back to a
+            // plain 3s delay so the ad still opens on the doc's cadence.
             _commercialBreak = gameObject.AddComponent<CommercialBreakController>();
-            _commercialBreak.Configure(countdownPresenter: null);
+            _commercialBreak.Configure(countdownPresenter: PlayCommercialBreakCountdown);
+        }
+
+        // Presenter for the commercial-break 3-2-1 countdown. Called once with the total seconds; the overlay
+        // owns the whole 3 -> 2 -> 1 sequence and completes when it reaches zero (the controller then opens the
+        // ad). Resolves the overlay lazily through GameUIManager (not cached — it may not exist at Awake). When
+        // the overlay GameObject isn't authored yet, still hold the ~3s beat (unscaled) so the ad opens on the
+        // doc's cadence — just without the on-screen digits.
+        private static UniTask PlayCommercialBreakCountdown(int totalSeconds)
+        {
+            if (GameUIManager.Instance)
+            {
+                CommercialBreakCountdownOverlay overlay =
+                    GameUIManager.Instance.GetOverlayUI<CommercialBreakCountdownOverlay>();
+                if (overlay)
+                    return overlay.PlayAsync(totalSeconds);
+            }
+
+            return UniTask.Delay(TimeSpan.FromSeconds(totalSeconds), DelayType.UnscaledDeltaTime);
         }
 
         private void OnDestroy()

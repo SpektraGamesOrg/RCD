@@ -39,8 +39,9 @@ namespace Ads
         private bool _isActive;
         private bool _countdownActive;
 
-        // Optional 3s-countdown presenter supplied by the HUD. Receives the whole-second value (3,2,1) to
-        // display; returns a task that completes when the countdown finishes. Null => plain delay, no UI.
+        // Optional countdown presenter supplied by the HUD. Receives the TOTAL seconds to count from (3) and
+        // OWNS the whole 3-2-1 sequence, returning a task that completes when the count reaches zero. Null =>
+        // the controller does a plain unscaled delay (no UI) so the ad still opens on the doc's cadence.
         private Func<int, UniTask> _countdownPresenter;
 
         public void Configure(Func<int, UniTask> countdownPresenter)
@@ -112,18 +113,12 @@ namespace Ads
 
         private async UniTask RunCountdownAsync()
         {
-            if (_countdownPresenter == null)
-            {
+            // The presenter owns the full 3-2-1 sequence when wired; otherwise fall back to a plain delay so
+            // the ad still opens after the doc's ~3s beat with no UI.
+            if (_countdownPresenter != null)
+                await _countdownPresenter((int)CountdownSeconds);
+            else
                 await UniTask.Delay(TimeSpan.FromSeconds(CountdownSeconds), ignoreTimeScale: true);
-                return;
-            }
-
-            // Present whole-second ticks 3 -> 2 -> 1, each held ~1s.
-            for (int remaining = (int)CountdownSeconds; remaining >= 1; remaining--)
-            {
-                await _countdownPresenter(remaining);
-                await UniTask.Delay(TimeSpan.FromSeconds(1f), ignoreTimeScale: true);
-            }
         }
     }
 }
