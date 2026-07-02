@@ -1,0 +1,132 @@
+using System;
+using _Game.Scripts.Utils.VContainer;
+using Cysharp.Threading.Tasks;
+using SpektraGames.SpektraUtilities.Runtime;
+using UnityEngine;
+
+namespace Ads
+{
+    /// <summary>
+    /// Timed Commercial Break interstitials (RCD "Ad Placements"): every
+    /// <c>ad_commercial_break_interval_sec</c> of ACTIVE gameplay, show a 3s countdown and then a
+    /// (cooldown/cap-gated) interstitial.
+    ///
+    /// Active-gameplay time is accumulated only while <see cref="_isActive"/> is set by the owning gameplay
+    /// HUD (see GameplayScreen), so paused/menu time does not count. The interstitial always routes through
+    /// <see cref="IAdGatingService"/> via <see cref="IAdService.ShowInterstitialAdAsync"/>, so the shared
+    /// cooldown and session/daily caps still apply.
+    ///
+    /// Re-arm rules:
+    ///   * On a shown break, the accumulator resets to 0 (next break is a full interval away).
+    ///   * If the gate refuses at interval (cooldown not elapsed / cap hit), the accumulator is clamped just
+    ///     below the interval so it retries shortly rather than waiting a whole interval again.
+    ///   * <see cref="_countdownActive"/> prevents overlapping breaks.
+    ///
+    /// The 3s countdown UI is an OPTIONAL injected callback: when the HUD provides one, it is awaited before
+    /// the ad; otherwise a plain delay is used so the timing still matches the doc without requiring the
+    /// overlay to be wired.
+    /// </summary>
+    public sealed class CommercialBreakController : MonoBehaviour
+    {
+        private static readonly InfoLogger Logger = new InfoLogger("CommercialBreakController", "yellow");
+
+        private const float CountdownSeconds = 3f;
+
+        private IAdService _adService;
+        private IAdGatingService _gating;
+
+        private float _activeSeconds;
+        private bool _isActive;
+        private bool _countdownActive;
+
+        // Optional countdown presenter supplied by the HUD. Receives the TOTAL seconds to count from (3) and
+        // OWNS the whole 3-2-1 sequence, returning a task that completes when the count reaches zero. Null =>
+        // the controller does a plain unscaled delay (no UI) so the ad still opens on the doc's cadence.
+        private Func<int, UniTask> _countdownPresenter;
+
+        public void Configure(Func<int, UniTask> countdownPresenter)
+        {
+            _countdownPresenter = countdownPresenter;
+            ServiceLocator.TryGetService(out _adService);
+            ServiceLocator.TryGetService(out _gating);
+        }
+
+        /// <summary>Enable/disable active-gameplay time accumulation (HUD shown & not paused => true).</summary>
+        public void SetActive(bool active)
+        {
+            _isActive = active;
+        }
+
+        private void Update()
+        {
+            if (!_isActive || _countdownActive || _gating == null)
+                return;
+
+            if (!_gating.CommercialBreakEnabled)
+                return;
+
+            _activeSeconds += Time.unscaledDeltaTime;
+
+            int interval = _gating.CommercialBreakIntervalSec;
+            if (interval <= 0)
+                return;
+
+            if (_activeSeconds < interval)
+                return;
+
+            // Only start the countdown when the interstitial will ACTUALLY show: the gate must allow it AND a
+            // creative must be loaded (SDK fill ready). This prevents an empty 3-2-1 countdown that ends with
+            // no ad (cooldown/cap refusal or a no-fill). If either fails, clamp so we retry shortly rather than
+            // waiting another full interval.
+            bool gateOpen = _gating.CanShowInterstitial();
+            bool adReady = _adService != null && _adService.IsInterstitialReady;
+            if (!gateOpen || !adReady)
+            {
+                _activeSeconds = interval - 1f;
+                return;
+            }
+
+            RunBreakAsync().Forget();
+        }
+
+        private async UniTaskVoid RunBreakAsync()
+        {
+            _countdownActive = true;
+            try
+            {
+                // 1) Enable + run the on-screen 3-2-1 countdown overlay.
+                await RunCountdownAsync();
+
+                // 2) Then trigger the interstitial. Re-check gate + readiness in case they changed during the
+                //    3s countdown (e.g. an App Open armed the shared cooldown, or fill dropped).
+                if (_adService != null && _gating != null &&
+                    _gating.CanShowInterstitial() && _adService.IsInterstitialReady)
+                {
+                    bool shown = await _adService.ShowInterstitialAdAsync("commercial_break");
+                    Logger.Log($"Commercial break shown={shown}.");
+                }
+                else
+                {
+                    Logger.Log("Commercial break gate/fill closed after countdown; skipped.");
+                }
+
+                // Reset to a full interval regardless of shown/skipped, so breaks stay spaced by the interval.
+                _activeSeconds = 0f;
+            }
+            finally
+            {
+                _countdownActive = false;
+            }
+        }
+
+        private async UniTask RunCountdownAsync()
+        {
+            // The presenter owns the full 3-2-1 sequence when wired; otherwise fall back to a plain delay so
+            // the ad still opens after the doc's ~3s beat with no UI.
+            if (_countdownPresenter != null)
+                await _countdownPresenter((int)CountdownSeconds);
+            else
+                await UniTask.Delay(TimeSpan.FromSeconds(CountdownSeconds), ignoreTimeScale: true);
+        }
+    }
+}

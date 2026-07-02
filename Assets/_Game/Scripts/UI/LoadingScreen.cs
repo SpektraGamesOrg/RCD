@@ -1,5 +1,7 @@
 using System;
 using System.Threading;
+using _Game.Scripts.Utils.VContainer;
+using Ads;
 using Core;
 using Cysharp.Threading.Tasks;
 using TMPro;
@@ -82,6 +84,20 @@ namespace UI
                 default:
                     break;
             }
+
+            // Loading-screen MREC (gated by ad_loading_mrec_enabled inside the table). MREC is a display
+            // unit, not cooldown-gated. Kept loaded and re-shown; hidden again in OnHidden.
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.ShowBanner(BannerPlacement.LoadingMrec);
+        }
+
+        protected override void OnHidden(bool immediate = false)
+        {
+            base.OnHidden(immediate);
+
+            // Hide the loading MREC when the loading screen is dismissed (keeps it loaded for cheap re-show).
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.HideBanner(BannerPlacement.LoadingMrec);
         }
 
         /// <summary>

@@ -1,3 +1,6 @@
+using _Game.Scripts.Utils.VContainer;
+using Ads;
+using Cysharp.Threading.Tasks;
 using Milestones;
 using TMPro;
 using UIManager;
@@ -186,9 +189,17 @@ namespace UI
             _resolved = true;
 
             if (useAdBonus)
+            {
                 DistanceMilestoneManager.ClaimNextPendingWithAdBonus();
+            }
             else
+            {
                 DistanceMilestoneManager.ClaimNextPending();
+                // Doc: closing the milestone popup (base claim / auto-close, NOT the rewarded x3 path) fires an
+                // interstitial when ad_milestone_close_inter is on. Gated + fire-and-forget so the claim/close
+                // is never blocked; a closed gate (cooldown/cap) simply shows nothing.
+                TryShowMilestoneCloseInterstitial();
+            }
 
             // Close the upsell, but only the offer we opened (never a gold pickup's) - RequestClose checks
             // ownership and defers if it is still animating in, so we never issue a Hide mid-show.
@@ -199,6 +210,17 @@ namespace UI
 
             if (ShowingOrShown)
                 Hide();
+        }
+
+        // Fires the milestone-close interstitial if the doc toggle allows it. The ad service still applies the
+        // shared cooldown + session/daily caps, so this only shows when the full gate is open.
+        private static void TryShowMilestoneCloseInterstitial()
+        {
+            if (!ServiceLocator.TryGetService(out IAdGatingService gating) || !gating.MilestoneCloseInterEnabled)
+                return;
+
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.ShowInterstitialAdAsync("milestone_close").Forget();
         }
 
         protected override void OnHidden(bool immediate = false)

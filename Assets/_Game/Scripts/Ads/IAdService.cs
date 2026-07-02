@@ -16,6 +16,21 @@ namespace Ads
         UniTask<bool> ShowInterstitialAdAsync(string placement = "default", bool forceShow = false);
 
         /// <summary>
+        /// True when an interstitial creative is loaded and would actually display right now (SDK fill
+        /// ready). Does NOT consider gating — callers that also need cooldown/cap headroom check
+        /// <see cref="IAdGatingService.CanShowInterstitial"/> too. Used so a pre-ad countdown UI is only
+        /// shown when the ad will really appear (no empty countdown on a no-fill).
+        /// </summary>
+        bool IsInterstitialReady { get; }
+
+        /// <summary>
+        /// Shows an App Open ad if one is configured and the shared fullscreen cooldown allows it. App Open
+        /// shares only the cooldown with interstitials; it does NOT consume the interstitial session/daily
+        /// caps. No-ops (returns false) when no real App Open ad unit id is configured (see CTR-6257).
+        /// </summary>
+        UniTask<bool> ShowAppOpenAdAsync(string placement = "app_open", bool forceShow = false);
+
+        /// <summary>
         /// Shows the banner for the given placement. Auto-creates + loads + shows on first call,
         /// re-shows if already created. No-op if the placement's AdConfig toggle is off/missing or
         /// the SDK is not initialized. Banners are persistent (not show-once); callers do not await.

@@ -1,3 +1,4 @@
+using System;
 using _Game.Scripts.Utils.VContainer;
 using Ads;
 using Core;
@@ -92,6 +93,11 @@ namespace UI
         // count/icon visual is restored exactly once when the boost window ends.
         private bool _nitroBoostActive;
 
+        // Timed Commercial Break interstitials. Created as a child component so it ticks with the HUD and is
+        // torn down with it; time only accrues while the HUD is showing (see Update). Not serialized — this
+        // is runtime-only state.
+        private CommercialBreakController _commercialBreak;
+
         protected override void Awake()
         {
             base.Awake();
@@ -103,6 +109,30 @@ namespace UI
             if (nitroButton) nitroButton.onClick.AddListener(OnNitroClicked);
 
             SaveManager.OnNitroChanged += OnNitroCountChanged;
+
+            // Own the commercial-break timer on this HUD object. The presenter shows the on-screen 3-2-1
+            // countdown before the interstitial; if the overlay isn't present, the controller falls back to a
+            // plain 3s delay so the ad still opens on the doc's cadence.
+            _commercialBreak = gameObject.AddComponent<CommercialBreakController>();
+            _commercialBreak.Configure(countdownPresenter: PlayCommercialBreakCountdown);
+        }
+
+        // Presenter for the commercial-break 3-2-1 countdown. Called once with the total seconds; the overlay
+        // owns the whole 3 -> 2 -> 1 sequence and completes when it reaches zero (the controller then opens the
+        // ad). Resolves the overlay lazily through GameUIManager (not cached — it may not exist at Awake). When
+        // the overlay GameObject isn't authored yet, still hold the ~3s beat (unscaled) so the ad opens on the
+        // doc's cadence — just without the on-screen digits.
+        private static UniTask PlayCommercialBreakCountdown(int totalSeconds)
+        {
+            if (GameUIManager.Instance)
+            {
+                CommercialBreakCountdownOverlay overlay =
+                    GameUIManager.Instance.GetOverlayUI<CommercialBreakCountdownOverlay>();
+                if (overlay)
+                    return overlay.PlayAsync(totalSeconds);
+            }
+
+            return UniTask.Delay(TimeSpan.FromSeconds(totalSeconds), DelayType.UnscaledDeltaTime);
         }
 
         private void OnDestroy()
@@ -126,11 +156,25 @@ namespace UI
 
             // Show the current free-nitro count / rewarded-ad affordance from the moment the HUD appears.
             RefreshNitroVisual();
+
+            // Start accruing active-gameplay time for Commercial Breaks while the HUD is up.
+            if (_commercialBreak) _commercialBreak.SetActive(true);
+
+            // Persistent in-game banner (gated by ad_banner_enabled inside the ad service/table).
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.ShowBanner(BannerPlacement.GameplayBottom);
         }
 
         protected override void OnHidden(bool immediate = false)
         {
             base.OnHidden(immediate);
+
+            // Stop the Commercial Break timer while the HUD is not shown (pause/menu/loading).
+            if (_commercialBreak) _commercialBreak.SetActive(false);
+
+            // Hide the persistent banner while the HUD is not shown (kept loaded for cheap re-show).
+            if (ServiceLocator.TryGetService(out IAdService adService))
+                adService.HideBanner(BannerPlacement.GameplayBottom);
         }
 
         /// <summary>
@@ -154,7 +198,18 @@ namespace UI
 
         private void OnDriftClicked() => SetDrift(!_driftEnabled);
 
+        // This is the RCD "Ad Placements" *Restore* surface (restore/respawn after fail/flip). Per the doc it
+        // is a rewarded placement (rewarded_multipliers.restore, cooldown-exempt). The exact policy is not
+        // settled yet — likely N free recoveries, then a rewarded ad — so recovery stays FREE for now and the
+        // gated path below is left commented. To enable: route OnRecoveryClicked through RecoverWithRewardedAd
+        // and pick the free-count rule.
         private void OnRecoveryClicked()
+        {
+            RecoverVehicle();
+        }
+
+        // Uprights the active vehicle in place (drop pitch/roll, keep heading, lift clear, kill momentum).
+        private void RecoverVehicle()
         {
             MainVehicleBehaviour vehicle = ActiveVehicle;
             if (!vehicle)
@@ -180,6 +235,36 @@ namespace UI
                 body.angularVelocity = Vector3.zero;
             }
         }
+
+        // Rewarded-gated recovery (RCD "Restore"). NOT wired yet — the free-count policy is undecided. When we
+        // pick it, point OnRecoveryClicked at this. rewarded_multipliers.restore is intended as the number of
+        // FREE recoveries before the ad is required (default 1); tracked per run in a counter like nitro.
+        // private int _freeRecoveriesUsed;
+        // private async UniTaskVoid RecoverWithRewardedAd()
+        // {
+        //     int freeAllowed = 0;
+        //     if (ServiceLocator.TryGetService(out IAdConfigProvider adConfigProvider))
+        //         freeAllowed = Mathf.RoundToInt((float)adConfigProvider.Current.RewardedMultiplier("restore", 1));
+        //
+        //     if (_freeRecoveriesUsed < freeAllowed)
+        //     {
+        //         _freeRecoveriesUsed++;
+        //         RecoverVehicle();
+        //         return;
+        //     }
+        //
+        //     if (recoveryButton) recoveryButton.interactable = false;
+        //     bool isSuccess = await ServiceLocator.GetService<MaxAdService>().ShowRewardedAdAsync("restore");
+        //     if (recoveryButton) recoveryButton.interactable = true;
+        //
+        //     if (!isSuccess)
+        //     {
+        //         RuntimeUI.ShowToast("Rewarded ad was not completed");
+        //         return;
+        //     }
+        //
+        //     RecoverVehicle();
+        // }
 
         private void OnFixClicked()
         {
@@ -240,7 +325,13 @@ namespace UI
                 return;
             }
 
-            SaveManager.AddNitro(nitroAdRewardAmount);
+            // Reward amount is the remote rewarded_multipliers.nitro when present, else the serialized
+            // GDD default. Rounded because the amount is stored as double in the config.
+            int nitroReward = nitroAdRewardAmount;
+            if (ServiceLocator.TryGetService(out IAdConfigProvider adConfigProvider))
+                nitroReward = Mathf.RoundToInt((float)adConfigProvider.Current.RewardedMultiplier("nitro", nitroAdRewardAmount));
+
+            SaveManager.AddNitro(nitroReward);
             SaveManager.Save();
             // RefreshNitroVisual runs via OnNitroChanged; the icon/count update as the count goes positive.
         }

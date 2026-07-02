@@ -29,6 +29,14 @@ namespace Ads
         // Keyed by ad unit id, NOT placement — mirrors how the MAX SDK identifies ad views.
         private readonly Dictionary<string, AdViewState> _views = new Dictionary<string, AdViewState>();
 
+        // Resolved AdConfig source. Placement gating reads the live config through this rather than
+        // fabricating a throwaway AdConfig.
+        private readonly IAdConfigProvider _configProvider;
+
+        public MaxBannerController(IAdConfigProvider configProvider)
+        {
+            _configProvider = configProvider;
+        }
 
         public void ShowBanner(BannerPlacement placement)
         {
@@ -38,7 +46,7 @@ namespace Ads
                 return;
             }
 
-            var config = new AdConfig(); // TODO: This should not try new class, instead get from featureflag(clutch)
+            AdConfig config = _configProvider.Current;
             if (!info.IsEnabled(config))
             {
                 Logger.Log($"Banner {placement} gated off (config).");

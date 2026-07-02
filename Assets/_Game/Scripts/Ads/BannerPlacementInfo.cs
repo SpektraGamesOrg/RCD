@@ -76,6 +76,52 @@ namespace Ads
                     new BannerPlacementInfo(BannerFormat.Mrec, BannerAnchor.CenterRight,
                         c => c.BannerGroupLoadingscreenRight, offset: new Vector2(-200f, 0f))
                 },
+
+                // --- RCD "Ad Placements" surfaces (mapped to the new ad_*_enabled schema accessors) ---
+                {
+                    // Persistent in-game banner, bottom-anchored (doc: always-on during gameplay).
+                    BannerPlacement.GameplayBottom,
+                    new BannerPlacementInfo(BannerFormat.Adaptive, BannerAnchor.BottomCenter,
+                        c => c.BannerEnabled)
+                },
+                {
+                    // Loading-screen MREC. Centered; loading and pause/city-start MRECs are never on screen
+                    // at the same time, so sharing the single MREC ad unit is fine.
+                    BannerPlacement.LoadingMrec,
+                    new BannerPlacementInfo(BannerFormat.Mrec, BannerAnchor.Center,
+                        c => c.LoadingMrecEnabled)
+                },
+                {
+                    // Pause-menu MREC, centered.
+                    BannerPlacement.PauseMrec,
+                    new BannerPlacementInfo(BannerFormat.Mrec, BannerAnchor.Center,
+                        c => c.PauseMrecEnabled)
+                },
+                {
+                    // Pause-menu banner, bottom-anchored.
+                    BannerPlacement.PauseBanner,
+                    new BannerPlacementInfo(BannerFormat.Adaptive, BannerAnchor.BottomCenter,
+                        c => c.PauseMrecEnabled)
+                },
+                {
+                    // City-start overlay MREC (doc: right side).
+                    BannerPlacement.CityStartMrec,
+                    new BannerPlacementInfo(BannerFormat.Mrec, BannerAnchor.CenterRight,
+                        c => c.CityStartOverlayEnabled, offset: new Vector2(-200f, 0f))
+                },
+                {
+                    // City-start overlay banner, bottom-anchored.
+                    BannerPlacement.CityStartBanner,
+                    new BannerPlacementInfo(BannerFormat.Adaptive, BannerAnchor.BottomCenter,
+                        c => c.CityStartOverlayEnabled)
+                },
+                {
+                    // First-session tutorial MREC. Shown one-at-a-time (single MREC ad unit): the doc's
+                    // 2x-MREC layout needs a second MREC ad unit id (Path A) before both can co-exist.
+                    BannerPlacement.TutorialMrec,
+                    new BannerPlacementInfo(BannerFormat.Mrec, BannerAnchor.Center,
+                        c => c.TutorialOn)
+                },
             };
 
         /// <summary>Returns the placement info. Throws if the placement is not registered (programmer error).</summary>
