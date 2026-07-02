@@ -74,32 +74,40 @@ namespace Ads
             if (_activeSeconds < interval)
                 return;
 
-            if (!_gating.CanShowInterstitial())
+            // Only start the countdown when the interstitial will ACTUALLY show: the gate must allow it AND a
+            // creative must be loaded (SDK fill ready). This prevents an empty 3-2-1 countdown that ends with
+            // no ad (cooldown/cap refusal or a no-fill). If either fails, clamp so we retry shortly rather than
+            // waiting another full interval.
+            bool gateOpen = _gating.CanShowInterstitial();
+            bool adReady = _adService != null && _adService.IsInterstitialReady;
+            if (!gateOpen || !adReady)
             {
-                // Gate refused (cooldown/cap). Clamp so we retry shortly instead of waiting another interval.
                 _activeSeconds = interval - 1f;
                 return;
             }
 
-            RunBreakAsync(interval).Forget();
+            RunBreakAsync().Forget();
         }
 
-        private async UniTaskVoid RunBreakAsync(int interval)
+        private async UniTaskVoid RunBreakAsync()
         {
             _countdownActive = true;
             try
             {
+                // 1) Enable + run the on-screen 3-2-1 countdown overlay.
                 await RunCountdownAsync();
 
-                // Re-check the gate after the countdown: cooldown/caps may have changed during the 3s.
-                if (_adService != null && _gating != null && _gating.CanShowInterstitial())
+                // 2) Then trigger the interstitial. Re-check gate + readiness in case they changed during the
+                //    3s countdown (e.g. an App Open armed the shared cooldown, or fill dropped).
+                if (_adService != null && _gating != null &&
+                    _gating.CanShowInterstitial() && _adService.IsInterstitialReady)
                 {
                     bool shown = await _adService.ShowInterstitialAdAsync("commercial_break");
                     Logger.Log($"Commercial break shown={shown}.");
                 }
                 else
                 {
-                    Logger.Log("Commercial break gate closed after countdown; skipped.");
+                    Logger.Log("Commercial break gate/fill closed after countdown; skipped.");
                 }
 
                 // Reset to a full interval regardless of shown/skipped, so breaks stay spaced by the interval.

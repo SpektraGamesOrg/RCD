@@ -101,6 +101,8 @@ namespace Ads
             IsInitializing = false;
         }
 
+        public bool IsInterstitialReady => _interstitialAdHandler.IsAdReady;
+
         public UniTask<bool> ShowRewardedAdAsync(string placement = "default", string parameter = "")
         {
             _rewardedAdHandler.SetRewardParameter(parameter);
